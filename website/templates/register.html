@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card p-4">
+            <form method="POST">
+                <h2 align="center" class="mb-4">Join Kisan Smart</h2>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter email"
+                        required />
+                </div>
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter full name"
+                        required />
+                </div>
+                <div class="form-group">
+                    <label for="role">User Role</label>
+                    <select class="form-control" id="role" name="role">
+                        <option value="Farmer">Farmer</option>
+                        <option value="Admin">Admin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" name="password"
+                        placeholder="Enter password (min 7 characters)" required />
+                </div>
+                <br />
+                <button type="submit" class="btn btn-primary btn-block">Register</button>
+                <div class="text-center mt-3">
+                    <p>Already have an account? <a href="/login">Login here</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

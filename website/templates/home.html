@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<div class="jumbotron mt-4 text-center" style="background: transparent;">
+    <h1 class="display-4">Welcome, {{ user.name }}!</h1>
+    <p class="lead">Optimize your crop yield with AI-driven fertilizer recommendations.</p>
+    <hr class="my-4">
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <div class="card p-4">
+                <i class="fa fa-leaf fa-3x mb-3 text-success"></i>
+                <h3>Get Advice</h3>
+                <p>Input your soil details and get precise recommendations.</p>
+                <a href="#" class="btn btn-primary">Start Now</a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4">
+                <i class="fa fa-history fa-3x mb-3 text-success"></i>
+                <h3>History</h3>
+                <p>Review your past recommendations and results.</p>
+                <a href="#" class="btn btn-primary">View History</a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4">
+                <i class="fa fa-user fa-3x mb-3 text-success"></i>
+                <h3>Profile</h3>
+                <p>Manage your account settings and farm details.</p>
+                <a href="#" class="btn btn-primary">Edit Profile</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
