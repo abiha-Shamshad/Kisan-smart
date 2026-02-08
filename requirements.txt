@@ -2,5 +2,15 @@ flask
 flask-sqlalchemy
 flask-login
 flask-bcrypt
-mysql-connector-python
+flask-wtf
+flask-mail
+flask-limiter
+psycopg2-binary
+pandas
+numpy
+scikit-learn
+matplotlib
+seaborn
 python-dotenv
+email-validator
+itsdangerous

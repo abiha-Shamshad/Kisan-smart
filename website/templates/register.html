@@ -2,39 +2,127 @@
 {% block title %}Register{% endblock %}
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card p-4">
-            <form method="POST">
-                <h2 align="center" class="mb-4">Join Kisan Smart</h2>
-                <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter email"
-                        required />
+    <div class="col-md-8">
+        <div class="card p-4 shadow">
+            <h2 class="text-center mb-4">Create Account</h2>
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {{ form.username.label(class="form-control-label") }}
+                            {% if form.username.errors %}
+                            {{ form.username(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.username.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            {{ form.username(class="form-control", placeholder="Username") }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {{ form.email.label(class="form-control-label") }}
+                            {% if form.email.errors %}
+                            {{ form.email(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.email.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            {{ form.email(class="form-control", placeholder="Email Address") }}
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="name">Full Name</label>
-                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter full name"
-                        required />
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {{ form.full_name.label(class="form-control-label") }}
+                            {{ form.full_name(class="form-control", placeholder="Optional") }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {{ form.phone_number.label(class="form-control-label") }}
+                            {{ form.phone_number(class="form-control", placeholder="Optional") }}
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="role">User Role</label>
-                    <select class="form-control" id="role" name="role">
-                        <option value="Farmer">Farmer</option>
-                        <option value="Admin">Admin</option>
-                    </select>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {{ form.password.label(class="form-control-label") }}
+                            {{ form.password(class="form-control", id="password", placeholder="At least 8 characters")
+                            }}
+                            <div class="progress mt-2" style="height: 5px;">
+                                <div id="password-strength" class="progress-bar" role="progressbar" style="width: 0%">
+                                </div>
+                            </div>
+                            <small id="password-help" class="form-text text-muted">Use uppercase, lowercase, numbers,
+                                and symbols.</small>
+                            {% if form.password.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.password.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {{ form.confirm_password.label(class="form-control-label") }}
+                            {{ form.confirm_password(class="form-control", placeholder="Repeat password") }}
+                            {% if form.confirm_password.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.confirm_password.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" class="form-control" id="password" name="password"
-                        placeholder="Enter password (min 7 characters)" required />
-                </div>
-                <br />
-                <button type="submit" class="btn btn-primary btn-block">Register</button>
-                <div class="text-center mt-3">
-                    <p>Already have an account? <a href="/login">Login here</a></p>
+                <div class="form-group mt-4">
+                    {{ form.submit(class="btn btn-primary btn-block") }}
                 </div>
             </form>
+            <hr>
+            <div class="text-center">
+                <small class="text-muted">
+                    Already Have An Account? <a class="ml-2" href="{{ url_for('auth.login') }}">Sign In</a>
+                </small>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+    const password = document.getElementById('password');
+    const strengthBar = document.getElementById('password-strength');
+
+    password.addEventListener('input', function () {
+        const val = password.value;
+        let strength = 0;
+        if (val.length >= 8) strength += 25;
+        if (val.match(/[A-Z]/)) strength += 25;
+        if (val.match(/[a-z]/)) strength += 20;
+        if (val.match(/[0-9]/)) strength += 15;
+        if (val.match(/[!@#$%^&*(),.?":{}|<>]/)) strength += 15;
+
+        strengthBar.style.width = strength + '%';
+        if (strength < 40) {
+            strengthBar.className = 'progress-bar bg-danger';
+        } else if (strength < 80) {
+            strengthBar.className = 'progress-bar bg-warning';
+        } else {
+            strengthBar.className = 'progress-bar bg-success';
+        }
+    });
+</script>
 {% endblock %}

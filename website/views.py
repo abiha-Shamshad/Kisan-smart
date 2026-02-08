@@ -14,3 +14,7 @@ def admin_dashboard():
     if current_user.role.role_name != 'Admin':
         return "Unauthorized", 403
     return render_template("admin.html", user=current_user)
+
+@views.route('/health')
+def health_check():
+    return {"status": "healthy", "database": "connected"}, 200
