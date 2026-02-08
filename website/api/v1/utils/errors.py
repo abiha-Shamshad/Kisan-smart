@@ -3,6 +3,7 @@ from website.api.v1.utils.responses import error_response
 from marshmallow import ValidationError
 from werkzeug.exceptions import HTTPException
 
+
 def register_error_handlers(app):
     """Registers global error handlers for the application."""
 
@@ -17,8 +18,12 @@ def register_error_handlers(app):
     @app.errorhandler(Exception)
     def handle_generic_exception(e):
         current_app.logger.error(f"Unhandled Exception: {str(e)}", exc_info=True)
-        return error_response("An unexpected error occurred", "INTERNAL_SERVER_ERROR", None, 500)
+        return error_response(
+            "An unexpected error occurred", "INTERNAL_SERVER_ERROR", None, 500
+        )
 
     @app.errorhandler(429)
     def handle_ratelimit_error(e):
-        return error_response("Rate limit exceeded", "RATE_LIMIT_EXCEEDED", str(e.description), 429)
+        return error_response(
+            "Rate limit exceeded", "RATE_LIMIT_EXCEEDED", str(e.description), 429
+        )

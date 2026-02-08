@@ -1,6 +1,7 @@
 from models.ml_models.inference_engine import InferenceEngine
 import threading
 
+
 class MLModelService:
     _instance = None
     _lock = threading.Lock()
@@ -16,12 +17,13 @@ class MLModelService:
         if self._initialized:
             return
         print("Initializing MLModelService (Singleton)...")
-        self.engine = InferenceEngine(version='v1.0.0')
+        self.engine = InferenceEngine(version="v1.0.0")
         self._initialized = True
 
     def predict(self, data):
         """Standardized prediction gateway."""
         return self.engine.predict(data)
+
 
 # Singleton access
 ml_service = MLModelService()

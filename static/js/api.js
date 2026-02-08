@@ -158,11 +158,11 @@ class APIClient {
         'Authorization': `Bearer ${this.token}`
       }
     });
-    
+
     if (!response.ok) {
       throw new Error('Export failed');
     }
-    
+
     // Download file
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
@@ -171,6 +171,17 @@ class APIClient {
     a.download = 'history.csv';
     a.click();
     window.URL.revokeObjectURL(url);
+  }
+
+  async savePrediction(predictionData) {
+    return await this.request('/history/', {
+      method: 'POST',
+      body: JSON.stringify(predictionData)
+    });
+  }
+
+  async getHistoryStats() {
+    return await this.request('/history/stats');
   }
 
   /**

@@ -9,6 +9,7 @@ from datetime import datetime
 
 predict_schema = PredictionRequestSchema()
 
+
 def get_prediction():
     """
     Get Fertilizer Recommendation
@@ -50,63 +51,67 @@ def get_prediction():
     errors = predict_schema.validate(data)
     if errors:
         return error_response("Validation failed", "VALIDATION_ERROR", errors, 422)
-    
+
     try:
         # Get result from ML Service
         result = ml_service.predict(data)
-        
+
         # Save to history if user is logged in
         user_id = get_jwt_identity()
         prediction_id = f"pred_{int(datetime.now().timestamp())}_{uuid.uuid4().hex[:6]}"
-        
+
         if user_id:
             new_rec = Recommendation(
                 user_id=int(user_id),
                 prediction_id=prediction_id,
-                crop_type=data['crop_type'],
-                nitrogen=data['nitrogen'],
-                phosphorus=data['phosphorus'],
-                potassium=data['potassium'],
-                ph=data['ph'],
-                moisture=data['moisture'],
-                temperature=data['temperature'],
-                farm_area=data['farm_area'],
-                growth_stage=data['growth_stage'],
-                fertilizer_type=result['fertilizer_type'],
-                quantity=result['quantity'],
-                type_confidence=result['fertilizer_type_confidence'],
-                quantity_confidence=result['quantity_confidence'],
-                overall_confidence=result['overall_confidence'],
-                confidence_level=result['confidence_level']
+                crop_type=data["crop_type"],
+                nitrogen=data["nitrogen"],
+                phosphorus=data["phosphorus"],
+                potassium=data["potassium"],
+                ph=data["ph"],
+                moisture=data["moisture"],
+                temperature=data["temperature"],
+                farm_area=data["farm_area"],
+                growth_stage=data["growth_stage"],
+                fertilizer_type=result["fertilizer_type"],
+                quantity=result["quantity"],
+                type_confidence=result["fertilizer_type_confidence"],
+                quantity_confidence=result["quantity_confidence"],
+                overall_confidence=result["overall_confidence"],
+                confidence_level=result["confidence_level"],
             )
             db.session.add(new_rec)
             db.session.commit()
-            result['prediction_id'] = prediction_id
-        
+            result["prediction_id"] = prediction_id
+
         return success_response(result, "Recommendation generated successfully")
-        
+
     except Exception as e:
         return error_response(str(e), "PREDICTION_FAILED", None, 500)
+
 
 def get_batch_prediction():
     data_list = request.get_json()
     if not isinstance(data_list, list):
-        return error_response("Input must be a list of objects", "INVALID_INPUT_FORMAT", None, 400)
-    
+        return error_response(
+            "Input must be a list of objects", "INVALID_INPUT_FORMAT", None, 400
+        )
+
     results = []
-    for item in data_list[:50]: # Limit to 50 for performance
+    for item in data_list[:50]:  # Limit to 50 for performance
         errors = predict_schema.validate(item)
         if errors:
             results.append({"error": errors, "success": False})
             continue
-        
+
         try:
             res = ml_service.predict(item)
             results.append({"data": res, "success": True})
         except Exception as e:
             results.append({"error": str(e), "success": False})
-            
+
     return success_response(results, f"Processed {len(results)} predictions")
+
 
 def validate_input():
     data = request.get_json()

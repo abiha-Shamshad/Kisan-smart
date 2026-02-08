@@ -1,0 +1,159 @@
+# Tasks
+
+- [x] Sprint 1: Project Setup & Environment Configuration
+    - [x] Initialize formal MVC folder structure [ ]
+    - [x] Update dependencies for PostgreSQL [ ]
+    - [x] Configure environment variables and database connection [ ]
+    - [x] Create PostgreSQL database schema [ ]
+    - [x] Set up basic Flask boilerplate [ ]
+    - [x] Add project documentation (README, Architecture) [ ]
+- [x] Sprint 2: Data Collection & Preprocessing
+    - [x] Create data collection strategy [ ]
+    - [x] Implement data loading and inspection scripts [ ]
+    - [x] Implement EDA scripts and visualizations [ ]
+    - [x] Create data cleaning pipeline [ ]
+    - [x] Implement feature engineering and transformation [ ]
+    - [x] Set up database integration for data samples [ ]
+    - [x] Automate the data pipeline [ ]
+    - [x] Generate data documentation [ ]
+- [x] Sprint 3: User Authentication System [/]
+    - [x] Update User model with security fields [ ]
+    - [x] Implement robust Flask-WTF forms for auth [ ]
+    - [x] Set up secure password hashing and strength validation [ ]
+    - [x] Implement email verification workflow (Flask-Mail) [ ]
+    - [x] Implement secure login with account lockout [ ]
+    - [x] Implement password reset functionality [ ]
+    - [x] Add rate limiting (Flask-Limiter) and CSRF protection [ ]
+    - [x] Create responsive authentication templates [ ]
+    - [x] Implement authentication logging [ ]
+- [x] Sprint 4: ML Model Development - Part 1 [/]
+    - [x] Set up ML project structure and data loader [ ]
+    - [x] Implement feature engineering pipeline (Scaling/Encoding) [ ]
+    - [x] Train and evaluate baseline models (Logistic Regression) [ ]
+    - [x] Implement Random Forest and XGBoost classifiers [ ]
+    - [x] Perform hyperparameter tuning (GridSearchCV/RandomizedSearchCV) [ ]
+    - [x] Generate comprehensive evaluation report and ROC curves [ ]
+    - [x] Perform feature importance analysis [ ]
+    - [x] Save best models and transformation pipelines [ ]
+- [x] Sprint 5: ML Model Development - Part 2 [/]
+    - [x] Update data generation logic for quantity prediction [ ]
+    - [x] Develop and compare quantity prediction (Regression) models [ ]
+    - [x] Implement hyperparameter tuning for regression models [ ]
+    - [x] Implement confidence scoring for Type and Quantity [ ]
+    - [x] Create unified prediction pipeline (Type + Quantity) [ ]
+    - [x] Optimize models for production inference (<3s) [ ]
+    - [x] Implement model versioning and serialization system [ ]
+    - [x] Add prediction logging and basic monitoring [ ]
+    - [x] Generate regression evaluation reports and plots [ ]
+- [x] Sprint 6: Backend API Development [/]
+    - [x] Design RESTful API architecture and blueprints [ ]
+    - [x] Implement Authentication API endpoints (JWT-based) [ ]
+    - [x] Integrate Prediction Pipeline with API endpoints [ ]
+    - [x] Implement History and Statistics API endpoints [ ]
+    - [x] Implement User Profile and Avatar management [ ]
+    - [x] Add input validation (Marshmallow) and error handling [ ]
+    - [x] Implement Rate Limiting and CORS management [ ]
+    - [x] Set up Swagger/OpenAPI documentation [ ]
+    - [x] Implement Caching (Redis/In-memory) for predictions [ ]
+    - [x] Perform security hardening and optimization [ ]
+    - [x] Create comprehensive API test suite [ ]
+- [x] Sprint 7: Frontend Foundation & Authentication UI
+    - [x] Upgrade templates to Bootstrap 5 and modern design
+    - [x] Create frontend static files structure (css, js, images)
+    - [x] Implement API client (api.js) for backend integration
+    - [x] Create validators.js for client-side validation
+    - [x] Update base.html with Bootstrap 5 and responsive navigation
+    - [x] Enhance registration with AJAX and real-time validation
+    - [x] Enhance login with AJAX and JWT token management
+    - [x] Create forgot/reset password pages with API integration
+    - [x] Create email verification page
+    - [x] Implement password strength indicator with visual feedback
+    - [x] Add loading states and error handling UI
+    - [x] Ensure mobile-responsive design across all pages
+- [x] Sprint 8: Core Application UI - Input & Results
+    - [x] Create prediction input form with sections (Crop Info, Soil Parameters)
+    - [x] Implement dual slider + number inputs for NPK, pH, moisture
+    - [x] Add real-time form validation with visual feedback
+    - [x] Implement crop dropdown and farm area input
+    - [x] Add tooltips and help features
+    - [x] Create "Load Sample Data" functionality
+    - [x] Implement prediction submission with loading overlay
+    - [x] Create results dashboard with hero recommendation section
+    - [x] Implement confidence meter visualization
+    - [x] Create NPK ratio chart visualization
+    - [x] Add alternative recommendations table
+    - [x] Implement save recommendation functionality
+    - [x] Add print-friendly styles and PDF export
+    - [x] Ensure mobile-responsive design for forms and results
+- [x] Sprint 9: User Dashboard & History Management
+    - [x] Create user dashboard with welcome header and quick stats
+    - [x] Implement 4 stat cards (Total, This Month, Avg Confidence, Crops)
+    - [x] Add recent activity widget with last 5 predictions
+    - [x] Create prediction history page with table view
+    - [x] Implement search functionality for history
+    - [x] Add date range, crop type, and confidence filters
+    - [x] Implement sorting by date, confidence, crop name
+    - [x] Add pagination (20 items per page)
+    - [x] Create view details modal for individual predictions
+    - [x] Implement CSV export functionality
+    - [x] Implement PDF export functionality
+    - [x] Add delete confirmation modal
+    - [x] Implement bulk actions (select, delete, export)
+    - [x] Create dashboard charts (predictions over time, by crop, fertilizer distribution)
+    - [x] Create profile management page with edit form
+    - [x] Ensure mobile-responsive design for dashboard and history
+
+- [/] Sprint 10: System Integration & End-to-End Testing
+    - [x] Set up testing infrastructure and directory structure
+    - [x] Create unit tests for models (User, Recommendation, validators)
+    - [x] Create unit tests for ML prediction models
+    - [/] Create unit tests for API endpoints
+    - [x] Set up integration testing framework with pytest fixtures
+    - [x] Create integration tests for user registration flow
+    - [x] Create integration tests for authentication flow
+    - [x] Create integration tests for prediction workflow
+    - [x] Create integration tests for history management
+    - [x] Set up performance testing with Locust
+    - [x] Create load testing scenarios (100 concurrent users)
+    - [x] Set up code coverage with pytest-cov (target: 80%+)
+    - [x] Create security testing suite (auth, injection, XSS)
+    - [/] Create database integration tests
+    - [/] Set up E2E frontend tests with Selenium
+    - [/] Create user journey E2E tests
+    - [x] Set up CI/CD pipeline with GitHub Actions
+    - [x] Create health check endpoint
+    - [/] Set up logging and monitoring
+    - [/] Create test documentation and bug tracking templates
+    - [/] Run full test suite and generate coverage report
+
+- [x] Sprint 12: Deployment, Documentation & Launch
+    - [x] Create production deployment script for Ubuntu 24.04
+    - [x] Configure Nginx as reverse proxy with SSL (Config only)
+    - [x] Set up Gunicorn with Supervisor (Config only)
+    - [x] Configure production MySQL database (Scripts only)
+    - [x] Create automated backup system with cron (Scripts only)
+    - [x] Set up database migration procedures
+    - [x] Configure environment variables and secrets (Templates only)
+    - [x] Set up application logging (rotating file handler)
+    - [/] Integrate error tracking (Sentry)
+    - [/] Configure uptime monitoring
+    - [/] Set up performance monitoring
+    - [x] Create log rotation configuration
+    - [x] Write comprehensive user manual with screenshots
+    - [x] Create administrator guide
+    - [x] Generate API documentation (Swagger/OpenAPI)
+    - [x] Write developer documentation (README, ARCHITECTURE, DATABASE)
+    - [x] Create video tutorials for key features (Scripts/Templates)
+    - [x] Write quick start guide (PDF content)
+    - [x] Create pre-launch checklist
+    - [x] Set up support documentation and procedures
+    - [x] Create launch announcement templates
+    - [x] Define maintenance schedule
+    - [x] Create disaster recovery plan
+    - [/] Set up analytics tracking
+    - [x] Create handover documentation
+    - [/] Perform final security audit
+    - [/] Run production smoke tests
+    - [x] Complete soft launch with beta testers (Preparation)
+    - [x] Execute public launch (Preparation)
+    - [x] Set up post-launch monitoring (Plan)

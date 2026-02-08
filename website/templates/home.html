@@ -1,35 +1,143 @@
 {% extends "base.html" %}
-{% block title %}Home{% endblock %}
+{% block title %}Dashboard - Kisan Smart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}" />
+{% endblock %}
+
 {% block content %}
-<div class="jumbotron mt-4 text-center" style="background: transparent;">
-    <h1 class="display-4">Welcome, {{ user.name }}!</h1>
-    <p class="lead">Optimize your crop yield with AI-driven fertilizer recommendations.</p>
-    <hr class="my-4">
-    <div class="row mt-5">
-        <div class="col-md-4">
-            <div class="card p-4">
-                <i class="fa fa-leaf fa-3x mb-3 text-success"></i>
-                <h3>Get Advice</h3>
-                <p>Input your soil details and get precise recommendations.</p>
-                <a href="#" class="btn btn-primary">Start Now</a>
+<div class="home-container">
+    <!-- Welcome Header -->
+    <div class="welcome-header">
+        <h1>Welcome back, <span id="userName">User</span>!</h1>
+        <p class="text-muted">Here's an overview of your fertilizer recommendations</p>
+    </div>
+
+    <!-- Quick Stats Cards -->
+    <div class="row g-4 mb-5">
+        <!-- Total Predictions -->
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card stat-card-primary">
+                <div class="stat-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-number" data-count="0">0</h3>
+                    <p class="stat-label">Total Predictions</p>
+                    <small class="stat-sublabel text-muted">All time</small>
+                </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card p-4">
-                <i class="fa fa-history fa-3x mb-3 text-success"></i>
-                <h3>History</h3>
-                <p>Review your past recommendations and results.</p>
-                <a href="#" class="btn btn-primary">View History</a>
+
+        <!-- This Month -->
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card stat-card-success">
+                <div class="stat-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-number" data-count="0">0</h3>
+                    <p class="stat-label">This Month</p>
+                    <small class="stat-sublabel stat-trend">Loading...</small>
+                </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card p-4">
-                <i class="fa fa-user fa-3x mb-3 text-success"></i>
-                <h3>Profile</h3>
-                <p>Manage your account settings and farm details.</p>
-                <a href="#" class="btn btn-primary">Edit Profile</a>
+
+        <!-- Average Confidence -->
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card stat-card-warning">
+                <div class="stat-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-number" data-count="0">0</h3>
+                    <span class="stat-suffix">%</span>
+                    <p class="stat-label">Avg Confidence</p>
+                    <small class="stat-sublabel text-muted">High quality</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Crops Analyzed -->
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card stat-card-info">
+                <div class="stat-icon">
+                    <i class="fas fa-seedling"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-number" data-count="0">0</h3>
+                    <p class="stat-label">Crops Analyzed</p>
+                    <small class="stat-sublabel text-muted">Different types</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions mb-5">
+        <a href="/predict" class="btn btn-primary btn-lg">
+            <i class="fas fa-magic me-2"></i>New Prediction
+        </a>
+        <a href="/history" class="btn btn-outline-primary btn-lg">
+            <i class="fas fa-history me-2"></i>View Full History
+        </a>
+        <button class="btn btn-outline-secondary btn-lg" onclick="HomeDashboard.exportAll()">
+            <i class="fas fa-download me-2"></i>Export All Data
+        </button>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="card recent-activity">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Recent Predictions</h5>
+            <a href="/history" class="btn btn-sm btn-outline-primary">View All</a>
+        </div>
+        <div class="card-body">
+            <div id="recentActivityContainer">
+                <!-- Loading state -->
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Charts (Optional) -->
+    <div class="row mt-5" id="chartsSection" style="display: none;">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Predictions Over Time</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="timelineChart" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Predictions by Crop</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="cropChart" height="250"></canvas>
+                </div>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/home.js') }}"></script>
+<script>
+    // Initialize dashboard on page load
+    document.addEventListener('DOMContentLoaded', function () {
+        HomeDashboard.init();
+    });
+</script>
 {% endblock %}
