@@ -1,58 +1,136 @@
 {% extends "base.html" %}
-{% block title %}Login{% endblock %}
+{% block title %}Login - Kisan Smart{% endblock %}
+
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card p-4 shadow">
-            <h2 class="text-center mb-4">Login</h2>
-            <form method="POST" action="">
-                {{ form.hidden_tag() }}
-                <div class="form-group">
-                    {{ form.email.label(class="form-control-label") }}
-                    {% if form.email.errors %}
-                    {{ form.email(class="form-control is-invalid") }}
-                    <div class="invalid-feedback">
-                        {% for error in form.email.errors %}
-                        <span>{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                    {% else %}
-                    {{ form.email(class="form-control", placeholder="Enter email") }}
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                    {{ form.password.label(class="form-control-label") }}
-                    {% if form.password.errors %}
-                    {{ form.password(class="form-control is-invalid") }}
-                    <div class="invalid-feedback">
-                        {% for error in form.password.errors %}
-                        <span>{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                    {% else %}
-                    {{ form.password(class="form-control", placeholder="Enter password") }}
-                    {% endif %}
-                </div>
-                <div class="form-check mb-3">
-                    {{ form.remember(class="form-check-input") }}
-                    {{ form.remember.label(class="form-check-label") }}
-                </div>
-                <div class="form-group">
-                    {{ form.submit(class="btn btn-primary btn-block") }}
-                </div>
-                <div class="text-center mt-3">
-                    <small class="text-muted">
-                        <a href="{{ url_for('auth.forgot_password') }}">Forgot Password?</a>
-                    </small>
-                </div>
-            </form>
-            <hr>
-            <div class="text-center">
-                <small class="text-muted">
-                    Need An Account? <a class="ml-2" href="{{ url_for('auth.register') }}">Sign Up Now</a>
-                </small>
+<div class="auth-container">
+    <div class="auth-card">
+        <h2><i class="fas fa-sign-in-alt me-2"></i>Welcome Back</h2>
+        <p class="text-center text-muted mb-4">Login to access your fertilizer recommendations</p>
+
+        <form id="loginForm">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" class="form-control" id="email" name="email" required autofocus />
+                <div class="invalid-feedback"></div>
             </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <div class="password-input-wrapper">
+                    <input type="password" class="form-control" id="password" name="password" required />
+                    <button type="button" class="password-toggle"><i class="fas fa-eye"></i></button>
+                </div>
+                <div class="invalid-feedback"></div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="remember_me" name="remember_me" />
+                    <label class="form-check-label" for="remember_me">
+                        Remember me
+                    </label>
+                </div>
+                <a href="/forgot-password" class="text-decoration-none small">Forgot Password?</a>
+            </div>
+
+            <button type="submit" id="submitBtn" class="btn btn-primary w-100 py-3">
+                <i class="fas fa-sign-in-alt me-2"></i>Login
+            </button>
+        </form>
+
+        <div class="auth-links">
+            <small>Don't have an account? <a href="/register">Sign Up Now</a></small>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const rememberMeCheckbox = document.getElementById('remember_me');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Real-time email validation
+        emailInput.addEventListener('blur', function () {
+            const result = Validators.validateEmail(this.value);
+            if (!result.valid) {
+                ValidationUI.showFieldError('email', result.message);
+            } else {
+                ValidationUI.showFieldSuccess('email');
+            }
+        });
+
+        // Form submission
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            // Clear previous errors
+            ValidationUI.clearAllFeedback('loginForm');
+
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            const rememberMe = rememberMeCheckbox.checked;
+
+            // Validate email
+            const emailResult = Validators.validateEmail(email);
+            if (!emailResult.valid) {
+                ValidationUI.showFieldError('email', emailResult.message);
+                Toast.error('Please enter a valid email address');
+                return;
+            }
+
+            // Validate password not empty
+            if (!password) {
+                ValidationUI.showFieldError('password', 'Password is required');
+                Toast.error('Please enter your password');
+                return;
+            }
+
+            // Submit to API
+            FormHelpers.setButtonLoading(submitBtn, true);
+
+            try {
+                const response = await auth.login(email, password, rememberMe);
+
+                Toast.success('Login successful! Redirecting...');
+
+                // Redirect to dashboard after 1 second
+                setTimeout(() => {
+                    window.location.href = '/dashboard';
+                }, 1000);
+
+            } catch (error) {
+                // Handle specific error cases
+                let errorMessage = 'Login failed. Please try again.';
+
+                if (error.message.includes('credentials')) {
+                    errorMessage = 'Invalid email or password';
+                    ValidationUI.showFieldError('email', ' ');
+                    ValidationUI.showFieldError('password', ' ');
+                } else if (error.message.includes('locked')) {
+                    errorMessage = 'Account is locked. Please contact support.';
+                } else if (error.message.includes('verified')) {
+                    errorMessage = 'Please verify your email before logging in.';
+                } else {
+                    errorMessage = error.message;
+                }
+
+                Toast.error(errorMessage);
+            } finally {
+                FormHelpers.setButtonLoading(submitBtn, false);
+            }
+        });
+
+        // Clear error on input
+        [emailInput, passwordInput].forEach(input => {
+            input.addEventListener('input', function () {
+                ValidationUI.clearFieldFeedback(this.id);
+            });
+        });
+    });
+</script>
 {% endblock %}

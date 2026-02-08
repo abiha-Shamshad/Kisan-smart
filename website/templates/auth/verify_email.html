@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Verify Email - Kisan Smart{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card text-center">
+        <div id="verificationContent">
+            <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                <span class="visually-hidden">Verifying...</span>
+            </div>
+            <h3>Verifying your email...</h3>
+            <p class="text-muted">Please wait while we confirm your email address.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', async function () {
+        const contentDiv = document.getElementById('verificationContent');
+
+        // Extract token from URL
+        const urlParts = window.location.pathname.split('/');
+        const token = urlParts[urlParts.length - 1];
+
+        if (!token || token === 'verify-email') {
+            showError('Invalid verification link');
+            return;
+        }
+
+        try {
+            // Call verification API
+            const response = await api.verifyEmail(token);
+
+            // Show success
+            showSuccess();
+
+        } catch (error) {
+            // Show error
+            showError(error.message || 'Verification failed');
+        }
+    });
+
+    function showSuccess() {
+        const contentDiv = document.getElementById('verificationContent');
+        let countdown = 5;
+
+        contentDiv.innerHTML = `
+        <i class="fas fa-check-circle text-success mb-3" style="font-size: 5rem;"></i>
+        <h3 class="text-success">Email Verified!</h3>
+        <p class="text-muted">Your email has been successfully verified.</p>
+        <p class="text-muted">Redirecting to login in <span id="countdown">${countdown}</span> seconds...</p>
+        <a href="/login" class="btn btn-primary mt-3">Continue to Login</a>
+    `;
+
+        // Countdown timer
+        const countdownSpan = document.getElementById('countdown');
+        const interval = setInterval(() => {
+            countdown--;
+            if (countdownSpan) {
+                countdownSpan.textContent = countdown;
+            }
+
+            if (countdown <= 0) {
+                clearInterval(interval);
+                window.location.href = '/login';
+            }
+        }, 1000);
+    }
+
+    function showError(message) {
+        const contentDiv = document.getElementById('verificationContent');
+
+        contentDiv.innerHTML = `
+        <i class="fas fa-times-circle text-danger mb-3" style="font-size: 5rem;"></i>
+        <h3 class="text-danger">Verification Failed</h3>
+        <p class="text-muted">${message}</p>
+        <p class="text-muted">The verification link may be invalid or expired.</p>
+        <div class="mt-4">
+            <a href="/register" class="btn btn-outline-primary me-2">Create New Account</a>
+            <a href="/login" class="btn btn-primary">Go to Login</a>
+        </div>
+    `;
+    }
+</script>
+{% endblock %}

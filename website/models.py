@@ -32,3 +32,38 @@ class User(db.Model, UserMixin):
 
     def get_id(self):
         return str(self.user_id)
+
+class Recommendation(db.Model):
+    __tablename__ = 'recommendations'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=True)
+    prediction_id = db.Column(db.String(50), unique=True, nullable=False)
+    
+    # Input data
+    crop_type = db.Column(db.String(50))
+    nitrogen = db.Column(db.Float)
+    phosphorus = db.Column(db.Float)
+    potassium = db.Column(db.Float)
+    ph = db.Column(db.Float)
+    moisture = db.Column(db.Float)
+    temperature = db.Column(db.Float)
+    farm_area = db.Column(db.Float)
+    growth_stage = db.Column(db.String(50))
+    
+    # Predictions
+    fertilizer_type = db.Column(db.String(100))
+    quantity = db.Column(db.Float)
+    quantity_unit = db.Column(db.String(20), default='kg/hectare')
+    
+    # Confidence
+    type_confidence = db.Column(db.Float)
+    quantity_confidence = db.Column(db.Float)
+    overall_confidence = db.Column(db.Float)
+    confidence_level = db.Column(db.String(20))
+    
+    # Metadata
+    created_at = db.Column(db.DateTime(timezone=True), default=func.now())
+    updated_at = db.Column(db.DateTime(timezone=True), default=func.now(), onupdate=func.now())
+    
+    # Relationships
+    user = db.relationship('User', backref='recommendations')

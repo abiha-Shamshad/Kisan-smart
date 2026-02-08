@@ -1,0 +1,71 @@
+/* ==================== CSS VARIABLES ==================== */
+:root {
+  /* Primary Colors */
+  --primary-green: #28a745;
+  --primary-green-dark: #218838;
+  --primary-green-light: #34ce57;
+  
+  /* Secondary Colors */
+  --secondary-brown: #795548;
+  --secondary-brown-dark: #5d4037;
+  
+  /* Accent */
+  --accent-orange: #ff9800;
+  --accent-yellow: #ffc107;
+  
+  /* Status Colors */
+  --success: #28a745;
+  --warning: #ff9800;
+  --danger: #dc3545;
+  --info: #17a2b8;
+  
+  /* Neutrals */
+  --text-dark: #212529;
+  --text-muted: #6c757d;
+  --bg-light: #f8f9fa;
+  --bg-white: #ffffff;
+  --border-color: #dee2e6;
+  
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-xxl: 3rem;
+  
+  /* Border Radius */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 20px rgba(0,0,0,0.15);
+  
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+  
+  /* Z-index */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-toast: 1060;
+}
+
+/* Dark mode support (optional) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-light: #1a1a1a;
+    --bg-white: #2d2d2d;
+    --text-dark: #e0e0e0;
+    --text-muted: #a0a0a0;
+    --border-color: #404040;
+  }
+}
