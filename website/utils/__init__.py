@@ -1,7 +1,7 @@
 from flask import url_for, current_app
 from flask_mail import Message
 from itsdangerous import URLSafeTimedSerializer as Serializer
-from . import mail
+from website import mail
 
 
 def send_verification_email(user):

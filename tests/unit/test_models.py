@@ -62,6 +62,7 @@ class TestUserModel:
     def test_verify_valid_token(self, db_session):
         """Test verifying a valid token"""
         user = User(username="testuser", email="test@example.com")
+        user.set_password("Pass123!")
         db_session.session.add(user)
         db_session.session.commit()
 
@@ -79,6 +80,7 @@ class TestUserModel:
     def test_verify_expired_token(self, db_session):
         """Test expired token is rejected"""
         user = User(username="testuser", email="test@example.com")
+        user.set_password("Pass123!")
         db_session.session.add(user)
         db_session.session.commit()
 
