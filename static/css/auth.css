@@ -1,217 +1,50 @@
 /* ==================== AUTHENTICATION PAGE STYLES ==================== */
 
 .auth-container {
-    min-height: calc(100vh - 100px);
+    min-height: calc(100vh - 80px);
+    /* Adjust for navbar */
     display: flex;
     align-items: center;
     justify-content: center;
     padding: var(--spacing-xl) var(--spacing-md);
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232e7d32' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
 
 .auth-card {
-    max-width: 500px;
+    max-width: 480px;
     width: 100%;
-    padding: var(--spacing-xxl);
+    padding: 3rem;
     background: var(--bg-white);
     border-radius: var(--border-radius-xl);
     box-shadow: var(--shadow-lg);
+    border-top: 6px solid var(--primary-green);
 }
 
 .auth-card h2 {
     text-align: center;
-    margin-bottom: var(--spacing-xl);
-    color: var(--primary-green);
+    margin-bottom: 2rem;
+    color: var(--primary-green-dark);
+    font-weight: 700;
 }
 
 .auth-card .form-group {
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: 1.5rem;
 }
 
-/* Password Strength Indicator */
-.password-strength {
-    margin-top: var(--spacing-sm);
-}
-
-.password-strength-bar {
-    height: 4px;
-    border-radius: 2px;
-    background-color: var(--border-color);
-    overflow: hidden;
-    margin-bottom: var(--spacing-xs);
-}
-
-.password-strength-fill {
-    height: 100%;
-    width: 0%;
-    transition: width var(--transition-normal), background-color var(--transition-normal);
-}
-
-.password-strength-fill.weak {
-    background-color: var(--danger);
-    width: 33%;
-}
-
-.password-strength-fill.medium {
-    background-color: var(--warning);
-    width: 66%;
-}
-
-.password-strength-fill.strong {
-    background-color: var(--success);
-    width: 100%;
-}
-
-.password-requirements {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-}
-
-.password-requirements li {
-    padding: 0.15rem 0;
-    transition: color var(--transition-fast);
-}
-
-.password-requirements li.met {
-    color: var(--success);
-}
-
-.password-requirements li.met::before {
-    content: '✓ ';
-    font-weight: bold;
-}
-
-.password-requirements li:not(.met)::before {
-    content: '✗ ';
-    color: var(--danger);
-}
-
-/* Password Toggle */
-.password-toggle {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    color: var(--text-muted);
-    padding: 0.5rem;
-    background: none;
-    border: none;
-    transition: color var(--transition-fast);
-}
-
-.password-toggle:hover {
-    color: var(--primary-green);
-}
-
-.password-input-wrapper {
-    position: relative;
-}
-
-.password-input-wrapper .form-control {
-    padding-right: 2.5rem;
-}
-
-/* Auth Links */
 .auth-links {
     text-align: center;
-    margin-top: var(--spacing-lg);
-    padding-top: var(--spacing-lg);
-    border-top: 1px solid var(--border-color);
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px dashed var(--border-color);
 }
 
 .auth-links a {
     color: var(--primary-green);
     font-weight: 600;
     text-decoration: none;
-    transition: color var(--transition-fast);
+    transition: color 0.2s;
 }
 
 .auth-links a:hover {
-    color: var(--primary-green-dark);
-    text-decoration: underline;
-}
-
-/* Loading State */
-.btn-loading {
-    position: relative;
-    color: transparent !important;
-    pointer-events: none;
-}
-
-.btn-loading::after {
-    content: '';
-    position: absolute;
-    width: 1rem;
-    height: 1rem;
-    top: 50%;
-    left: 50%;
-    margin-left: -0.5rem;
-    margin-top: -0.5rem;
-    border: 2px solid #ffffff;
-    border-radius: 50%;
-    border-top-color: transparent;
-    animation: spinner 0.6s linear infinite;
-}
-
-@keyframes spinner {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-/* Toast Notifications */
-.toast-container {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: var(--z-toast);
-    width: auto;
-    max-width: 350px;
-}
-
-.toast {
-    background: white;
-    border-radius: var(--border-radius-md);
-    box-shadow: var(--shadow-lg);
-    margin-bottom: var(--spacing-sm);
-    animation: slideIn 0.3s ease-out;
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-.toast.success {
-    border-left: 4px solid var(--success);
-}
-
-.toast.error {
-    border-left: 4px solid var(--danger);
-}
-
-.toast.warning {
-    border-left: 4px solid var(--warning);
-}
-
-.toast.info {
-    border-left: 4px solid var(--info);
-}
-
-/* Responsive */
-@media (max-width: 576px) {
-    .auth-card {
-        padding: var(--spacing-xl);
-    }
-
-    .auth-container {
-        padding: var(--spacing-md);
-    }
+    color: var(--secondary-brown);
 }
