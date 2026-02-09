@@ -16,8 +16,10 @@ from website.models import User, Recommendation
 
 @pytest.fixture(scope="session")
 def app():
-    """Create application for testing"""
     app = create_app("testing")
+    from website import limiter
+    with app.app_context():
+        limiter.reset()
     return app
 
 

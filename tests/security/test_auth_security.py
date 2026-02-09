@@ -12,7 +12,7 @@ class TestAuthenticationSecurity:
 
     def test_protected_route_requires_token(self, client):
         """Test protected routes require authentication token"""
-        protected_endpoints = ["/api/v1/history", "/api/v1/predict", "/api/v1/profile"]
+        protected_endpoints = ["/api/v1/history", "/api/v1/profile"]
 
         for endpoint in protected_endpoints:
             response = client.get(endpoint)

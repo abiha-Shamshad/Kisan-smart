@@ -34,3 +34,5 @@ class TestingConfig(Config):
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
     WTF_CSRF_ENABLED = False
     DEBUG = True
+    RATELIMIT_ENABLED = True
+    RATELIMIT_STORAGE_URI = "memory://"
