@@ -5,7 +5,7 @@ Performance benchmarking tests
 import pytest
 import time
 import statistics
-from app.models import Recommendation
+from website.models import Recommendation
 
 
 @pytest.mark.performance

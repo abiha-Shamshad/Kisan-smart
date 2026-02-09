@@ -55,7 +55,7 @@ def login_user():
         if user.is_locked:
             return error_response("Account is locked", "ACCOUNT_LOCKED", None, 403)
 
-        access_token = create_access_token(identity=str(user.user_id))
+        access_token = create_access_token(identity=str(user.id))
         return success_response(
             {"access_token": access_token, "user": user_schema.dump(user)},
             "Login successful",

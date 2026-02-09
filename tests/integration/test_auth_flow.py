@@ -4,7 +4,7 @@ Integration tests for authentication and user management flows
 
 import pytest
 from unittest.mock import patch
-from app.models import User
+from website.models import User
 
 
 @pytest.mark.integration
@@ -33,7 +33,7 @@ class TestRegistrationFlow:
 
     def test_registration_sends_verification_email(self, client, db_session):
         """Test verification email is sent on registration"""
-        with patch("app.utils.email.send_verification_email") as mock_email:
+        with patch("website.utils.email.send_verification_email") as mock_email:
             registration_data = {
                 "username": "testuser",
                 "email": "test@example.com",
@@ -131,22 +131,22 @@ class TestLoginFlow:
 
     def test_successful_login(self, client, test_user):
         """Test user can login with correct credentials"""
-        login_data = {"username": "testuser", "password": "TestPassword123!"}
+        login_data = {"email": "test@example.com", "password": "TestPassword123!"}
 
         response = client.post("/api/v1/auth/login", json=login_data)
 
         assert response.status_code == 200
         assert "data" in response.json
-        assert "token" in response.json["data"]
+        assert "access_token" in response.json["data"]
 
         # Token should be a non-empty string
-        token = response.json["data"]["token"]
+        token = response.json["data"]["access_token"]
         assert isinstance(token, str)
         assert len(token) > 20
 
     def test_login_wrong_password(self, client, test_user):
         """Test login fails with wrong password"""
-        login_data = {"username": "testuser", "password": "WrongPassword!"}
+        login_data = {"email": "test@example.com", "password": "WrongPassword!"}
 
         response = client.post("/api/v1/auth/login", json=login_data)
 
@@ -155,7 +155,7 @@ class TestLoginFlow:
 
     def test_login_nonexistent_user(self, client):
         """Test login fails for non-existent user"""
-        login_data = {"username": "nonexistent", "password": "Password123!"}
+        login_data = {"email": "nonexistent@example.com", "password": "Password123!"}
 
         response = client.post("/api/v1/auth/login", json=login_data)
 
@@ -190,7 +190,7 @@ class TestPasswordResetFlow:
 
     def test_request_password_reset(self, client, test_user):
         """Test user can request password reset"""
-        with patch("app.utils.email.send_password_reset_email") as mock_email:
+        with patch("website.utils.email.send_password_reset_email") as mock_email:
             response = client.post(
                 "/api/v1/auth/reset-password", json={"email": "test@example.com"}
             )
@@ -215,7 +215,7 @@ class TestPasswordResetFlow:
         # User should be able to login with new password
         login_response = client.post(
             "/api/v1/auth/login",
-            json={"username": "testuser", "password": new_password},
+            json={"email": "test@example.com", "password": new_password},
         )
 
         assert login_response.status_code == 200

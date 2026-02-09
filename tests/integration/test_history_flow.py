@@ -3,7 +3,7 @@ Integration tests for history management
 """
 
 import pytest
-from app.models import Recommendation
+from website.models import Recommendation
 
 
 @pytest.mark.integration
@@ -80,7 +80,7 @@ class TestHistoryFlow:
     def test_cannot_view_other_user_prediction(self, authenticated_client, db_session):
         """Test user cannot view another user's prediction"""
         # Create another user and prediction
-        from app.models import User
+        from website.models import User
 
         other_user = User(username="otheruser", email="other@example.com")
         other_user.set_password("Password123!")
@@ -126,7 +126,7 @@ class TestHistoryFlow:
     ):
         """Test user cannot delete another user's prediction"""
         # Create another user and prediction
-        from app.models import User
+        from website.models import User
 
         other_user = User(username="anotheruser", email="another@example.com")
         other_user.set_password("Password123!")

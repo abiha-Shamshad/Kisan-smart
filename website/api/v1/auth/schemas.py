@@ -14,7 +14,7 @@ class LoginSchema(Schema):
 
 
 class UserSchema(Schema):
-    user_id = fields.Int(dump_only=True)
+    id = fields.Int(dump_only=True)
     username = fields.Str()
     email = fields.Email()
     full_name = fields.Str()

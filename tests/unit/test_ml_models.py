@@ -13,18 +13,18 @@ class TestMLPredictor:
 
     def test_model_loads(self):
         """Test ML models load successfully"""
-        from app.ml.predictor import FertilizerPredictor
+        from models.ml_models.inference_engine import InferenceEngine
 
-        predictor = FertilizerPredictor()
+        predictor = InferenceEngine()
 
         assert predictor is not None
         assert hasattr(predictor, "predict")
 
     def test_prediction_with_valid_input(self, sample_prediction_data):
         """Test prediction with valid input data"""
-        from app.ml.predictor import FertilizerPredictor
+        from models.ml_models.inference_engine import InferenceEngine
 
-        predictor = FertilizerPredictor()
+        predictor = InferenceEngine()
         result = predictor.predict(sample_prediction_data)
 
         # Check result structure
@@ -39,9 +39,9 @@ class TestMLPredictor:
 
     def test_prediction_confidence_scores(self, sample_prediction_data):
         """Test confidence scores are in valid range"""
-        from app.ml.predictor import FertilizerPredictor
+        from models.ml_models.inference_engine import InferenceEngine
 
-        predictor = FertilizerPredictor()
+        predictor = InferenceEngine()
         result = predictor.predict(sample_prediction_data)
 
         confidence = result["confidence"]
@@ -58,9 +58,9 @@ class TestMLPredictor:
 
     def test_prediction_with_extreme_values(self):
         """Test prediction handles extreme but valid input"""
-        from app.ml.predictor import FertilizerPredictor
+        from models.ml_models.inference_engine import InferenceEngine
 
-        predictor = FertilizerPredictor()
+        predictor = InferenceEngine()
 
         extreme_data = {
             "crop_type": "wheat",
@@ -81,9 +81,9 @@ class TestMLPredictor:
 
     def test_prediction_with_missing_optional_params(self):
         """Test prediction works with missing optional parameters"""
-        from app.ml.predictor import FertilizerPredictor
+        from models.ml_models.inference_engine import InferenceEngine
 
-        predictor = FertilizerPredictor()
+        predictor = InferenceEngine()
 
         minimal_data = {
             "crop_type": "rice",
@@ -101,9 +101,9 @@ class TestMLPredictor:
 
     def test_prediction_performance(self, sample_prediction_data):
         """Test prediction completes within acceptable time"""
-        from app.ml.predictor import FertilizerPredictor
+        from models.ml_models.inference_engine import InferenceEngine
 
-        predictor = FertilizerPredictor()
+        predictor = InferenceEngine()
 
         start_time = time.time()
         result = predictor.predict(sample_prediction_data)
@@ -116,9 +116,9 @@ class TestMLPredictor:
 
     def test_prediction_with_invalid_crop(self):
         """Test prediction handles invalid crop type"""
-        from app.ml.predictor import FertilizerPredictor
+        from models.ml_models.inference_engine import InferenceEngine
 
-        predictor = FertilizerPredictor()
+        predictor = InferenceEngine()
 
         invalid_data = {
             "crop_type": "invalid_crop_12345",
@@ -134,9 +134,9 @@ class TestMLPredictor:
 
     def test_prediction_with_negative_values(self):
         """Test prediction rejects negative nutrient values"""
-        from app.ml.predictor import FertilizerPredictor
+        from models.ml_models.inference_engine import InferenceEngine
 
-        predictor = FertilizerPredictor()
+        predictor = InferenceEngine()
 
         invalid_data = {
             "crop_type": "wheat",
@@ -151,9 +151,9 @@ class TestMLPredictor:
 
     def test_prediction_consistency(self, sample_prediction_data):
         """Test prediction gives consistent results for same input"""
-        from app.ml.predictor import FertilizerPredictor
+        from models.ml_models.inference_engine import InferenceEngine
 
-        predictor = FertilizerPredictor()
+        predictor = InferenceEngine()
 
         result1 = predictor.predict(sample_prediction_data)
         result2 = predictor.predict(sample_prediction_data)
@@ -165,9 +165,9 @@ class TestMLPredictor:
 
     def test_quantity_calculation(self):
         """Test fertilizer quantity is reasonable"""
-        from app.ml.predictor import FertilizerPredictor
+        from models.ml_models.inference_engine import InferenceEngine
 
-        predictor = FertilizerPredictor()
+        predictor = InferenceEngine()
 
         data = {
             "crop_type": "wheat",
@@ -187,9 +187,9 @@ class TestMLPredictor:
     @pytest.mark.slow
     def test_prediction_with_all_crops(self):
         """Test prediction works for all supported crops"""
-        from app.ml.predictor import FertilizerPredictor
+        from models.ml_models.inference_engine import InferenceEngine
 
-        predictor = FertilizerPredictor()
+        predictor = InferenceEngine()
         crops = ["wheat", "rice", "maize", "cotton", "sugarcane"]
 
         for crop in crops:

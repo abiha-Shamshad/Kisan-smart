@@ -4,7 +4,7 @@ Integration tests for prediction workflow
 
 import pytest
 import time
-from app.models import Recommendation
+from website.models import Recommendation
 
 
 @pytest.mark.integration

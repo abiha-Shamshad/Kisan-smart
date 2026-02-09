@@ -35,11 +35,11 @@ class KisanSmartUser(HttpUser):
         # Login and get token
         response = self.client.post(
             "/api/v1/auth/login",
-            json={"username": self.username, "password": self.password},
+            json={"email": f"{self.username}@loadtest.com", "password": self.password},
         )
 
         if response.status_code == 200:
-            self.token = response.json()["data"]["token"]
+            self.token = response.json()["data"]["access_token"]
             self.headers = {"Authorization": f"Bearer {self.token}"}
         else:
             self.token = None
@@ -139,11 +139,11 @@ class AdminUser(HttpUser):
         # Admin login
         response = self.client.post(
             "/api/v1/auth/login",
-            json={"username": "admin", "password": "AdminPassword123!"},
+            json={"email": "admin@kisan.smart", "password": "AdminPassword123!"},
         )
 
         if response.status_code == 200:
-            self.token = response.json()["data"]["token"]
+            self.token = response.json()["data"]["access_token"]
             self.headers = {"Authorization": f"Bearer {self.token}"}
         else:
             self.token = None

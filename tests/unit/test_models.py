@@ -4,7 +4,7 @@ Unit tests for database models
 
 import pytest
 from datetime import datetime, timedelta
-from app.models import User, Recommendation
+from website.models import User, Recommendation
 
 
 @pytest.mark.unit

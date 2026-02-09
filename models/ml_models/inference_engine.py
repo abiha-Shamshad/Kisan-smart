@@ -42,12 +42,75 @@ class InferenceEngine:
 
         # Convert to DataFrame if needed
         if isinstance(input_data, dict):
-            df = pd.DataFrame([input_data])
+            # Map lowercase keys to expected CamelCase
+            key_map = {
+                "nitrogen": "Nitrogen",
+                "phosphorus": "Phosphorus",
+                "potassium": "Potassium",
+                "ph": "pH",
+                "moisture": "Moisture",
+                "temperature": "Temperature",
+                "crop_type": "Crop_Type",
+                "growth_stage": "Growth_Stage",
+                "farm_area": "Farm_Area"
+            }
+            mapped_data = {}
+            # Defaults for all expected columns
+            expected_defaults = {
+                "Nitrogen": 0.0,
+                "Phosphorus": 0.0,
+                "Potassium": 0.0,
+                "pH": 6.5,
+                "Moisture": 0.0,
+                "Temperature": 25.0,
+                "Crop_Type": "Wheat",
+                "Growth_Stage": "Vegetative",
+                "Farm_Area": 1.0
+            }
+            mapped_data.update(expected_defaults)
+            for k, v in input_data.items():
+                mapped_data[key_map.get(k.lower(), k)] = v
+            
+            # Capitalize categorical values if they are strings
+            for col in ["Crop_Type", "Growth_Stage"]:
+                if isinstance(mapped_data[col], str):
+                    mapped_data[col] = mapped_data[col].capitalize()
+
+            df = pd.DataFrame([mapped_data])
+            # Reorder columns to match expected order if necessary (optional but safe)
+            column_order = ["Nitrogen", "Phosphorus", "Potassium", "pH", "Moisture", "Temperature", "Crop_Type", "Growth_Stage", "Farm_Area"]
+            df = df[column_order]
+
+            # Validation
+            for nutrient in ["Nitrogen", "Phosphorus", "Potassium"]:
+                if mapped_data[nutrient] < 0:
+                    raise ValueError(f"{nutrient} cannot be negative")
+            if mapped_data["pH"] < 0 or mapped_data["pH"] > 14:
+                raise ValueError("pH must be between 0 and 14")
+            
+            # Crop/Growth Stage validation (optional but good for testing)
+            supported_crops = ["Cotton", "Maize", "Rice", "Sugarcane", "Wheat"]
+            supported_stages = ["Flowering", "Maturity", "Vegetative"]
+            
+            if mapped_data["Crop_Type"] not in supported_crops:
+                raise ValueError(f"Unsupported crop: {mapped_data['Crop_Type']}")
+            
+            if mapped_data["Growth_Stage"] not in supported_stages:
+                raise ValueError(f"Unsupported growth stage: {mapped_data['Growth_Stage']}")
+
         else:
             df = input_data
 
         # 1. Preprocess
-        X_transformed = self.preprocessor.transform(df)
+        try:
+            # print(f"DEBUG: df.columns={df.columns.tolist()}")
+            # print(f"DEBUG: df.head()=\n{df.head()}")
+            X_transformed = self.preprocessor.transform(df)
+        except Exception as te:
+            print(f"ERROR during transform: {te}")
+            print(f"DF columns sent: {df.columns.tolist()}")
+            print(f"DF values sent: {df.values.tolist()}")
+            raise te
 
         # 2. Predict Type
         type_enc = self.clf_model.predict(X_transformed)
@@ -71,15 +134,17 @@ class InferenceEngine:
 
         return {
             "fertilizer_type": type_name,
-            "fertilizer_type_confidence": round(float(type_conf), 2),
             "quantity": round(float(quantity), 2),
             "quantity_unit": "kg/hectare",
-            "quantity_confidence": round(float(quant_conf), 2),
-            "overall_confidence": round(float(overall_conf), 2),
-            "confidence_level": conf_level,
+            "confidence": {
+                "fertilizer_type_confidence": round(float(type_conf), 2),
+                "quantity_confidence": round(float(quant_conf), 2),
+                "overall_confidence": round(float(overall_conf), 2),
+                "level": conf_level
+            },
             "inference_time_ms": round(latency, 2),
             "model_version": self.version,
-            "explanation": f"Based on {df['Crop_Type'].iloc[0]} requirement and current {df['Growth_Stage'].iloc[0]} stage.",
+            "explanation": f"Based on {mapped_data.get('Crop_Type', 'Unknown')} requirement and current {mapped_data.get('Growth_Stage', 'Unknown')} stage.",
         }
 
 

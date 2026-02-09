@@ -148,3 +148,22 @@ def export_history():
         as_attachment=True,
         download_name=f'kisan_smart_history_{datetime.now().strftime("%Y%m%d")}.csv',
     )
+def get_history_stats():
+    user_id = get_jwt_identity()
+    recs = Recommendation.query.filter_by(user_id=int(user_id)).all()
+    
+    total = len(recs)
+    avg_conf = sum(r.overall_confidence for r in recs) / total if total > 0 else 0
+    crops = count = len(set(r.crop_type for r in recs))
+    
+    # This month count
+    from datetime import datetime
+    now = datetime.now()
+    this_month = sum(1 for r in recs if r.created_at.month == now.month and r.created_at.year == now.year)
+    
+    return success_response({
+        "total_predictions": total,
+        "this_month": this_month,
+        "avg_confidence": round(avg_conf, 2),
+        "crops_analyzed": crops
+    }, "Stats retrieved")

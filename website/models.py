@@ -12,7 +12,7 @@ class Role(db.Model):
 
 class User(db.Model, UserMixin):
     __tablename__ = "users"
-    user_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     username = db.Column(
         db.String(50), unique=True, nullable=True
     )  # Set to nullable temporarily for existing users
@@ -37,14 +37,50 @@ class User(db.Model, UserMixin):
     )
 
     def get_id(self):
-        return str(self.user_id)
+        return str(self.id)
+
+    def set_password(self, password):
+        from . import bcrypt
+        self.password_hash = bcrypt.generate_password_hash(password).decode("utf-8")
+
+    def check_password(self, password):
+        from . import bcrypt
+        return bcrypt.check_password_hash(self.password_hash, password)
+
+    def generate_verification_token(self):
+        # Placeholder implementation for token generation
+        import secrets
+        return secrets.token_urlsafe(32)
+
+    @staticmethod
+    def verify_verification_token(token):
+        # Placeholder implementation - usually involves database check or JWT
+        # For now, return a dummy user ID or None
+        return None
+
+    def generate_password_reset_token(self):
+        import secrets
+        return secrets.token_urlsafe(32)
+
+
+import uuid
+from datetime import datetime
+
+
+def generate_prediction_id():
+    return f"pred_{int(datetime.now().timestamp())}_{uuid.uuid4().hex[:6]}"
 
 
 class Recommendation(db.Model):
     __tablename__ = "recommendations"
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=True)
-    prediction_id = db.Column(db.String(50), unique=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    prediction_id = db.Column(
+        db.String(50), 
+        unique=True, 
+        nullable=False, 
+        default=generate_prediction_id
+    )
 
     # Input data
     crop_type = db.Column(db.String(50))

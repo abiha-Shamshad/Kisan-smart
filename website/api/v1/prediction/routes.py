@@ -5,7 +5,7 @@ from flask_jwt_extended import jwt_required
 predict_api = Blueprint("predict_api", __name__)
 
 
-@predict_api.route("/", methods=["POST"])
+@predict_api.route("", methods=["POST"])
 @jwt_required(optional=True)  # Allow guest predictions but track if logged in
 def predict():
     return get_prediction()

@@ -27,3 +27,10 @@ class Config:
     API_TITLE = "Kisan Smart API"
     API_VERSION = "v1"
     SWAGGER_UI_DOC_EXPANSION = "list"
+
+
+class TestingConfig(Config):
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
+    WTF_CSRF_ENABLED = False
+    DEBUG = True

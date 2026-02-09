@@ -10,8 +10,8 @@ from datetime import datetime
 # Add parent directory to path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from app import create_app, db
-from app.models import User, Recommendation
+from website import create_app, db
+from website.models import User, Recommendation
 
 
 @pytest.fixture(scope="session")
@@ -59,11 +59,11 @@ def authenticated_client(client, test_user):
     # Login and get token
     response = client.post(
         "/api/v1/auth/login",
-        json={"username": "testuser", "password": "TestPassword123!"},
+        json={"email": "test@example.com", "password": "TestPassword123!"},
     )
 
     if response.status_code == 200:
-        token = response.json["data"]["token"]
+        token = response.json["data"]["access_token"]
 
         # Add authorization header to client
         class AuthenticatedClient:

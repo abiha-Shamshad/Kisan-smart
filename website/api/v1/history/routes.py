@@ -4,16 +4,23 @@ from .controllers import (
     get_prediction_detail,
     delete_prediction,
     export_history,
+    get_history_stats,
 )
 from flask_jwt_extended import jwt_required
 
 history_api = Blueprint("history_api", __name__)
 
 
-@history_api.route("/", methods=["GET"])
+@history_api.route("", methods=["GET"])
 @jwt_required()
 def list_history():
     return get_history()
+
+
+@history_api.route("/stats", methods=["GET"])
+@jwt_required()
+def history_stats():
+    return get_history_stats()
 
 
 @history_api.route("/<prediction_id>", methods=["GET"])

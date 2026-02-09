@@ -11,7 +11,7 @@ class TestValidators:
 
     def test_validate_email_valid(self):
         """Test email validation with valid emails"""
-        from app.utils.validators import validate_email
+        from website.utils.validators import validate_email
 
         valid_emails = [
             "test@example.com",
@@ -25,7 +25,7 @@ class TestValidators:
 
     def test_validate_email_invalid(self):
         """Test email validation with invalid emails"""
-        from app.utils.validators import validate_email
+        from website.utils.validators import validate_email
 
         invalid_emails = [
             "invalid-email",
@@ -41,7 +41,7 @@ class TestValidators:
 
     def test_validate_password_strength(self):
         """Test password strength validation"""
-        from app.utils.validators import validate_password_strength
+        from website.utils.validators import validate_password_strength
 
         # Strong password
         result = validate_password_strength("StrongPass123!")
@@ -62,7 +62,7 @@ class TestValidators:
 
     def test_validate_numeric_range(self):
         """Test numeric range validation"""
-        from app.utils.validators import validate_numeric_range
+        from website.utils.validators import validate_numeric_range
 
         # Valid values
         assert validate_numeric_range(50, 0, 100) is True
@@ -75,7 +75,7 @@ class TestValidators:
 
     def test_validate_ph_value(self):
         """Test pH value validation"""
-        from app.utils.validators import validate_ph
+        from website.utils.validators import validate_ph
 
         # Valid pH values
         assert validate_ph(7.0) is True
@@ -90,7 +90,7 @@ class TestValidators:
 
     def test_validate_npk_values(self):
         """Test NPK nutrient validation"""
-        from app.utils.validators import validate_npk
+        from website.utils.validators import validate_npk
 
         # Valid NPK values
         assert validate_npk(nitrogen=50, phosphorus=30, potassium=25) is True
@@ -103,7 +103,7 @@ class TestValidators:
 
     def test_validate_crop_type(self):
         """Test crop type validation"""
-        from app.utils.validators import validate_crop_type
+        from website.utils.validators import validate_crop_type
 
         valid_crops = ["wheat", "rice", "maize", "cotton", "sugarcane"]
 
@@ -116,7 +116,7 @@ class TestValidators:
 
     def test_validate_phone_number(self):
         """Test phone number validation"""
-        from app.utils.validators import validate_phone
+        from website.utils.validators import validate_phone
 
         valid_phones = ["+1234567890", "1234567890", "+1 (555) 123-4567"]
 

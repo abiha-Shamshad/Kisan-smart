@@ -75,10 +75,10 @@ def get_prediction():
                 growth_stage=data["growth_stage"],
                 fertilizer_type=result["fertilizer_type"],
                 quantity=result["quantity"],
-                type_confidence=result["fertilizer_type_confidence"],
-                quantity_confidence=result["quantity_confidence"],
-                overall_confidence=result["overall_confidence"],
-                confidence_level=result["confidence_level"],
+                type_confidence=result["confidence"]["fertilizer_type_confidence"],
+                quantity_confidence=result["confidence"]["quantity_confidence"],
+                overall_confidence=result["confidence"]["overall_confidence"],
+                confidence_level=result["confidence"]["level"],
             )
             db.session.add(new_rec)
             db.session.commit()

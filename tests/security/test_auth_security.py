@@ -3,7 +3,7 @@ Security tests for authentication and authorization
 """
 
 import pytest
-from app.models import User, Recommendation
+from website.models import User, Recommendation
 
 
 @pytest.mark.security
@@ -73,9 +73,9 @@ class TestAuthenticationSecurity:
 
         # Login as user1
         login_response = client.post(
-            "/api/v1/auth/login", json={"username": "user1", "password": "Password123!"}
+            "/api/v1/auth/login", json={"email": "user1@example.com", "password": "Password123!"}
         )
-        token = login_response.json["data"]["token"]
+        token = login_response.json["data"]["access_token"]
         headers = {"Authorization": f"Bearer {token}"}
 
         # Try to access user2's prediction
@@ -89,11 +89,11 @@ class TestAuthenticationSecurity:
         # Login
         login_response = client.post(
             "/api/v1/auth/login",
-            json={"username": "testuser", "password": "TestPassword123!"},
+            json={"email": "test@example.com", "password": "TestPassword123!"},
         )
 
         # Get profile
-        token = login_response.json["data"]["token"]
+        token = login_response.json["data"]["access_token"]
         headers = {"Authorization": f"Bearer {token}"}
 
         profile_response = client.get("/api/v1/profile", headers=headers)
@@ -194,13 +194,13 @@ class TestRateLimiting:
         for i in range(10):
             response = client.post(
                 "/api/v1/auth/login",
-                json={"username": "testuser", "password": "wrongpassword"},
+                json={"email": "test@example.com", "password": "wrongpassword"},
             )
 
         # After many attempts, should be rate limited
         final_response = client.post(
             "/api/v1/auth/login",
-            json={"username": "testuser", "password": "wrongpassword"},
+            json={"email": "test@example.com", "password": "wrongpassword"},
         )
 
         # Should return 429 Too Many Requests (if rate limiting implemented)
