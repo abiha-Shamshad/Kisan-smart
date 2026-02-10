@@ -13,7 +13,7 @@
 ## Monthly
 - [ ] **Updates**: Apply OS security patches (`apt update && apt upgrade`).
 - [ ] **Dependencies**: Update Python/JS libraries if critical security fixes exist.
-- [ ] **Performance**: Analyze slow queries in MySQL (`slow_query_log`).
+- [ ] **Performance**: Analyze slow queries in PostgreSQL (`pg_stat_statements`).
 - [ ] **Cleanup**: Delete temporary files and old logs (>30 days).
 
 ## Quarterly

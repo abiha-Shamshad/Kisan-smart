@@ -7,7 +7,7 @@ To host Kisan Smart, the server must meet these minimum specifications:
 - **CPU**: 2 vCPU
 - **RAM**: 4GB
 - **Storage**: 40GB SSD
-- **Database**: MySQL 8.0
+- **Database**: PostgreSQL 14+
 - **Runtime**: Python 3.10+
 
 ---
@@ -25,7 +25,7 @@ The application is configured via environment variables in `.env`:
 ```ini
 FLASK_ENV=production
 SECRET_KEY=complex_random_string
-DATABASE_URL=mysql://user:pass@localhost/kisan_smart
+DATABASE_URL=postgresql://user:pass@localhost/kisan_smart
 MAIL_USERNAME=noreply@kisansmart.com
 MAIL_PASSWORD=smtp_password
 ```
@@ -53,7 +53,7 @@ Backups are automated via cron (`/etc/cron.d/kisan-backup`):
 
 **Restoring Data:**
 ```bash
-gunzip < backups/db_backup_20231025.sql.gz | mysql -u kisansmart -p kisan_smart
+pg_restore -h localhost -U kisansmart -d kisan_smart backups/db_backup_20231025.dump
 ```
 
 ### Migrations

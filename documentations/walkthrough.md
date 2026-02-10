@@ -365,7 +365,7 @@ Created comprehensive health monitoring at [app/routes/health.py](file:///c:/Use
 6. **Coverage Report**: Upload to Codecov, check 80% threshold
 7. **Artifacts**: Upload HTML coverage report
 
-**MySQL Service**: Automated database setup for tests
+**PostgreSQL Service**: Automated database setup for tests
 
 ### Test Documentation
 

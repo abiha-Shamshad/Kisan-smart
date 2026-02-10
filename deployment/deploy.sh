@@ -41,7 +41,7 @@ apt update && apt upgrade -y || error "Failed to update system"
 # 2. Install Dependencies
 log "Installing dependencies..."
 apt install -y python3-pip python3-venv python3-dev \
-    mysql-server libmysqlclient-dev \
+    postgresql postgresql-contrib libpq-dev \
     nginx \
     supervisor \
     redis-server \
@@ -68,9 +68,14 @@ else
 fi
 
 # 5. Database Setup
-log "Securing MySQL installation..."
-# Automate mysql_secure_installation or warn user to do it
-warn "Please run 'mysql_secure_installation' manually if this is a fresh install."
+log "Setting up PostgreSQL..."
+systemctl start postgresql
+systemctl enable postgresql
+warn "Please create PostgreSQL database and user manually:"
+warn "  sudo -u postgres psql"
+warn "  CREATE DATABASE kisan_smart;"
+warn "  CREATE USER kisansmart WITH PASSWORD 'your_password';"
+warn "  GRANT ALL PRIVILEGES ON DATABASE kisan_smart TO kisansmart;"
 
 # 6. Application Setup
 log "Setting up application directory..."

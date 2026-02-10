@@ -80,7 +80,7 @@ curl http://localhost:5000/health/live
 
 ### Database Connection
 ```bash
-# Ensure MySQL is running
+# Ensure PostgreSQL is running
 # Check DATABASE_URL environment variable
 ```
 

@@ -130,7 +130,7 @@
     - [x] Create production deployment script for Ubuntu 24.04
     - [x] Configure Nginx as reverse proxy with SSL (Config only)
     - [x] Set up Gunicorn with Supervisor (Config only)
-    - [x] Configure production MySQL database (Scripts only)
+    - [x] Configure production PostgreSQL database (Scripts only)
     - [x] Create automated backup system with cron (Scripts only)
     - [x] Set up database migration procedures
     - [x] Configure environment variables and secrets (Templates only)

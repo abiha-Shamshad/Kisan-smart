@@ -1,7 +1,7 @@
 # Database Schema
 
 ## Overview
-The database uses **MySQL** with `InnoDB` engine for ACID compliance.
+The database uses **PostgreSQL** with ACID compliance and advanced features.
 
 ## Tables
 

@@ -10,7 +10,7 @@ Sprint 12 is the final sprint to deploy Kisan Smart to production, create compre
 > **Deployment Target Confirmation**
 > - Deploying to **Ubuntu 24.04 LTS** server
 > - Using **Nginx** as reverse proxy and **Gunicorn** as application server
-> - **MySQL 8.0** for production database
+> - **PostgreSQL 14+** for production database
 > - **Let's Encrypt** for SSL certificates
 > - Please confirm hosting provider or if using VPS (DigitalOcean, AWS EC2, Linode, etc.)
 
@@ -37,7 +37,7 @@ Sprint 12 is the final sprint to deploy Kisan Smart to production, create compre
 **Automated deployment script for Ubuntu 24.04:**
 - System update and package installation
 - Create application user (`kisansmart`)
-- Install Python 3, MySQL, Nginx, Supervisor, Redis
+- Install Python 3, PostgreSQL, Nginx, Supervisor, Redis
 - Configure UFW firewall
 - Clone repository and setup virtual environment
 - Install dependencies
@@ -46,7 +46,7 @@ Sprint 12 is the final sprint to deploy Kisan Smart to production, create compre
 
 #### [NEW] [server_setup.sh](file:///c:/Users/Each%20One%20Teach%20One/Desktop/Kisan%20smart/deployment/server_setup.sh)
 **Initial server configuration:**
-- Secure MySQL installation
+- Configure PostgreSQL (create database and user)
 - Create production database and user
 - Configure SSH key authentication
 - Install fail2ban for security
@@ -94,7 +94,7 @@ Sprint 12 is the final sprint to deploy Kisan Smart to production, create compre
 
 #### [NEW] [backup_db.sh](file:///c:/Users/Each%20One%20Teach%20One/Desktop/Kisan%20smart/deployment/backup_db.sh)
 **Automated database backup:**
-- Mysqldump with gzip compression
+- pg_dump for PostgreSQL backups
 - Timestamp-based naming
 - 30-day retention policy
 - Cloud upload (optional: AWS S3/Backblaze)

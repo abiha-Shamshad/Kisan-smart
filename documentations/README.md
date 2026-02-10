@@ -145,7 +145,7 @@ Tests run automatically on:
 ## Troubleshooting
 
 ### Database Connection Errors
-- Ensure MySQL is running
+- Ensure PostgreSQL is running
 - Check `DATABASE_URL` environment variable
 - Verify test database exists
 
