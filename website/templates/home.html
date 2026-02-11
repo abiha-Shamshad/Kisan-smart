@@ -8,7 +8,7 @@
 {% block content %}
 <div class="home-container">
     <!-- Welcome Header -->
-    <div class="welcome-header">
+    <div class="welcome-header reveal">
         <h1>Welcome back, <span id="userName">User</span>!</h1>
         <p class="text-muted">Here's an overview of your fertilizer recommendations</p>
     </div>
@@ -16,8 +16,8 @@
     <!-- Quick Stats Cards -->
     <div class="row g-4 mb-5">
         <!-- Total Predictions -->
-        <div class="col-lg-3 col-md-6">
-            <div class="stat-card stat-card-primary">
+        <div class="col-lg-3 col-md-6 reveal animate-fade-in-delay-1">
+            <div class="stat-card stat-card-primary glass hover-lift">
                 <div class="stat-icon">
                     <i class="fas fa-chart-line"></i>
                 </div>
@@ -30,8 +30,8 @@
         </div>
 
         <!-- This Month -->
-        <div class="col-lg-3 col-md-6">
-            <div class="stat-card stat-card-success">
+        <div class="col-lg-3 col-md-6 reveal animate-fade-in-delay-2">
+            <div class="stat-card stat-card-success glass hover-lift">
                 <div class="stat-icon">
                     <i class="fas fa-calendar-alt"></i>
                 </div>
@@ -44,8 +44,8 @@
         </div>
 
         <!-- Average Confidence -->
-        <div class="col-lg-3 col-md-6">
-            <div class="stat-card stat-card-warning">
+        <div class="col-lg-3 col-md-6 reveal animate-fade-in-delay-3">
+            <div class="stat-card stat-card-warning glass hover-lift">
                 <div class="stat-icon">
                     <i class="fas fa-star"></i>
                 </div>
@@ -87,7 +87,7 @@
     </div>
 
     <!-- Recent Activity -->
-    <div class="card recent-activity">
+    <div class="card recent-activity reveal glass">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Recent Predictions</h5>
             <a href="/history" class="btn btn-sm btn-outline-primary">View All</a>

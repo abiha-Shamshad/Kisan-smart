@@ -21,6 +21,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modern.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}" />
 
     {% block extra_css %}{% endblock %}
@@ -28,7 +29,7 @@
 
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top glass-nav">
         <div class="container">
             <a class="navbar-brand" href="/">
                 <i class="fas fa-seedling me-2"></i>Kisan Smart
@@ -89,7 +90,7 @@
     <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-    <div class="container mt-4">
+    <div class="container mt-4 reveal">
         {% for category, message in messages %}
         <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show"
             role="alert">

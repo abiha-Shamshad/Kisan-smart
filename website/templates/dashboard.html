@@ -8,7 +8,7 @@
 {% block content %}
 <div class="dashboard-container">
     <!-- Page Header -->
-    <div class="page-header">
+    <div class="page-header reveal">
         <h1><i class="fas fa-tractor me-2"></i>Fertilizer Recommendation</h1>
         <p>Get AI-powered fertilizer recommendations for your crops</p>
     </div>
@@ -16,7 +16,7 @@
     <!-- Prediction Input Form -->
     <form id="predictionForm">
         <!-- Section 1: Crop Information -->
-        <div class="form-section">
+        <div class="form-section reveal glass">
             <div class="form-section-header">
                 <i class="fas fa-seedling"></i>
                 <h3>Crop Information</h3>
@@ -55,7 +55,7 @@
         </div>
 
         <!-- Section 2: Soil Parameters -->
-        <div class="form-section">
+        <div class="form-section reveal glass">
             <div class="form-section-header">
                 <i class="fas fa-flask"></i>
                 <h3>Soil Parameters</h3>
@@ -70,8 +70,8 @@
                 </label>
                 <div class="dual-input-controls">
                     <div class="slider-container">
-                        <input type="range" class="custom-slider" id="nitrogen_slider" min="0" max="200" value="45"
-                            step="1" />
+                        <input type="range" class="custom-slider modern-range" id="nitrogen_slider" min="0" max="200"
+                            value="45" step="1" />
                         <div class="value-indicator">
                             <div class="range-labels">
                                 <span>0</span>
