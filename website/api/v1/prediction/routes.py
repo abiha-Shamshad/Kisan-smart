@@ -6,7 +6,7 @@ predict_api = Blueprint("predict_api", __name__)
 
 
 @predict_api.route("", methods=["POST"])
-@jwt_required(optional=True)  # Allow guest predictions but track if logged in
+@jwt_required()  # Require authentication for predictions
 def predict():
     return get_prediction()
 

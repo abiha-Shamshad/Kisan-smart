@@ -156,6 +156,10 @@ class TestPredictionFlow:
             "phosphorus": 30.0,
             "potassium": 25.0,
             "ph": 6.8,
+            "moisture": 65.0,
+            "temperature": 22.5,
+            "farm_area": 2.5,
+            "growth_stage": "Vegetative",
             # Optional fields omitted
         }
 

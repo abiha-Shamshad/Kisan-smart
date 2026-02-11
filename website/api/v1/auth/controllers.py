@@ -4,6 +4,7 @@ from website import bcrypt
 from .schemas import RegisterSchema, LoginSchema, UserSchema
 from website.api.v1.utils.responses import success_response, error_response
 from flask_jwt_extended import create_access_token, get_jwt_identity
+import website.utils
 import datetime
 
 register_schema = RegisterSchema()
@@ -34,6 +35,9 @@ def register_user():
 
     db.session.add(new_user)
     db.session.commit()
+
+    # Send verification email
+    website.utils.send_verification_email(new_user)
 
     return success_response(
         user_schema.dump(new_user), "User registered successfully", 201
@@ -80,15 +84,56 @@ def get_current_user():
 
 
 def verify_email(token):
-    # Integration with existing verify logic
-    return success_response(None, "Email verified successfully (Placeholder)")
+    email = website.utils.verify_token(token, salt="email-confirm")
+    if not email:
+        return error_response(
+            "Invalid or expired verification link", "INVALID_TOKEN", None, 400
+        )
+
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return error_response("User not found", "USER_NOT_FOUND", None, 404)
+
+    user.is_verified = True
+    db.session.commit()
+
+    return success_response(None, "Email verified successfully")
 
 
 def forgot_password():
-    return success_response(
-        None, "Password reset email sent if account exists (Placeholder)"
-    )
+    data = request.get_json()
+    email = data.get("email")
+    if not email:
+        return error_response("Email is required", "EMAIL_REQUIRED", None, 400)
+
+    user = User.query.filter_by(email=email).first()
+    if user:
+        website.utils.send_reset_email(user)
+
+    return success_response(None, "Password reset email sent if account exists")
 
 
 def reset_password():
-    return success_response(None, "Password reset successfully (Placeholder)")
+    data = request.get_json()
+    token = data.get("token")
+    new_password = data.get("password")
+
+    if not token or not new_password:
+        return error_response(
+            "Token and password are required", "MISSING_FIELDS", None, 400
+        )
+
+    email = website.utils.verify_token(token, salt="password-reset")
+    if not email:
+        return error_response(
+            "Invalid or expired reset link", "INVALID_TOKEN", None, 400
+        )
+
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return error_response("User not found", "USER_NOT_FOUND", None, 404)
+
+    user.set_password(new_password)
+    db.session.commit()
+
+    return success_response(None, "Password reset successfully")

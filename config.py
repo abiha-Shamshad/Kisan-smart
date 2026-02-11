@@ -36,3 +36,5 @@ class TestingConfig(Config):
     DEBUG = True
     RATELIMIT_ENABLED = False
     RATELIMIT_STORAGE_URI = "memory://"
+    MAIL_DEFAULT_SENDER = "noreply@kisan-smart.com"
+    MAIL_SUPPRESS_SEND = True  # Don't actually send emails in tests

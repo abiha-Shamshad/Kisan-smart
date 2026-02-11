@@ -48,21 +48,17 @@ class User(db.Model, UserMixin):
         return bcrypt.check_password_hash(self.password_hash, password)
 
     def generate_verification_token(self):
-        # Placeholder implementation for token generation
-        import secrets
-        return secrets.token_urlsafe(32)
+        from .utils import generate_token
+        return generate_token(self.email, salt="email-confirm")
 
     @staticmethod
     def verify_verification_token(token):
-        # Improved implementation for tests - in real app, use JWT or DB check
-        # For tests, we can just return the last created user's ID if we want to bypass,
-        # but better to do it right. Let's use a dummy logic that matches the test expectation.
-        user = User.query.first() # Very basic for tests
-        return user.id if user else None
+        from .utils import verify_token
+        return verify_token(token, salt="email-confirm")
 
     def generate_password_reset_token(self):
-        import secrets
-        return secrets.token_urlsafe(32)
+        from .utils import generate_token
+        return generate_token(self.email, salt="password-reset")
 
 
 import uuid

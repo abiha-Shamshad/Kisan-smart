@@ -32,22 +32,22 @@ class TestRegistrationFlow:
         assert user.email == "newuser@example.com"
         assert user.is_verified is False  # Not verified yet
 
-    def test_registration_sends_verification_email(self, client, db_session):
+    @patch("website.utils.send_verification_email")
+    def test_registration_sends_verification_email(self, mock_email, client, db_session):
         """Test verification email is sent on registration"""
         # Registration data with full_name
-        with patch("website.utils.send_verification_email") as mock_email:
-            registration_data = {
-                "username": "testuser",
-                "full_name": "Test User",
-                "email": "test@example.com",
-                "password": "Password123!",
-            }
+        registration_data = {
+            "username": "testuser",
+            "full_name": "Test User",
+            "email": "test@example.com",
+            "password": "Password123!",
+        }
 
-            response = client.post("/api/v1/auth/register", json=registration_data)
+        response = client.post("/api/v1/auth/register", json=registration_data)
 
-            assert response.status_code == 201
-            # Verification email should be sent
-            mock_email.assert_called_once()
+        assert response.status_code == 201
+        # Verification email should be sent
+        mock_email.assert_called_once()
 
     def test_registration_duplicate_username(self, client, test_user):
         """Test registration fails with duplicate username"""
@@ -192,17 +192,17 @@ class TestLoginFlow:
 class TestPasswordResetFlow:
     """Test password reset flow"""
 
-    def test_request_password_reset(self, client, test_user):
+    @patch("website.utils.send_reset_email")
+    def test_request_password_reset(self, mock_email, client, test_user):
         """Test user can request password reset"""
         # Test password reset request
-        with patch("website.utils.send_reset_email") as mock_email:
-            response = client.post(
-                "/api/v1/auth/forgot-password", json={"email": "test@example.com"}
-            )
+        response = client.post(
+            "/api/v1/auth/forgot-password", json={"email": "test@example.com"}
+        )
 
-            assert response.status_code == 200
-            # Email should be sent
-            mock_email.assert_called_once()
+        assert response.status_code == 200
+        # Email should be sent
+        mock_email.assert_called_once()
 
     def test_reset_password_with_token(self, client, test_user, db_session):
         """Test password reset with valid token"""

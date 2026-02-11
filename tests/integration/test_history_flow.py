@@ -30,12 +30,9 @@ class TestHistoryFlow:
         data = response.json["data"]
 
         assert "predictions" in data
-        assert "total" in data
-        assert "page" in data
-        assert "per_page" in data
-
-        # Should return max 5 items
-        assert len(data["predictions"]) <= 5
+        assert "pagination" in data
+        assert data["pagination"]["total"] == 10
+        assert len(data["predictions"]) == 5
 
     def test_history_filtering_by_crop(self, authenticated_client, test_predictions):
         """Test filtering history by crop type"""
@@ -72,7 +69,8 @@ class TestHistoryFlow:
 
         data = response.json["data"]
         assert data["prediction_id"] == prediction_id
-        assert "crop_type" in data
+        assert "input_summary" in data
+        assert data["input_summary"]["crop_type"] in ["wheat", "rice", "maize", "cotton"]
         assert "fertilizer_type" in data
 
     def test_cannot_view_other_user_prediction(self, authenticated_client, db_session):
@@ -116,7 +114,7 @@ class TestHistoryFlow:
         assert response.status_code == 200
 
         # Prediction should be deleted from database
-        deleted_pred = Recommendation.query.get(prediction_id)
+        deleted_pred = Recommendation.query.filter_by(prediction_id=prediction_id).first()
         assert deleted_pred is None
 
     def test_cannot_delete_other_user_prediction(
@@ -138,11 +136,6 @@ class TestHistoryFlow:
             phosphorus=30,
             potassium=25,
             ph=6.8,
-            moisture=65.0,
-            temperature=22.5,
-            farm_area=2.5,
-            growth_stage="Vegetative",
-            # Optional fields omitted
             fertilizer_type="NPK",
             quantity=110,
             overall_confidence=75,
