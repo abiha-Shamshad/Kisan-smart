@@ -12,7 +12,6 @@ user_schema = UserSchema()
 
 
 def register_user():
-    print(f"DEBUG: API hitting database: {db.engine.url}")
     data = request.get_json()
     errors = register_schema.validate(data)
     if errors:
@@ -25,6 +24,7 @@ def register_user():
 
     hashed_pw = bcrypt.generate_password_hash(data["password"]).decode("utf-8")
     new_user = User(
+        username=data.get("username"),
         full_name=data["full_name"],
         email=data["email"],
         password_hash=hashed_pw,

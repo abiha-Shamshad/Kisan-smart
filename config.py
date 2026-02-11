@@ -34,5 +34,5 @@ class TestingConfig(Config):
     SQLALCHEMY_DATABASE_URI = "sqlite:///test_kisan.db"
     WTF_CSRF_ENABLED = False
     DEBUG = True
-    RATELIMIT_ENABLED = True
+    RATELIMIT_ENABLED = False
     RATELIMIT_STORAGE_URI = "memory://"

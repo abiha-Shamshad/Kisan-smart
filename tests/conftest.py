@@ -19,7 +19,8 @@ def app():
     app = create_app("testing")
     from website import limiter
     with app.app_context():
-        limiter.reset()
+        if app.config.get("RATELIMIT_ENABLED"):
+            limiter.reset()
         # Create all tables once for the session
         db.create_all()
     return app
@@ -142,4 +143,5 @@ def sample_prediction_data():
         "moisture": 65.0,
         "temperature": 22.5,
         "farm_area": 2.5,
+        "growth_stage": "Vegetative",
     }

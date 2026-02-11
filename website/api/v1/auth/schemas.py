@@ -3,6 +3,7 @@ from marshmallow import Schema, fields, validate
 
 class RegisterSchema(Schema):
     full_name = fields.Str(required=True, validate=validate.Length(min=2, max=100))
+    username = fields.Str(validate=validate.Length(min=3, max=50))
     email = fields.Email(required=True)
     password = fields.Str(required=True, validate=validate.Length(min=8))
     phone_number = fields.Str(validate=validate.Length(min=10, max=15))

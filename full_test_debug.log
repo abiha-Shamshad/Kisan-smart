@@ -1,0 +1,199 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.7, pytest-9.0.2, pluggy-1.6.0 -- C:\Python313\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Each One Teach One\Desktop\Kisan smart
+configfile: pytest.ini
+plugins: anyio-4.11.0, Faker-40.4.0, locust-2.43.2, cov-7.0.0, flask-1.3.0
+collecting ... collected 35 items
+
+tests/integration/test_auth_flow.py::TestRegistrationFlow::test_successful_registration PASSED [  2%]
+tests/integration/test_auth_flow.py::TestRegistrationFlow::test_registration_sends_verification_email FAILED [  5%]
+tests/integration/test_auth_flow.py::TestRegistrationFlow::test_registration_duplicate_username PASSED [  8%]
+tests/integration/test_auth_flow.py::TestRegistrationFlow::test_registration_duplicate_email PASSED [ 11%]
+tests/integration/test_auth_flow.py::TestRegistrationFlow::test_registration_invalid_email PASSED [ 14%]
+tests/integration/test_auth_flow.py::TestRegistrationFlow::test_registration_weak_password PASSED [ 17%]
+tests/integration/test_auth_flow.py::TestRegistrationFlow::test_email_verification_flow FAILED [ 20%]
+tests/integration/test_auth_flow.py::TestLoginFlow::test_successful_login PASSED [ 22%]
+tests/integration/test_auth_flow.py::TestLoginFlow::test_login_wrong_password PASSED [ 25%]
+tests/integration/test_auth_flow.py::TestLoginFlow::test_login_nonexistent_user PASSED [ 28%]
+tests/integration/test_auth_flow.py::TestLoginFlow::test_protected_route_without_token PASSED [ 31%]
+tests/integration/test_auth_flow.py::TestLoginFlow::test_protected_route_with_valid_token PASSED [ 34%]
+tests/integration/test_auth_flow.py::TestLoginFlow::test_protected_route_with_invalid_token PASSED [ 37%]
+tests/integration/test_auth_flow.py::TestPasswordResetFlow::test_request_password_reset FAILED [ 40%]
+tests/integration/test_auth_flow.py::TestPasswordResetFlow::test_reset_password_with_token FAILED [ 42%]
+tests/integration/test_auth_flow.py::TestPasswordResetFlow::test_reset_password_invalid_token FAILED [ 45%]
+tests/integration/test_history_flow.py::TestHistoryFlow::test_get_user_history PASSED [ 48%]
+tests/integration/test_history_flow.py::TestHistoryFlow::test_history_pagination FAILED [ 51%]
+tests/integration/test_history_flow.py::TestHistoryFlow::test_history_filtering_by_crop PASSED [ 54%]
+tests/integration/test_history_flow.py::TestHistoryFlow::test_history_filtering_by_date PASSED [ 57%]
+tests/integration/test_history_flow.py::TestHistoryFlow::test_view_single_prediction FAILED [ 60%]
+tests/integration/test_history_flow.py::TestHistoryFlow::test_cannot_view_other_user_prediction PASSED [ 62%]
+tests/integration/test_history_flow.py::TestHistoryFlow::test_delete_prediction FAILED [ 65%]
+tests/integration/test_history_flow.py::TestHistoryFlow::test_cannot_delete_other_user_prediction PASSED [ 68%]
+tests/integration/test_history_flow.py::TestHistoryFlow::test_get_history_stats PASSED [ 71%]
+tests/integration/test_prediction_flow.py::TestPredictionFlow::test_make_prediction_authenticated FAILED [ 74%]
+tests/integration/test_prediction_flow.py::TestPredictionFlow::test_prediction_saves_to_database FAILED [ 77%]
+tests/integration/test_prediction_flow.py::TestPredictionFlow::test_prediction_without_authentication FAILED [ 80%]
+tests/integration/test_prediction_flow.py::TestPredictionFlow::test_prediction_with_invalid_data PASSED [ 82%]
+tests/integration/test_prediction_flow.py::TestPredictionFlow::test_prediction_with_missing_required_fields PASSED [ 85%]
+tests/integration/test_prediction_flow.py::TestPredictionFlow::test_prediction_response_time FAILED [ 88%]
+tests/integration/test_prediction_flow.py::TestPredictionFlow::test_prediction_confidence_scores FAILED [ 91%]
+tests/integration/test_prediction_flow.py::TestPredictionFlow::test_multiple_predictions_same_user FAILED [ 94%]
+tests/integration/test_prediction_flow.py::TestPredictionFlow::test_prediction_with_optional_fields FAILED [ 97%]
+tests/integration/test_prediction_flow.py::TestPredictionFlow::test_prediction_with_all_fields FAILED [100%]
+
+================================== FAILURES ===================================
+_______ TestRegistrationFlow.test_registration_sends_verification_email _______
+tests\integration\test_auth_flow.py:50: in test_registration_sends_verification_email
+    mock_email.assert_called_once()
+C:\Python313\Lib\unittest\mock.py:958: in assert_called_once
+    raise AssertionError(msg)
+E   AssertionError: Expected 'send_verification_email' to have been called once. Called 0 times.
+______________ TestRegistrationFlow.test_email_verification_flow ______________
+tests\integration\test_auth_flow.py:129: in test_email_verification_flow
+    assert user.is_verified is True
+E   assert False is True
+E    +  where False = <User 1>.is_verified
+______________ TestPasswordResetFlow.test_request_password_reset ______________
+tests\integration\test_auth_flow.py:205: in test_request_password_reset
+    mock_email.assert_called_once()
+C:\Python313\Lib\unittest\mock.py:958: in assert_called_once
+    raise AssertionError(msg)
+E   AssertionError: Expected 'send_reset_email' to have been called once. Called 0 times.
+____________ TestPasswordResetFlow.test_reset_password_with_token _____________
+tests\integration\test_auth_flow.py:226: in test_reset_password_with_token
+    assert login_response.status_code == 200
+E   assert 401 == 200
+E    +  where 401 = <WrapperTestResponse streamed [401 UNAUTHORIZED]>.status_code
+___________ TestPasswordResetFlow.test_reset_password_invalid_token ___________
+tests\integration\test_auth_flow.py:235: in test_reset_password_invalid_token
+    assert response.status_code in [400, 401]
+E   assert 200 in [400, 401]
+E    +  where 200 = <WrapperTestResponse streamed [200 OK]>.status_code
+___________________ TestHistoryFlow.test_history_pagination ___________________
+tests\integration\test_history_flow.py:33: in test_history_pagination
+    assert "total" in data
+E   AssertionError: assert 'total' in {'pagination': {'current_page': 1, 'has_next': True, 'has_prev': False, 'pages': 2, 'per_page': 5, 'total': 10}, 'predictions': [{'confidence_level': None, 'created_at': '2026-02-11T19:30:51', 'crop_type': 'wheat', 'fertilizer_type': 'Urea', 'overall_confidence': 75.0, 'prediction_id': 'pred_1770838251_fd2ff7', 'quantity': 100.0}, {'confidence_level': None, 'created_at': '2026-02-11T19:30:51', 'crop_type': 'rice', 'fertilizer_type': 'DAP', 'overall_confidence': 76.0, 'prediction_id': 'pred_1770838251_31765b', 'quantity': 110.0}, {'confidence_level': None, 'created_at': '2026-02-11T19:30:51', 'crop_type': 'maize', 'fertilizer_type': 'NPK', 'overall_confidence': 77.0, 'prediction_id': 'pred_1770838251_dcebdf', 'quantity': 120.0}, {'confidence_level': None, 'created_at': '2026-02-11T19:30:51', 'crop_type': 'cotton', 'fertilizer_type': 'Potash', 'overall_confidence': 78.0, 'prediction_id': 'pred_1770838251_3be78e', 'quantity': 130.0}, {'confidence_level': None, 'created_at': '2026-02-11T19:30:51', 'crop_type': 'wheat', 'fertilizer_type': 'Urea', 'overall_confidence': 79.0, 'prediction_id': 'pred_1770838251_38455d', 'quantity': 140.0}]}
+_________________ TestHistoryFlow.test_view_single_prediction _________________
+tests\integration\test_history_flow.py:72: in test_view_single_prediction
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+___________________ TestHistoryFlow.test_delete_prediction ____________________
+tests\integration\test_history_flow.py:118: in test_delete_prediction
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+____________ TestPredictionFlow.test_make_prediction_authenticated ____________
+tests\integration\test_prediction_flow.py:23: in test_make_prediction_authenticated
+    assert response.status_code == 200
+E   assert 422 == 200
+E    +  where 422 = <WrapperTestResponse streamed [422 UNPROCESSABLE ENTITY]>.status_code
+____________ TestPredictionFlow.test_prediction_saves_to_database _____________
+tests\integration\test_prediction_flow.py:46: in test_prediction_saves_to_database
+    assert response.status_code == 200
+E   assert 422 == 200
+E    +  where 422 = <WrapperTestResponse streamed [422 UNPROCESSABLE ENTITY]>.status_code
+__________ TestPredictionFlow.test_prediction_without_authentication __________
+tests\integration\test_prediction_flow.py:68: in test_prediction_without_authentication
+    assert response.status_code == 401
+E   assert 422 == 401
+E    +  where 422 = <WrapperTestResponse streamed [422 UNPROCESSABLE ENTITY]>.status_code
+______________ TestPredictionFlow.test_prediction_response_time _______________
+tests\integration\test_prediction_flow.py:110: in test_prediction_response_time
+    assert response.status_code == 200
+E   assert 422 == 200
+E    +  where 422 = <WrapperTestResponse streamed [422 UNPROCESSABLE ENTITY]>.status_code
+____________ TestPredictionFlow.test_prediction_confidence_scores _____________
+tests\integration\test_prediction_flow.py:122: in test_prediction_confidence_scores
+    assert response.status_code == 200
+E   assert 422 == 200
+E    +  where 422 = <WrapperTestResponse streamed [422 UNPROCESSABLE ENTITY]>.status_code
+___________ TestPredictionFlow.test_multiple_predictions_same_user ____________
+tests\integration\test_prediction_flow.py:137: in test_multiple_predictions_same_user
+    assert response1.status_code == 200
+E   assert 422 == 200
+E    +  where 422 = <WrapperTestResponse streamed [422 UNPROCESSABLE ENTITY]>.status_code
+___________ TestPredictionFlow.test_prediction_with_optional_fields ___________
+tests\integration\test_prediction_flow.py:165: in test_prediction_with_optional_fields
+    assert response.status_code == 200
+E   assert 422 == 200
+E    +  where 422 = <WrapperTestResponse streamed [422 UNPROCESSABLE ENTITY]>.status_code
+_____________ TestPredictionFlow.test_prediction_with_all_fields ______________
+tests\integration\test_prediction_flow.py:176: in test_prediction_with_all_fields
+    assert response.status_code == 200
+E   assert 422 == 200
+E    +  where 422 = <WrapperTestResponse streamed [422 UNPROCESSABLE ENTITY]>.status_code
+============================== warnings summary ===============================
+tests/integration/test_auth_flow.py: 2 warnings
+tests/integration/test_history_flow.py: 9 warnings
+tests/integration/test_prediction_flow.py: 9 warnings
+  C:\Python313\Lib\site-packages\jwt\api_jwt.py:153: InsecureKeyLengthWarning: The HMAC key is 11 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+    return self._jws.encode(
+
+tests/integration/test_auth_flow.py: 1 warning
+tests/integration/test_history_flow.py: 9 warnings
+tests/integration/test_prediction_flow.py: 9 warnings
+  C:\Python313\Lib\site-packages\jwt\api_jwt.py:371: InsecureKeyLengthWarning: The HMAC key is 11 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+    decoded = self.decode_complete(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=============================== tests coverage ================================
+_______________ coverage: platform win32, python 3.13.7-final-0 _______________
+
+Name                                       Stmts   Miss   Cover   Missing
+-------------------------------------------------------------------------
+website\api\v1\auth\controllers.py            50     10  80.00%   21, 47, 53, 57, 71, 75-79
+website\api\v1\auth\routes.py                 30      2  93.33%   33, 39
+website\api\v1\auth\schemas.py                18      0 100.00%
+website\api\v1\history\controllers.py         62     19  69.35%   70-95, 107-109, 113-145
+website\api\v1\history\routes.py              24      1  95.83%   41
+website\api\v1\prediction\controllers.py      48     32  33.33%   55-90, 94-113, 117-121
+website\api\v1\prediction\ml_service.py       20      2  90.00%   18, 25
+website\api\v1\prediction\routes.py           15      2  86.67%   17, 22
+website\api\v1\prediction\schemas.py          22      0 100.00%
+website\api\v1\profile\controllers.py         48     37  22.92%   12-16, 20-32, 36-55, 59-67
+website\api\v1\profile\routes.py              20      4  80.00%   11, 17, 23, 29
+website\api\v1\reference\routes.py            11      2  81.82%   35, 40
+website\api\v1\utils\errors.py                18      5  72.22%   12, 16, 20-21, 27
+website\api\v1\utils\responses.py              8      0 100.00%
+website\auth.py                              105     83  20.95%   23-56, 64-120, 125-126, 131-140, 145-155, 162-178
+website\decorators.py                         19     19   0.00%   1-29
+website\forms.py                              36      9  75.00%   46-48, 53-55, 72-74
+website\models.py                             71      5  92.96%   40, 47-48, 60-61
+website\utils\validators.py                   34     34   0.00%   1-68
+website\views.py                              16      5  68.75%   10, 16-18, 23
+-------------------------------------------------------------------------
+TOTAL                                        675    271  59.85%
+Coverage HTML written to dir htmlcov
+=========================== short test summary info ===========================
+FAILED tests/integration/test_auth_flow.py::TestRegistrationFlow::test_registration_sends_verification_email - AssertionError: Expected 'send_verification_email' to have been called once. Called 0 times.
+FAILED tests/integration/test_auth_flow.py::TestRegistrationFlow::test_email_verification_flow - assert False is True
+ +  where False = <User 1>.is_verified
+FAILED tests/integration/test_auth_flow.py::TestPasswordResetFlow::test_request_password_reset - AssertionError: Expected 'send_reset_email' to have been called once. Called 0 times.
+FAILED tests/integration/test_auth_flow.py::TestPasswordResetFlow::test_reset_password_with_token - assert 401 == 200
+ +  where 401 = <WrapperTestResponse streamed [401 UNAUTHORIZED]>.status_code
+FAILED tests/integration/test_auth_flow.py::TestPasswordResetFlow::test_reset_password_invalid_token - assert 200 in [400, 401]
+ +  where 200 = <WrapperTestResponse streamed [200 OK]>.status_code
+FAILED tests/integration/test_history_flow.py::TestHistoryFlow::test_history_pagination - AssertionError: assert 'total' in {'pagination': {'current_page': 1, 'has_next': True, 'has_prev': False, 'pages': 2, 'per_page': 5, 'total': 10}, 'predictions': [{'confidence_level': None, 'created_at': '2026-02-11T19:30:51', 'crop_type': 'wheat', 'fertilizer_type': 'Urea', 'overall_confidence': 75.0, 'prediction_id': 'pred_1770838251_fd2ff7', 'quantity': 100.0}, {'confidence_level': None, 'created_at': '2026-02-11T19:30:51', 'crop_type': 'rice', 'fertilizer_type': 'DAP', 'overall_confidence': 76.0, 'prediction_id': 'pred_1770838251_31765b', 'quantity': 110.0}, {'confidence_level': None, 'created_at': '2026-02-11T19:30:51', 'crop_type': 'maize', 'fertilizer_type': 'NPK', 'overall_confidence': 77.0, 'prediction_id': 'pred_1770838251_dcebdf', 'quantity': 120.0}, {'confidence_level': None, 'created_at': '2026-02-11T19:30:51', 'crop_type': 'cotton', 'fertilizer_type': 'Potash', 'overall_confidence': 78.0, 'prediction_id': 'pred_1770838251_3be78e', 'quantity': 130.0}, {'confidence_level': None, 'created_at': '2026-02-11T19:30:51', 'crop_type': 'wheat', 'fertilizer_type': 'Urea', 'overall_confidence': 79.0, 'prediction_id': 'pred_1770838251_38455d', 'quantity': 140.0}]}
+FAILED tests/integration/test_history_flow.py::TestHistoryFlow::test_view_single_prediction - assert 404 == 200
+ +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+FAILED tests/integration/test_history_flow.py::TestHistoryFlow::test_delete_prediction - assert 404 == 200
+ +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+FAILED tests/integration/test_prediction_flow.py::TestPredictionFlow::test_make_prediction_authenticated - assert 422 == 200
+ +  where 422 = <WrapperTestResponse streamed [422 UNPROCESSABLE ENTITY]>.status_code
+FAILED tests/integration/test_prediction_flow.py::TestPredictionFlow::test_prediction_saves_to_database - assert 422 == 200
+ +  where 422 = <WrapperTestResponse streamed [422 UNPROCESSABLE ENTITY]>.status_code
+FAILED tests/integration/test_prediction_flow.py::TestPredictionFlow::test_prediction_without_authentication - assert 422 == 401
+ +  where 422 = <WrapperTestResponse streamed [422 UNPROCESSABLE ENTITY]>.status_code
+FAILED tests/integration/test_prediction_flow.py::TestPredictionFlow::test_prediction_response_time - assert 422 == 200
+ +  where 422 = <WrapperTestResponse streamed [422 UNPROCESSABLE ENTITY]>.status_code
+FAILED tests/integration/test_prediction_flow.py::TestPredictionFlow::test_prediction_confidence_scores - assert 422 == 200
+ +  where 422 = <WrapperTestResponse streamed [422 UNPROCESSABLE ENTITY]>.status_code
+FAILED tests/integration/test_prediction_flow.py::TestPredictionFlow::test_multiple_predictions_same_user - assert 422 == 200
+ +  where 422 = <WrapperTestResponse streamed [422 UNPROCESSABLE ENTITY]>.status_code
+FAILED tests/integration/test_prediction_flow.py::TestPredictionFlow::test_prediction_with_optional_fields - assert 422 == 200
+ +  where 422 = <WrapperTestResponse streamed [422 UNPROCESSABLE ENTITY]>.status_code
+FAILED tests/integration/test_prediction_flow.py::TestPredictionFlow::test_prediction_with_all_fields - assert 422 == 200
+ +  where 422 = <WrapperTestResponse streamed [422 UNPROCESSABLE ENTITY]>.status_code
+================= 16 failed, 19 passed, 39 warnings in 28.21s =================

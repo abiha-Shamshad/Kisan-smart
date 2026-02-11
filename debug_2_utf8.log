@@ -1,0 +1,52 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.13.7, pytest-9.0.2, pluggy-1.6.0 -- C:\Python313\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Each One Teach One\Desktop\Kisan smart
+configfile: pytest.ini
+plugins: anyio-4.11.0, Faker-40.4.0, locust-2.43.2, cov-7.0.0, flask-1.3.0
+collecting ... collected 1 item
+
+tests/integration/test_auth_flow.py::TestRegistrationFlow::test_successful_registration Initializing MLModelService (Singleton)...
+Loading version v1.0.0 artifacts...
+All artifacts loaded successfully.
+DEBUG: API hitting database: sqlite:///C:\Users\Each One Teach One\Desktop\Kisan smart\instance\test_kisan.db
+FAILED
+
+================================== FAILURES ===================================
+______________ TestRegistrationFlow.test_successful_registration ______________
+tests\integration\test_auth_flow.py:26: in test_successful_registration
+    assert response.status_code == 201
+E   assert 422 == 201
+E    +  where 422 = <WrapperTestResponse streamed [422 UNPROCESSABLE ENTITY]>.status_code
+=============================== tests coverage ================================
+_______________ coverage: platform win32, python 3.13.7-final-0 _______________
+
+Name                                       Stmts   Miss   Cover   Missing
+-------------------------------------------------------------------------
+website\api\v1\auth\controllers.py            51     29  43.14%   21-38, 44-65, 71, 75-79, 84, 88, 94
+website\api\v1\auth\routes.py                 30      6  80.00%   27, 33, 39, 44, 49, 54
+website\api\v1\auth\schemas.py                17      0 100.00%
+website\api\v1\history\controllers.py         62     48  22.58%   14-44, 61-95, 99-109, 113-145, 152-164
+website\api\v1\history\routes.py              24      5  79.17%   17, 23, 29, 35, 41
+website\api\v1\prediction\controllers.py      48     36  25.00%   50-90, 94-113, 117-121
+website\api\v1\prediction\ml_service.py       20      2  90.00%   18, 25
+website\api\v1\prediction\routes.py           15      3  80.00%   11, 17, 22
+website\api\v1\prediction\schemas.py          22      0 100.00%
+website\api\v1\profile\controllers.py         48     37  22.92%   12-16, 20-32, 36-55, 59-67
+website\api\v1\profile\routes.py              20      4  80.00%   11, 17, 23, 29
+website\api\v1\reference\routes.py            11      2  81.82%   35, 40
+website\api\v1\utils\errors.py                18      5  72.22%   12, 16, 20-21, 27
+website\api\v1\utils\responses.py              8      2  75.00%   7-14
+website\auth.py                              105     83  20.95%   23-56, 64-120, 125-126, 131-140, 145-155, 162-178
+website\decorators.py                         19     19   0.00%   1-29
+website\forms.py                              36      9  75.00%   46-48, 53-55, 72-74
+website\models.py                             71     12  83.10%   40, 43-44, 47-48, 52-53, 60-61, 64-65, 73
+website\utils\validators.py                   34     34   0.00%   1-68
+website\views.py                              16      5  68.75%   10, 16-18, 23
+-------------------------------------------------------------------------
+TOTAL                                        675    341  49.48%
+Coverage HTML written to dir htmlcov
+=========================== short test summary info ===========================
+FAILED tests/integration/test_auth_flow.py::TestRegistrationFlow::test_successful_registration - assert 422 == 201
+ +  where 422 = <WrapperTestResponse streamed [422 UNPROCESSABLE ENTITY]>.status_code
+============================= 1 failed in 30.58s ==============================

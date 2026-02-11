@@ -63,17 +63,15 @@ class TestHistoryFlow:
         # Should return predictions within date range
 
     def test_view_single_prediction(self, authenticated_client, test_predictions):
-        """Test viewing details of a single prediction"""
-        # Get prediction ID
-        pred_id = test_predictions[0].id
-
-        response = authenticated_client.get(f"/api/v1/history/{pred_id}")
+        """Test user can view details of a single prediction"""
+        prediction_id = test_predictions[0].prediction_id
+        response = authenticated_client.get(f"/api/v1/history/{prediction_id}")
 
         assert response.status_code == 200
         assert "data" in response.json
 
         data = response.json["data"]
-        assert data["id"] == pred_id
+        assert data["prediction_id"] == prediction_id
         assert "crop_type" in data
         assert "fertilizer_type" in data
 
@@ -110,15 +108,15 @@ class TestHistoryFlow:
     def test_delete_prediction(
         self, authenticated_client, test_predictions, db_session
     ):
-        """Test user can delete their own prediction"""
-        pred_id = test_predictions[0].id
+        """Test user can delete a prediction"""
+        prediction_id = test_predictions[0].prediction_id
 
-        response = authenticated_client.delete(f"/api/v1/history/{pred_id}")
+        response = authenticated_client.delete(f"/api/v1/history/{prediction_id}")
 
         assert response.status_code == 200
 
         # Prediction should be deleted from database
-        deleted_pred = Recommendation.query.get(pred_id)
+        deleted_pred = Recommendation.query.get(prediction_id)
         assert deleted_pred is None
 
     def test_cannot_delete_other_user_prediction(
@@ -140,6 +138,11 @@ class TestHistoryFlow:
             phosphorus=30,
             potassium=25,
             ph=6.8,
+            moisture=65.0,
+            temperature=22.5,
+            farm_area=2.5,
+            growth_stage="Vegetative",
+            # Optional fields omitted
             fertilizer_type="NPK",
             quantity=110,
             overall_confidence=75,
