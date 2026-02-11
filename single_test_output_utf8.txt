@@ -1,0 +1,31 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.13.7, pytest-9.0.2, pluggy-1.6.0 -- C:\Python313\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Each One Teach One\Desktop\Kisan smart
+configfile: pytest.ini
+plugins: anyio-4.11.0, Faker-40.4.0, locust-2.43.2, cov-7.0.0, flask-1.3.0
+collecting ... collected 1 item
+
+tests/integration/test_auth_flow.py::TestRegistrationFlow::test_successful_registration FAILED [100%]
+
+================================== FAILURES ===================================
+______________ TestRegistrationFlow.test_successful_registration ______________
+tests\integration\test_auth_flow.py:25: in test_successful_registration
+    assert response.status_code == 201
+E   assert 422 == 201
+E    +  where 422 = <WrapperTestResponse streamed [422 UNPROCESSABLE ENTITY]>.status_code
+---------------------------- Captured stdout setup ----------------------------
+Initializing MLModelService (Singleton)...
+Loading version v1.0.0 artifacts...
+All artifacts loaded successfully.
+============================== warnings summary ===============================
+..\..\..\..\Python313\Lib\site-packages\_pytest\config\__init__.py:1428
+  C:\Python313\Lib\site-packages\_pytest\config\__init__.py:1428: PytestConfigWarning: Unknown config option: addopts_coverage
+  
+    self._warn_or_fail_if_strict(f"Unknown config option: {key}\n")
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/integration/test_auth_flow.py::TestRegistrationFlow::test_successful_registration - assert 422 == 201
+ +  where 422 = <WrapperTestResponse streamed [422 UNPROCESSABLE ENTITY]>.status_code
+======================== 1 failed, 1 warning in 10.02s ========================

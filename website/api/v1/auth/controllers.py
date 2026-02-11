@@ -12,6 +12,7 @@ user_schema = UserSchema()
 
 
 def register_user():
+    print(f"DEBUG: API hitting database: {db.engine.url}")
     data = request.get_json()
     errors = register_schema.validate(data)
     if errors:

@@ -73,7 +73,7 @@ class TestRegistrationFlow:
         assert response.status_code in [409, 422]
         assert "error" in response.json
 
-    def test_registration_invalid_email(self, client):
+    def test_registration_invalid_email(self, client, db_session):
         """Test registration fails with invalid email"""
         registration_data = {
             "username": "newuser",
@@ -85,7 +85,7 @@ class TestRegistrationFlow:
 
         assert response.status_code == 422
 
-    def test_registration_weak_password(self, client):
+    def test_registration_weak_password(self, client, db_session):
         """Test registration fails with weak password"""
         registration_data = {
             "username": "newuser",
@@ -153,7 +153,7 @@ class TestLoginFlow:
         assert response.status_code == 401
         assert "error" in response.json
 
-    def test_login_nonexistent_user(self, client):
+    def test_login_nonexistent_user(self, client, db_session):
         """Test login fails for non-existent user"""
         login_data = {"email": "nonexistent@example.com", "password": "Password123!"}
 
@@ -161,7 +161,7 @@ class TestLoginFlow:
 
         assert response.status_code == 401
 
-    def test_protected_route_without_token(self, client):
+    def test_protected_route_without_token(self, client, db_session):
         """Test protected routes require authentication"""
         response = client.get("/api/v1/history")
 

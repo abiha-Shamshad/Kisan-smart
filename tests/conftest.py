@@ -20,6 +20,8 @@ def app():
     from website import limiter
     with app.app_context():
         limiter.reset()
+        # Create all tables once for the session
+        db.create_all()
     return app
 
 
@@ -33,14 +35,14 @@ def client(app):
 def db_session(app):
     """Create a database session for testing"""
     with app.app_context():
-        # Create all tables
-        db.create_all()
-
         yield db
 
-        # Cleanup after test
+        # Cleanup after test - clear data instead of dropping tables
+        # This is more reliable for in-memory or shared SQLite
         db.session.remove()
-        db.drop_all()
+        for table in reversed(db.metadata.sorted_tables):
+            db.session.execute(table.delete())
+        db.session.commit()
 
 
 @pytest.fixture(scope="function")
