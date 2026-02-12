@@ -9,6 +9,7 @@ def test_role_required_authorized(app, db_session):
     with app.test_request_context():
         role = Role.query.filter_by(role_name="Admin").first()
         user = User(email="admin@test.com", username="admin", role_id=role.role_id)
+        user.set_password("Pass123!")
         db_session.session.add(user)
         db_session.session.commit()
         
@@ -25,6 +26,7 @@ def test_role_required_unauthorized_role(app, db_session):
     with app.test_request_context():
         role = Role.query.filter_by(role_name="Farmer").first()
         user = User(email="farmer@test.com", username="farmer", role_id=role.role_id)
+        user.set_password("Pass123!")
         db_session.session.add(user)
         db_session.session.commit()
         
@@ -54,6 +56,7 @@ def test_admin_required(app, db_session):
     with app.test_request_context():
         role = Role.query.filter_by(role_name="Admin").first()
         user = User(email="admin2@test.com", username="admin2", role_id=role.role_id)
+        user.set_password("Pass123!")
         db_session.session.add(user)
         db_session.session.commit()
         
@@ -70,6 +73,7 @@ def test_farmer_required(app, db_session):
     with app.test_request_context():
         role = Role.query.filter_by(role_name="Farmer").first()
         user = User(email="farmer2@test.com", username="farmer2", role_id=role.role_id)
+        user.set_password("Pass123!")
         db_session.session.add(user)
         db_session.session.commit()
         
