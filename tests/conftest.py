@@ -36,10 +36,16 @@ def client(app):
 def db_session(app):
     """Create a database session for testing"""
     with app.app_context():
+        # Re-seed roles for every test
+        from website.models import Role
+        admin_role = Role(role_id=1, role_name="Admin")
+        farmer_role = Role(role_id=2, role_name="Farmer")
+        db.session.add_all([admin_role, farmer_role])
+        db.session.commit()
+
         yield db
 
         # Cleanup after test - clear data instead of dropping tables
-        # This is more reliable for in-memory or shared SQLite
         db.session.remove()
         for table in reversed(db.metadata.sorted_tables):
             db.session.execute(table.delete())

@@ -69,8 +69,8 @@ class TestUserModel:
         token = user.generate_verification_token()
 
         # Token should verify correctly
-        verified_user_id = User.verify_verification_token(token)
-        assert verified_user_id == user.id
+        verified_user_email = User.verify_verification_token(token)
+        assert verified_user_email == user.email
 
     def test_verify_invalid_token(self, db_session):
         """Test invalid token is rejected"""

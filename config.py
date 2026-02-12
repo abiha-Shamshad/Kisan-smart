@@ -14,7 +14,7 @@ class Config:
     RATELIMIT_ENABLED = os.environ.get("RATELIMIT_ENABLED", "True") == "True"
 
     # JWT Configuration
-    JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "jwt-dev-key")
+    JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "kisan-smart-secure-jwt-secret-key-32-chars")
     JWT_ACCESS_TOKEN_EXPIRES = 3600  # 1 hour
     MAIL_DEFAULT_SENDER = os.environ.get("MAIL_DEFAULT_SENDER", "noreply@kisan-smart.com")
     MAIL_SUPPRESS_SEND = True # Don't send emails during development/load tests
