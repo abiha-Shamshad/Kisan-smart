@@ -1,23 +1,69 @@
 {% extends "base.html" %}
 {% block title %}Admin Dashboard{% endblock %}
 {% block content %}
-<div class="row mt-4">
-    <div class="col-12">
-        <div class="card p-4">
-            <h2 class="mb-4">Admin Dashboard</h2>
-            <p>Welcome, Administrator {{ user.name }}. Here you can manage users and system settings.</p>
+<div class="admin-container">
+    <!-- Page Header -->
+    <div class="page-header reveal mb-5">
+        <h1 class="fw-bold"><i class="fas fa-user-shield me-3 text-primary"></i>Admin Command Center</h1>
+        <p class="text-muted">Welcome back, Administrator. System monitoring and user management portal.</p>
+    </div>
 
-            <div class="row mt-4">
-                <div class="col-md-3">
-                    <div class="card bg-primary text-white p-3">
-                        <h4>Total Users</h4>
-                        <h2>1</h2>
+    <div class="row">
+        <div class="col-12">
+            <div class="glass-panel reveal p-4 p-md-5 mb-5">
+                <div class="row g-4">
+                    <!-- Total Users -->
+                    <div class="col-md-4">
+                        <div class="stat-card glass-panel hover-lift">
+                            <div class="stat-icon text-primary">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number">1</h3>
+                                <p class="stat-label">Active Users</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total Recommendations -->
+                    <div class="col-md-4">
+                        <div class="stat-card glass-panel hover-lift">
+                            <div class="stat-icon text-success">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number">0</h3>
+                                <p class="stat-label">Total Reports</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Status -->
+                    <div class="col-md-4">
+                        <div class="stat-card glass-panel hover-lift">
+                            <div class="stat-icon text-info">
+                                <i class="fas fa-server"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number">Live</h3>
+                                <p class="stat-label">System Nodes</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card bg-success text-white p-3">
-                        <h4>Recommendations</h4>
-                        <h2>0</h2>
+
+                <div class="mt-5">
+                    <h5 class="fw-bold mb-4"><i class="fas fa-tools me-2 text-primary"></i>Management Actions</h5>
+                    <div class="d-flex flex-wrap gap-3">
+                        <button class="btn glass-panel border px-4 py-2 small fw-bold">
+                            <i class="fas fa-user-plus me-2 text-primary"></i>Manage User Roles
+                        </button>
+                        <button class="btn glass-panel border px-4 py-2 small fw-bold">
+                            <i class="fas fa-database me-2 text-success"></i>System Backups
+                        </button>
+                        <button class="btn glass-panel border px-4 py-2 small fw-bold text-danger">
+                            <i class="fas fa-exclamation-circle me-2"></i>Clear Error Logs
+                        </button>
                     </div>
                 </div>
             </div>

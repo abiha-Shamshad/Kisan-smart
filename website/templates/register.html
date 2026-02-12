@@ -2,73 +2,79 @@
 {% block title %}Register - Kisan Smart{% endblock %}
 
 {% block content %}
-<div class="auth-container">
-    <div class="auth-card">
-        <h2><i class="fas fa-user-plus me-2"></i>Create Account</h2>
-        <p class="text-center text-muted mb-4">Join Kisan Smart for AI-powered fertilizer recommendations</p>
+<div class="auth-wrapper d-flex align-items-center justify-content-center"
+    style="min-height: 90vh; padding: 40px 20px;">
+    <div class="glass-panel p-4 p-md-5 reveal" style="max-width: 800px; width: 100%;">
+        <div class="text-center mb-4">
+            <div class="brand-icon mb-3 float" style="font-size: 3rem; color: var(--primary);">
+                <i class="fas fa-seedling"></i>
+            </div>
+            <h2 class="fw-bold" style="font-family: var(--font-poppins);">Create Your Account</h2>
+            <p class="text-muted">Start optimizing your crop yield with AI-driven insights</p>
+        </div>
 
         <form id="registerForm">
             <div class="row">
-                <div class="col-md-12 mb-3">
-                    <label for="username" class="form-label">Username *</label>
-                    <input type="text" class="form-control" id="username" name="username" required />
+                <div class="col-md-6 mb-3">
+                    <label for="username" class="form-label fw-semibold">Username *</label>
+                    <input type="text" class="input-premium w-100" id="username" name="username" placeholder="johndoe"
+                        required />
                     <div class="invalid-feedback"></div>
                 </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-12 mb-3">
-                    <label for="email" class="form-label">Email Address *</label>
-                    <input type="email" class="form-control" id="email" name="email" required />
-                    <div class="invalid-feedback"></div>
-                </div>
-            </div>
-
-            <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label for="full_name" class="form-label">Full Name</label>
-                    <input type="text" class="form-control" id="full_name" name="full_name" />
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label for="phone_number" class="form-label">Phone Number</label>
-                    <input type="tel" class="form-control" id="phone_number" name="phone_number" />
+                    <label for="email" class="form-label fw-semibold">Email Address *</label>
+                    <input type="email" class="input-premium w-100" id="email" name="email"
+                        placeholder="john@example.com" required />
                     <div class="invalid-feedback"></div>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label for="password" class="form-label">Password *</label>
-                    <div class="password-input-wrapper">
-                        <input type="password" class="form-control" id="password" name="password" required />
-                        <button type="button" class="password-toggle"><i class="fas fa-eye"></i></button>
+                    <label for="full_name" class="form-label fw-semibold">Full Name</label>
+                    <input type="text" class="input-premium w-100" id="full_name" name="full_name"
+                        placeholder="John Doe" />
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="phone_number" class="form-label fw-semibold">Phone Number</label>
+                    <input type="tel" class="input-premium w-100" id="phone_number" name="phone_number"
+                        placeholder="+1 (555) 000-0000" />
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="password" class="form-label fw-semibold">Password *</label>
+                    <div class="password-input-wrapper position-relative">
+                        <input type="password" class="input-premium w-100" id="password" name="password"
+                            placeholder="••••••••" required />
+                        <button type="button"
+                            class="password-toggle position-absolute end-0 top-50 translate-middle-y border-0 bg-transparent px-3 py-2 text-muted">
+                            <i class="fas fa-eye"></i>
+                        </button>
                     </div>
                     <div class="invalid-feedback"></div>
 
-                    <!-- Password Strength Indicator -->
                     <div class="password-strength mt-2">
-                        <div class="password-strength-bar">
-                            <div id="strength-fill" class="password-strength-fill"></div>
+                        <div class="password-strength-bar"
+                            style="height: 4px; background: var(--border); border-radius: 2px; overflow: hidden;">
+                            <div id="strength-fill" class="password-strength-fill"
+                                style="height: 100%; width: 0; transition: width 0.3s var(--ease);"></div>
                         </div>
-                        <small id="strength-label" class="text-muted"></small>
+                        <small id="strength-label" class="text-muted x-small"></small>
                     </div>
-
-                    <!-- Password Requirements -->
-                    <ul class="password-requirements mt-2 mb-0">
-                        <li id="req-length">At least 8 characters</li>
-                        <li id="req-uppercase">One uppercase letter</li>
-                        <li id="req-lowercase">One lowercase letter</li>
-                        <li id="req-number">One number</li>
-                        <li id="req-special">One special character</li>
-                    </ul>
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label for="confirm_password" class="form-label">Confirm Password *</label>
-                    <div class="password-input-wrapper">
-                        <input type="password" class="form-control" id="confirm_password" name="confirm_password"
-                            required />
-                        <button type="button" class="password-toggle"><i class="fas fa-eye"></i></button>
+                    <label for="confirm_password" class="form-label fw-semibold">Confirm Password *</label>
+                    <div class="password-input-wrapper position-relative">
+                        <input type="password" class="input-premium w-100" id="confirm_password" name="confirm_password"
+                            placeholder="••••••••" required />
+                        <button type="button"
+                            class="password-toggle position-absolute end-0 top-50 translate-middle-y border-0 bg-transparent px-3 py-2 text-muted">
+                            <i class="fas fa-eye"></i>
+                        </button>
                     </div>
                     <div class="invalid-feedback"></div>
                 </div>
@@ -76,18 +82,20 @@
 
             <div class="form-check mb-4">
                 <input type="checkbox" class="form-check-input" id="terms" required />
-                <label class="form-check-label" for="terms">
-                    I agree to the <a href="/terms" target="_blank">Terms and Conditions</a>
+                <label class="form-check-label small" for="terms">
+                    I agree to the <a href="/terms" target="_blank" class="fw-semibold"
+                        style="color: var(--primary);">Terms and Conditions</a>
                 </label>
             </div>
 
-            <button type="submit" id="submitBtn" class="btn btn-primary w-100 py-3">
+            <button type="submit" id="submitBtn" class="btn-premium w-100 py-3 mb-3">
                 <i class="fas fa-user-plus me-2"></i>Create Account
             </button>
         </form>
 
-        <div class="auth-links">
-            <small>Already have an account? <a href="/login">Sign In</a></small>
+        <div class="text-center">
+            <p class="small text-muted mb-0">Already have an account? <a href="/login"
+                    class="fw-bold text-decoration-none" style="color: var(--primary);">Sign In</a></p>
         </div>
     </div>
 </div>

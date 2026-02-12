@@ -8,70 +8,58 @@
 {% block content %}
 <div class="history-container">
     <!-- Page Header -->
-    <div class="page-header">
-        <div>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/home">Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">History</li>
-                </ol>
-            </nav>
-            <h1><i class="fas fa-history me-2"></i>Prediction History</h1>
+    <div class="history-container">
+        <!-- Page Header -->
+        <div class="page-header reveal mb-5">
+            <div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/home" class="text-decoration-none">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Prediction History</li>
+                    </ol>
+                </nav>
+                <h1 class="fw-bold"><i class="fas fa-history me-3 text-primary"></i>Archive</h1>
+                <p class="text-muted">A comprehensive log of all your AI-driven soil analyses and recommendations.</p>
+            </div>
+            <a href="/predict" class="btn-premium px-4 py-3">
+                <i class="fas fa-plus me-2"></i>New Analysis
+            </a>
         </div>
-        <a href="/predict" class="btn btn-primary">
-            <i class="fas fa-plus me-2"></i>New Prediction
-        </a>
-    </div>
 
-    <!-- Filters & Search -->
-    <div class="card filters-card mb-4">
-        <div class="card-body">
-            <div class="row g-3">
+        <!-- Filters & Search -->
+        <div class="glass-panel reveal mb-5 p-4">
+            <div class="row g-4">
                 <!-- Search Bar -->
                 <div class="col-md-4">
-                    <label class="form-label">Search</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="searchInput"
+                    <label class="form-label fw-bold">Search</label>
+                    <div class="position-relative">
+                        <input type="text" class="input-premium w-100 ps-5" id="searchInput"
                             placeholder="Search by crop or fertilizer...">
-                        <button class="btn btn-outline-secondary" type="button" onclick="HistoryManager.clearSearch()">
-                            <i class="fas fa-times"></i>
-                        </button>
+                        <i
+                            class="fas fa-search position-absolute start-0 top-50 translate-middle-y ms-3 text-muted"></i>
                     </div>
                 </div>
 
-                <!-- Date Range -->
-                <div class="col-md-3">
-                    <label class="form-label">Date Range</label>
-                    <select class="form-select" id="dateRange" onchange="HistoryManager.applyDateFilter()">
-                        <option value="all">All Time</option>
-                        <option value="today">Today</option>
-                        <option value="7days">Last 7 Days</option>
-                        <option value="30days">Last 30 Days</option>
-                        <option value="90days">Last 90 Days</option>
-                        <option value="custom">Custom Range</option>
-                    </select>
-                </div>
-
                 <!-- Crop Type -->
-                <div class="col-md-2">
-                    <label class="form-label">Crop Type</label>
-                    <select class="form-select" id="cropFilter">
-                        <option value="">All Crops</option>
-                        <option value="wheat">Wheat</option>
-                        <option value="rice">Rice</option>
-                        <option value="maize">Maize</option>
-                        <option value="cotton">Cotton</option>
-                        <option value="sugarcane">Sugarcane</option>
-                        <option value="potato">Potato</option>
-                        <option value="tomato">Tomato</option>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Crop Filter</label>
+                    <select class="input-premium w-100" id="cropFilter">
+                        <option value="">All Crop Types</option>
+                        <option value="wheat">Wheat (Kanak)</option>
+                        <option value="rice">Rice (Chawal)</option>
+                        <option value="maize">Maize (Makka)</option>
+                        <option value="cotton">Cotton (Kapaas)</option>
+                        <option value="sugarcane">Sugarcane (Ganna)</option>
+                        <option value="potato">Potato (Aloo)</option>
+                        <option value="tomato">Tomato (Tamatar)</option>
                     </select>
                 </div>
 
                 <!-- Confidence Level -->
-                <div class="col-md-2">
-                    <label class="form-label">Confidence</label>
-                    <select class="form-select" id="confidenceFilter">
-                        <option value="">All Levels</option>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Reliability</label>
+                    <select class="input-premium w-100" id="confidenceFilter">
+                        <option value="">All Confidence Levels</option>
                         <option value="high">High (≥80%)</option>
                         <option value="medium">Medium (60-79%)</option>
                         <option value="low">Low (<60%)< /option>
@@ -79,70 +67,72 @@
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="col-md-1 d-flex align-items-end">
-                    <button class="btn btn-primary w-100" onclick="HistoryManager.applyFilters()">
-                        <i class="fas fa-filter"></i>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn glass-panel border w-100 py-2 fw-bold" onclick="HistoryManager.applyFilters()">
+                        <i class="fas fa-filter me-2 text-primary"></i>Filter
                     </button>
                 </div>
             </div>
 
             <!-- Custom Date Range (Hidden by default) -->
-            <div id="customDateRange" class="row g-3 mt-2" style="display: none;">
+            <div id="customDateRange" class="row g-3 mt-4 animate slideIn" style="display: none;">
                 <div class="col-md-3">
-                    <label class="form-label">From</label>
-                    <input type="date" class="form-control" id="dateFrom">
+                    <label class="form-label fw-bold">From</label>
+                    <input type="date" class="input-premium w-100" id="dateFrom">
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label">To</label>
-                    <input type="date" class="form-control" id="dateTo">
+                    <label class="form-label fw-bold">To</label>
+                    <input type="date" class="input-premium w-100" id="dateTo">
                 </div>
             </div>
 
             <!-- Active Filters Tags -->
-            <div id="activeFilters" class="active-filters mt-3"></div>
+            <div id="activeFilters" class="active-filters mt-4 d-flex flex-wrap gap-2"></div>
         </div>
-    </div>
 
-    <!-- Toolbar -->
-    <div class="toolbar mb-3">
-        <div class="toolbar-left">
-            <span id="resultsCount" class="text-muted">Loading...</span>
-        </div>
-        <div class="toolbar-right">
-            <!-- Sort -->
-            <select class="form-select form-select-sm" id="sortBy" onchange="HistoryManager.applySorting()">
-                <option value="date_desc">Date (Newest First)</option>
-                <option value="date_asc">Date (Oldest First)</option>
-                <option value="confidence_desc">Confidence (High to Low)</option>
-                <option value="confidence_asc">Confidence (Low to High)</option>
-                <option value="crop_asc">Crop (A-Z)</option>
-            </select>
+        <!-- Toolbar -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 reveal">
+            <div class="toolbar-left">
+                <span id="resultsCount" class="text-muted fw-semibold">Loading records...</span>
+            </div>
+            <div class="toolbar-right d-flex gap-3 align-items-center">
+                <!-- Sort -->
+                <select class="input-premium py-1 px-3 border-0 bg-transparent text-muted small" id="sortBy"
+                    onchange="HistoryManager.applySorting()">
+                    <option value="date_desc">Newest First</option>
+                    <option value="date_asc">Oldest First</option>
+                    <option value="confidence_desc">Confidence (High)</option>
+                    <option value="confidence_asc">Confidence (Low)</option>
+                </select>
 
-            <!-- Bulk Actions -->
-            <div class="btn-group ms-2" role="group">
-                <button class="btn btn-sm btn-outline-secondary" onclick="HistoryManager.exportSelected()">
-                    <i class="fas fa-download me-1"></i>Export
-                </button>
-                <button class="btn btn-sm btn-outline-danger" onclick="HistoryManager.deleteSelected()">
-                    <i class="fas fa-trash me-1"></i>Delete
-                </button>
+                <!-- Bulk Actions -->
+                <div class="btn-group">
+                    <button class="btn btn-sm glass-panel border px-3" onclick="HistoryManager.exportSelected()">
+                        <i class="fas fa-download me-1 text-primary"></i>Export
+                    </button>
+                    <button class="btn btn-sm glass-panel border px-3 text-danger"
+                        onclick="HistoryManager.deleteSelected()">
+                        <i class="fas fa-trash me-1"></i>Delete
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- History Table -->
-    <div class="card history-table-card">
-        <div class="card-body p-0">
+        <!-- History Table -->
+        <div class="glass-panel reveal overflow-hidden mb-5">
             <div id="historyTableContainer">
                 <!-- Loading state -->
                 <div class="text-center py-5">
                     <div class="spinner-border text-primary" role="status">
                         <span class="visually-hidden">Loading...</span>
                     </div>
-                    <p class="mt-3 text-muted">Loading predictions...</p>
+                    <p class="mt-3 text-muted fw-bold">Accessing Archived Data...</p>
                 </div>
             </div>
         </div>
+
+        <!-- Pagination -->
+        <div id="paginationContainer" class="mt-4 mb-5 pb-5"></div>
     </div>
 
     <!-- Pagination -->

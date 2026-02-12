@@ -9,45 +9,45 @@
 <div class="dashboard-container">
     <!-- Page Header -->
     <div class="page-header reveal">
-        <h1><i class="fas fa-tractor me-2"></i>Fertilizer Recommendation</h1>
-        <p>Get AI-powered fertilizer recommendations for your crops</p>
+        <h1 class="display-5 fw-bold"><i class="fas fa-tractor me-3"></i>Field Analysis</h1>
+        <p class="text-muted fs-5">Input your soil data to generate AI-optimized nutrient recommendations.</p>
     </div>
 
     <!-- Prediction Input Form -->
     <form id="predictionForm">
         <!-- Section 1: Crop Information -->
-        <div class="form-section reveal glass">
+        <div class="form-section glass-panel reveal mb-4">
             <div class="form-section-header">
                 <i class="fas fa-seedling"></i>
-                <h3>Crop Information</h3>
+                <h3 class="fw-bold">Crop Details</h3>
             </div>
 
             <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="crop_type" class="form-label">Crop Type *</label>
-                    <select class="form-select" id="crop_type" name="crop_type" required>
-                        <option value="">Select crop...</option>
-                        <option value="wheat">Wheat</option>
-                        <option value="rice">Rice</option>
-                        <option value="maize">Maize</option>
-                        <option value="cotton">Cotton</option>
-                        <option value="sugarcane">Sugarcane</option>
-                        <option value="potato">Potato</option>
-                        <option value="tomato">Tomato</option>
+                <div class="col-md-6 mb-4">
+                    <label for="crop_type" class="form-label fw-bold">Target Crop *</label>
+                    <select class="input-premium w-100" id="crop_type" name="crop_type" required>
+                        <option value="">Select a crop type...</option>
+                        <option value="wheat">Wheat (Kanak)</option>
+                        <option value="rice">Rice (Chawal)</option>
+                        <option value="maize">Maize (Makka)</option>
+                        <option value="cotton">Cotton (Kapaas)</option>
+                        <option value="sugarcane">Sugarcane (Ganna)</option>
+                        <option value="potato">Potato (Aloo)</option>
+                        <option value="tomato">Tomato (Tamatar)</option>
                     </select>
                     <div class="invalid-feedback"></div>
                 </div>
 
-                <div class="col-md-6 mb-3">
-                    <label for="farm_area" class="form-label">
-                        Farm Area *
-                        <i class="fas fa-info-circle info-icon" data-bs-toggle="tooltip"
-                            title="Enter the total area of your farm"></i>
+                <div class="col-md-6 mb-4">
+                    <label for="farm_area" class="form-label fw-bold">
+                        Farm Size *
+                        <i class="fas fa-info-circle text-primary ms-1" data-bs-toggle="tooltip"
+                            title="Enter the total area of your farm field"></i>
                     </label>
-                    <div class="input-group">
-                        <input type="number" class="form-control" id="farm_area" name="farm_area" min="0.1" max="1000"
-                            step="0.1" value="2.5" required />
-                        <span class="input-group-text">hectares</span>
+                    <div class="number-input-container">
+                        <input type="number" id="farm_area" name="farm_area" min="0.1" max="1000" step="0.1" value="2.5"
+                            required />
+                        <span class="unit">hectares</span>
                     </div>
                     <div class="invalid-feedback"></div>
                 </div>
@@ -55,29 +55,27 @@
         </div>
 
         <!-- Section 2: Soil Parameters -->
-        <div class="form-section reveal glass">
+        <div class="form-section glass-panel reveal mb-4">
             <div class="form-section-header">
-                <i class="fas fa-flask"></i>
-                <h3>Soil Parameters</h3>
+                <i class="fas fa-microscope text-primary"></i>
+                <h3 class="fw-bold">Soil Nutrients (N-P-K)</h3>
             </div>
 
             <!-- Nitrogen -->
-            <div class="dual-input-group">
+            <div class="dual-input-group reveal">
                 <label class="dual-input-label">
-                    Nitrogen (N) *
-                    <i class="fas fa-info-circle info-icon" data-bs-toggle="tooltip"
-                        title="Amount of nitrogen in soil. Typical range: 20-80 kg/ha for most crops."></i>
+                    Nitrogen (N) Content
+                    <i class="fas fa-info-circle text-muted ms-1" data-bs-toggle="tooltip"
+                        title="Essential for leaf growth and green color. Typical range: 20-80 kg/ha."></i>
                 </label>
                 <div class="dual-input-controls">
                     <div class="slider-container">
-                        <input type="range" class="custom-slider modern-range" id="nitrogen_slider" min="0" max="200"
-                            value="45" step="1" />
-                        <div class="value-indicator">
-                            <div class="range-labels">
-                                <span>0</span>
-                                <span id="nitrogen_status" class="status medium">Medium</span>
-                                <span>200 kg/ha</span>
-                            </div>
+                        <input type="range" class="modern-range" id="nitrogen_slider" min="0" max="200" value="45"
+                            step="1" />
+                        <div class="range-labels">
+                            <span>Very Low</span>
+                            <span id="nitrogen_status" class="status-badge status-medium">Optimal</span>
+                            <span>Excessive</span>
                         </div>
                     </div>
                     <div class="number-input-container">
@@ -86,26 +84,23 @@
                         <span class="unit">kg/ha</span>
                     </div>
                 </div>
-                <div class="invalid-feedback"></div>
             </div>
 
             <!-- Phosphorus -->
-            <div class="dual-input-group">
+            <div class="dual-input-group reveal">
                 <label class="dual-input-label">
-                    Phosphorus (P) *
-                    <i class="fas fa-info-circle info-icon" data-bs-toggle="tooltip"
-                        title="Phosphorus content in soil. Essential for root development and energy transfer."></i>
+                    Phosphorus (P) Content
+                    <i class="fas fa-info-circle text-muted ms-1" data-bs-toggle="tooltip"
+                        title="Promotes root development and flowering. Critical in early growth."></i>
                 </label>
                 <div class="dual-input-controls">
                     <div class="slider-container">
-                        <input type="range" class="custom-slider" id="phosphorus_slider" min="0" max="200" value="30"
+                        <input type="range" class="modern-range" id="phosphorus_slider" min="0" max="200" value="30"
                             step="1" />
-                        <div class="value-indicator">
-                            <div class="range-labels">
-                                <span>0</span>
-                                <span id="phosphorus_status" class="status medium">Medium</span>
-                                <span>200 kg/ha</span>
-                            </div>
+                        <div class="range-labels">
+                            <span>Deficient</span>
+                            <span id="phosphorus_status" class="status-badge status-medium">Balanced</span>
+                            <span>High</span>
                         </div>
                     </div>
                     <div class="number-input-container">
@@ -114,26 +109,23 @@
                         <span class="unit">kg/ha</span>
                     </div>
                 </div>
-                <div class="invalid-feedback"></div>
             </div>
 
             <!-- Potassium -->
-            <div class="dual-input-group">
+            <div class="dual-input-group reveal">
                 <label class="dual-input-label">
-                    Potassium (K) *
-                    <i class="fas fa-info-circle info-icon" data-bs-toggle="tooltip"
-                        title="Potassium level in soil. Important for disease resistance and water regulation."></i>
+                    Potassium (K) Content
+                    <i class="fas fa-info-circle text-muted ms-1" data-bs-toggle="tooltip"
+                        title="Improves disease resistance and overall plant health."></i>
                 </label>
                 <div class="dual-input-controls">
                     <div class="slider-container">
-                        <input type="range" class="custom-slider" id="potassium_slider" min="0" max="200" value="25"
+                        <input type="range" class="modern-range" id="potassium_slider" min="0" max="200" value="25"
                             step="1" />
-                        <div class="value-indicator">
-                            <div class="range-labels">
-                                <span>0</span>
-                                <span id="potassium_status" class="status low">Low</span>
-                                <span>200 kg/ha</span>
-                            </div>
+                        <div class="range-labels">
+                            <span>Low</span>
+                            <span id="potassium_status" class="status-badge status-low">Low</span>
+                            <span>High</span>
                         </div>
                     </div>
                     <div class="number-input-container">
@@ -142,100 +134,59 @@
                         <span class="unit">kg/ha</span>
                     </div>
                 </div>
-                <div class="invalid-feedback"></div>
             </div>
 
-            <!-- Soil pH -->
-            <div class="dual-input-group">
-                <label class="dual-input-label">
-                    Soil pH *
-                    <i class="fas fa-info-circle info-icon" data-bs-toggle="tooltip"
-                        title="Soil acidity/alkalinity. 6.0-7.5 is ideal for most crops."></i>
-                </label>
-                <div class="dual-input-controls">
+            <hr class="my-5 opacity-10">
+
+            <div class="row">
+                <!-- Soil pH -->
+                <div class="col-md-6 mb-4 reveal">
+                    <label class="dual-input-label">Soil pH Level</label>
                     <div class="slider-container">
-                        <input type="range" class="custom-slider" id="ph_slider" min="3.0" max="10.0" value="6.8"
+                        <input type="range" class="modern-range" id="ph_slider" min="3.0" max="10.0" value="6.8"
                             step="0.1" />
-                        <div class="value-indicator">
-                            <div class="range-labels">
-                                <span>3.0 (Acidic)</span>
-                                <span id="ph_status" class="status high">Neutral</span>
-                                <span>10.0 (Alkaline)</span>
-                            </div>
+                        <div class="range-labels">
+                            <span>Acidic</span>
+                            <span id="ph_status" class="status-badge status-high">Neutral</span>
+                            <span>Alkaline</span>
                         </div>
                     </div>
-                    <div class="number-input-container">
+                    <div class="number-input-container mt-3">
                         <input type="number" id="ph" name="ph" min="3.0" max="10.0" step="0.1" value="6.8" required />
-                        <span class="unit">pH</span>
+                        <span class="unit">pH Scale</span>
                     </div>
                 </div>
-                <div class="invalid-feedback"></div>
-            </div>
 
-            <!-- Optional: Moisture -->
-            <div class="dual-input-group">
-                <label class="dual-input-label">
-                    Soil Moisture (Optional)
-                    <i class="fas fa-info-circle info-icon" data-bs-toggle="tooltip"
-                        title="Current moisture level in soil (percentage)."></i>
-                </label>
-                <div class="dual-input-controls">
+                <!-- Soil Moisture -->
+                <div class="col-md-6 mb-4 reveal">
+                    <label class="dual-input-label">Soil Moisture %</label>
                     <div class="slider-container">
-                        <input type="range" class="custom-slider" id="moisture_slider" min="0" max="100" value="65"
+                        <input type="range" class="modern-range" id="moisture_slider" min="0" max="100" value="65"
                             step="1" />
-                        <div class="value-indicator">
-                            <div class="range-labels">
-                                <span>0%</span>
-                                <span id="moisture_status" class="status medium">Medium</span>
-                                <span>100%</span>
-                            </div>
+                        <div class="range-labels">
+                            <span>Dry</span>
+                            <span id="moisture_status" class="status-badge status-medium">Optimal</span>
+                            <span>Saturated</span>
                         </div>
                     </div>
-                    <div class="number-input-container">
+                    <div class="number-input-container mt-3">
                         <input type="number" id="moisture" name="moisture" min="0" max="100" step="1" value="65" />
-                        <span class="unit">%</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Optional: Temperature -->
-            <div class="dual-input-group">
-                <label class="dual-input-label">
-                    Soil Temperature (Optional)
-                    <i class="fas fa-info-circle info-icon" data-bs-toggle="tooltip"
-                        title="Current temperature of soil in Celsius."></i>
-                </label>
-                <div class="dual-input-controls">
-                    <div class="slider-container">
-                        <input type="range" class="custom-slider" id="temperature_slider" min="-10" max="50" value="22"
-                            step="0.5" />
-                        <div class="value-indicator">
-                            <div class="range-labels">
-                                <span>-10°C</span>
-                                <span id="temperature_status" class="status medium">Medium</span>
-                                <span>50°C</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="number-input-container">
-                        <input type="number" id="temperature" name="temperature" min="-10" max="50" step="0.5"
-                            value="22" />
-                        <span class="unit">°C</span>
+                        <span class="unit">% Moisture</span>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Form Actions -->
-        <div class="form-actions">
-            <button type="button" class="btn btn-outline-secondary" onclick="loadSampleData()">
-                <i class="fas fa-download me-2"></i>Load Sample Data
+        <div class="form-actions d-flex flex-wrap gap-3 justify-content-center justify-content-md-end mt-5 reveal">
+            <button type="button" class="btn btn-link text-muted text-decoration-none px-4" onclick="clearForm()">
+                <i class="fas fa-undo me-2"></i>Reset Form
             </button>
-            <button type="button" class="btn btn-outline-danger" onclick="clearForm()">
-                <i class="fas fa-times me-2"></i>Clear All
+            <button type="button" class="btn glass-panel border px-4" onclick="loadSampleData()">
+                <i class="fas fa-magic text-primary me-2"></i>Load Sample
             </button>
-            <button type="submit" id="submitBtn" class="btn btn-primary btn-lg">
-                <i class="fas fa-magic me-2"></i>Get Recommendation
+            <button type="submit" id="submitBtn" class="btn-premium px-5 py-3">
+                <i class="fas fa-chart-line me-2"></i>Generate Recommendation
             </button>
         </div>
     </form>

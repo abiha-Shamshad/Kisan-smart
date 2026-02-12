@@ -9,125 +9,154 @@
 <div class="home-container">
     <!-- Welcome Header -->
     <div class="welcome-header reveal">
-        <h1>Welcome back, <span id="userName">User</span>!</h1>
-        <p class="text-muted">Here's an overview of your fertilizer recommendations</p>
+        <h1 class="fw-bold mb-2">Hello, <span id="userName" class="text-primary">Farmer</span>!</h1>
+        <p class="text-muted fs-5">Welcome to your agricultural command center. Here is your latest data.</p>
     </div>
 
     <!-- Quick Stats Cards -->
     <div class="row g-4 mb-5">
         <!-- Total Predictions -->
-        <div class="col-lg-3 col-md-6 reveal animate-fade-in-delay-1">
-            <div class="stat-card stat-card-primary glass hover-lift">
+        <div class="col-lg-3 col-md-6 reveal animate-fade-in">
+            <div class="stat-card glass-panel hover-lift">
                 <div class="stat-icon">
                     <i class="fas fa-chart-line"></i>
                 </div>
                 <div class="stat-content">
-                    <h3 class="stat-number" data-count="0">0</h3>
-                    <p class="stat-label">Total Predictions</p>
-                    <small class="stat-sublabel text-muted">All time</small>
+                    <h3 class="stat-number" id="totalPredictionsDisplay">0</h3>
+                    <p class="stat-label">Total Reports</p>
                 </div>
             </div>
         </div>
 
         <!-- This Month -->
-        <div class="col-lg-3 col-md-6 reveal animate-fade-in-delay-2">
-            <div class="stat-card stat-card-success glass hover-lift">
-                <div class="stat-icon">
-                    <i class="fas fa-calendar-alt"></i>
+        <div class="col-lg-3 col-md-6 reveal animate-fade-in-delay-1">
+            <div class="stat-card glass-panel hover-lift">
+                <div class="stat-icon text-success">
+                    <i class="fas fa-calendar-check"></i>
                 </div>
                 <div class="stat-content">
-                    <h3 class="stat-number" data-count="0">0</h3>
+                    <h3 class="stat-number" id="monthlyPredictionsDisplay">0</h3>
                     <p class="stat-label">This Month</p>
-                    <small class="stat-sublabel stat-trend">Loading...</small>
                 </div>
             </div>
         </div>
 
         <!-- Average Confidence -->
-        <div class="col-lg-3 col-md-6 reveal animate-fade-in-delay-3">
-            <div class="stat-card stat-card-warning glass hover-lift">
-                <div class="stat-icon">
-                    <i class="fas fa-star"></i>
+        <div class="col-lg-3 col-md-6 reveal animate-fade-in-delay-2">
+            <div class="stat-card glass-panel hover-lift">
+                <div class="stat-icon text-warning">
+                    <i class="fas fa-shield-alt"></i>
                 </div>
                 <div class="stat-content">
-                    <h3 class="stat-number" data-count="0">0</h3>
-                    <span class="stat-suffix">%</span>
-                    <p class="stat-label">Avg Confidence</p>
-                    <small class="stat-sublabel text-muted">High quality</small>
+                    <h3 class="stat-number" id="avgConfidenceDisplay">0</h3>
+                    <p class="stat-label">Reliability %</p>
                 </div>
             </div>
         </div>
 
         <!-- Crops Analyzed -->
-        <div class="col-lg-3 col-md-6">
-            <div class="stat-card stat-card-info">
-                <div class="stat-icon">
-                    <i class="fas fa-seedling"></i>
+        <div class="col-lg-3 col-md-6 reveal animate-fade-in-delay-3">
+            <div class="stat-card glass-panel hover-lift">
+                <div class="stat-icon text-info">
+                    <i class="fas fa-leaf"></i>
                 </div>
                 <div class="stat-content">
-                    <h3 class="stat-number" data-count="0">0</h3>
-                    <p class="stat-label">Crops Analyzed</p>
-                    <small class="stat-sublabel text-muted">Different types</small>
+                    <h3 class="stat-number" id="cropsAnalyzedDisplay">0</h3>
+                    <p class="stat-label">Crop Types</p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Quick Actions -->
-    <div class="quick-actions mb-5">
-        <a href="/predict" class="btn btn-primary btn-lg">
-            <i class="fas fa-magic me-2"></i>New Prediction
+    <div class="d-flex flex-wrap gap-3 mb-5 reveal">
+        <a href="/predict" class="btn-premium px-4 py-3">
+            <i class="fas fa-plus-circle me-2"></i>New Prediction
         </a>
-        <a href="/history" class="btn btn-outline-primary btn-lg">
-            <i class="fas fa-history me-2"></i>View Full History
+        <a href="/history" class="btn glass-panel px-4 py-3">
+            <i class="fas fa-history me-2"></i>View History
         </a>
-        <button class="btn btn-outline-secondary btn-lg" onclick="HomeDashboard.exportAll()">
-            <i class="fas fa-download me-2"></i>Export All Data
+        <button class="btn glass-panel px-4 py-3" onclick="HomeDashboard.exportAll()">
+            <i class="fas fa-file-export me-2"></i>Export Data
         </button>
     </div>
 
-    <!-- Recent Activity -->
-    <div class="card recent-activity reveal glass">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Recent Predictions</h5>
-            <a href="/history" class="btn btn-sm btn-outline-primary">View All</a>
+    <div class="row">
+        <!-- Recent Activity -->
+        <div class="col-lg-8 mb-4">
+            <div class="card glass-panel recent-activity reveal h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold"><i class="fas fa-clipboard-list me-2 text-primary"></i>Recent Reports</h5>
+                    <a href="/history" class="text-decoration-none small fw-bold">View Full History <i
+                            class="fas fa-chevron-right ms-1"></i></a>
+                </div>
+                <div class="card-body p-0">
+                    <div id="recentActivityContainer">
+                        <!-- Loading state -->
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-            <div id="recentActivityContainer">
-                <!-- Loading state -->
-                <div class="text-center py-4">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
+
+        <!-- Stats Overview -->
+        <div class="col-lg-4 mb-4">
+            <div class="card glass-panel reveal h-100">
+                <div class="card-header">
+                    <h5 class="mb-0 fw-bold"><i class="fas fa-chart-pie me-2 text-primary"></i>Quick Summary</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small">Your AI-driven insights are helping optimize soil health and increase
+                        crop yield.</p>
+                    <div class="mt-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="small fw-semibold">Soil Health Index</span>
+                            <span class="small text-success fw-bold">Good</span>
+                        </div>
+                        <div class="progress" style="height: 6px; background: var(--border);">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="small fw-semibold">Data Accuracy</span>
+                            <span class="small text-primary fw-bold">98%</span>
+                        </div>
+                        <div class="progress" style="height: 6px; background: var(--border);">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: 98%"></div>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-3 rounded-3" style="background: hsla(142, 60%, 50%, 0.1);">
+                        <p class="x-small mb-0 text-success fw-bold"><i class="fas fa-lightbulb me-2"></i>AI Tip:</p>
+                        <p class="x-small mb-0 text-muted">Consider checking Nitrogen levels for your Wheat crop next
+                            week based on local weather trends.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Dashboard Charts (Optional) -->
-    <div class="row mt-5" id="chartsSection" style="display: none;">
+    <!-- Charts Section -->
+    <div class="row mt-4" id="chartsSection" style="display: none;">
         <div class="col-md-6 mb-4">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Predictions Over Time</h5>
-                </div>
-                <div class="card-body">
-                    <canvas id="timelineChart" height="250"></canvas>
-                </div>
+            <div class="card glass-panel h-100 p-3">
+                <h5 class="fw-bold mb-4"><i class="fas fa-chart-line me-2 text-primary"></i>Reports Timeline</h5>
+                <canvas id="timelineChart" height="250"></canvas>
             </div>
         </div>
 
         <div class="col-md-6 mb-4">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Predictions by Crop</h5>
-                </div>
-                <div class="card-body">
-                    <canvas id="cropChart" height="250"></canvas>
-                </div>
+            <div class="card glass-panel h-100 p-3">
+                <h5 class="fw-bold mb-4"><i class="fas fa-chart-bar me-2 text-primary"></i>Crops Distribution</h5>
+                <canvas id="cropChart" height="250"></canvas>
             </div>
         </div>
     </div>
+</div>
 </div>
 {% endblock %}
 

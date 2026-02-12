@@ -1,0 +1,112 @@
+/* ============================================
+   KISAN SMART - PREMIUM HOME DASHBOARD
+   ============================================ */
+
+.home-container {
+    padding-bottom: 5rem;
+}
+
+.welcome-header {
+    margin-bottom: 3rem;
+    padding: 3rem 0;
+}
+
+.welcome-header h1 {
+    font-family: var(--font-poppins);
+    font-weight: 700;
+    font-size: 3rem;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+
+/* Stat Cards */
+.stat-card {
+    position: relative;
+    padding: 2rem;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    overflow: hidden;
+    transition: var(--transition-base);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    background: var(--glass-bg);
+    color: var(--primary);
+    box-shadow: var(--shadow-sm);
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0;
+    line-height: 1;
+    color: var(--foreground);
+}
+
+.stat-label {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--muted-foreground);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Card Variations */
+.stat-card-primary .stat-icon {
+    color: var(--primary);
+}
+
+.stat-card-success .stat-icon {
+    color: #10b981;
+}
+
+.stat-card-warning .stat-icon {
+    color: #f59e0b;
+}
+
+.stat-card-info .stat-icon {
+    color: #0ea5e9;
+}
+
+/* Recent Activity */
+.recent-activity {
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.recent-activity .card-header {
+    background: transparent;
+    border-bottom: 1px solid var(--glass-border);
+    padding: 1.5rem 2rem;
+}
+
+.activity-item {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--glass-border);
+    transition: background 0.3s var(--ease);
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-item:hover {
+    background: hsla(142, 60%, 50%, 0.05);
+}
+
+/* Charts Section */
+#chartsSection .card {
+    border-radius: var(--radius);
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+}

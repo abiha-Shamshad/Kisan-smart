@@ -1,0 +1,168 @@
+/* ============================================
+   KISAN SMART - PREMIUM DASHBOARD
+   ============================================ */
+
+.dashboard-container {
+    padding-bottom: 4rem;
+}
+
+.page-header {
+    margin-bottom: 2.5rem;
+    padding: 2rem 0;
+}
+
+.page-header h1 {
+    font-family: var(--font-poppins);
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.form-section {
+    margin-bottom: 2rem;
+    padding: 2rem;
+    border-radius: var(--radius);
+    transition: var(--transition-base);
+}
+
+.form-section:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.form-section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.form-section-header i {
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+.form-section-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+/* Dual Input Group Stylings */
+.dual-input-group {
+    margin-bottom: 2.5rem;
+}
+
+.dual-input-label {
+    display: block;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.dual-input-controls {
+    display: grid;
+    grid-template-columns: 1fr 140px;
+    gap: 2rem;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .dual-input-controls {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+.slider-container {
+    padding: 0.5rem 0;
+}
+
+.range-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+}
+
+.status-low {
+    background: hsla(0, 84%, 60%, 0.2);
+    color: #ef4444;
+}
+
+.status-medium {
+    background: hsla(45, 93%, 47%, 0.2);
+    color: #f59e0b;
+}
+
+.status-high {
+    background: hsla(142, 76%, 36%, 0.2);
+    color: #16a34a;
+}
+
+.number-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.number-input-container input {
+    width: 100%;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 10px 45px 10px 15px;
+    font-weight: 600;
+    text-align: right;
+    color: var(--foreground);
+}
+
+.number-input-container .unit {
+    position: absolute;
+    right: 15px;
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
+    pointer-events: none;
+}
+
+/* Prediction Result Cards */
+.prediction-loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: hsla(222, 47%, 4%, 0.9);
+    backdrop-filter: blur(8px);
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+}
+
+.loading-spinner {
+    width: 80px;
+    height: 80px;
+    border: 4px solid var(--glass-border);
+    border-top: 4px solid var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 2rem;
+}
+
+.prediction-loading.hidden {
+    display: none;
+}
