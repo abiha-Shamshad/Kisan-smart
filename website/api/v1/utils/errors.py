@@ -19,7 +19,7 @@ def register_error_handlers(app):
     def handle_generic_exception(e):
         current_app.logger.error(f"Unhandled Exception: {str(e)}", exc_info=True)
         return error_response(
-            "An unexpected error occurred", "INTERNAL_SERVER_ERROR", None, 500
+            f"An unexpected error occurred: {str(e)}", "INTERNAL_SERVER_ERROR", None, 500
         )
 
     @app.errorhandler(429)

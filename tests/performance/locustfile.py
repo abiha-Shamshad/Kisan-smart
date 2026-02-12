@@ -27,6 +27,7 @@ class KisanSmartUser(HttpUser):
             "/api/v1/auth/register",
             json={
                 "username": self.username,
+                "full_name": "Load Test User",
                 "email": f"{self.username}@loadtest.com",
                 "password": self.password,
             },
@@ -93,6 +94,7 @@ class KisanSmartUser(HttpUser):
                 "moisture": random.uniform(50, 80),
                 "temperature": random.uniform(15, 30),
                 "farm_area": random.uniform(1, 10),
+                "growth_stage": "Vegetative",
             }
 
             with self.client.post(
@@ -127,30 +129,4 @@ class KisanSmartUser(HttpUser):
                     response.failure(f"Got status code {response.status_code}")
 
 
-class AdminUser(HttpUser):
-    """
-    Simulates an admin user with different behavior
-    """
-
-    wait_time = between(2, 5)
-
-    def on_start(self):
-        """Login as admin"""
-        # Admin login
-        response = self.client.post(
-            "/api/v1/auth/login",
-            json={"email": "admin@kisan.smart", "password": "AdminPassword123!"},
-        )
-
-        if response.status_code == 200:
-            self.token = response.json()["data"]["access_token"]
-            self.headers = {"Authorization": f"Bearer {self.token}"}
-        else:
-            self.token = None
-            self.headers = {}
-
-    @task
-    def view_all_users(self):
-        """View all users (admin only)"""
-        if self.token:
-            self.client.get("/api/v1/admin/users", headers=self.headers)
+# Removed AdminUser as it is not yet implemented

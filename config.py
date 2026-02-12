@@ -11,10 +11,13 @@ class Config:
         "DATABASE_URL", "postgresql://postgres:password@localhost:5432/kisan_smart"
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    RATELIMIT_ENABLED = os.environ.get("RATELIMIT_ENABLED", "True") == "True"
 
     # JWT Configuration
     JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "jwt-dev-key")
     JWT_ACCESS_TOKEN_EXPIRES = 3600  # 1 hour
+    MAIL_DEFAULT_SENDER = os.environ.get("MAIL_DEFAULT_SENDER", "noreply@kisan-smart.com")
+    MAIL_SUPPRESS_SEND = True # Don't send emails during development/load tests
 
     # Mail Configuration
     MAIL_SERVER = "smtp.googlemail.com"
