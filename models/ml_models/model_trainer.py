@@ -8,6 +8,7 @@ from sklearn.metrics import (
     mean_absolute_error,
     mean_squared_error,
 )
+from sklearn.preprocessing import LabelEncoder
 import joblib
 import pandas as pd
 import numpy as np
@@ -42,13 +43,18 @@ class ModelTrainer:
                 ),
             }
         self.trained_models = {}
+        self.label_encoder = LabelEncoder() if mode == "classification" else None
 
     def train_all(self, X_train, y_train):
         """Trains all configured models."""
         print(f"--- Starting {self.mode.capitalize()} Model Training ---")
+        y_train_encoded = y_train
+        if self.mode == "classification":
+            y_train_encoded = self.label_encoder.fit_transform(y_train)
+
         for name, model in self.models.items():
             print(f"Training {name}...")
-            model.fit(X_train, y_train)
+            model.fit(X_train, y_train_encoded)
             self.trained_models[name] = model
         print("Training completed.")
 
@@ -59,7 +65,8 @@ class ModelTrainer:
         for name, model in self.trained_models.items():
             y_pred = model.predict(X_val)
             if self.mode == "classification":
-                score = accuracy_score(y_val, y_pred)
+                y_val_encoded = self.label_encoder.transform(y_val)
+                score = accuracy_score(y_val_encoded, y_pred)
                 print(f"{name} Accuracy: {score:.4f}")
                 results.append({"Model": name, "Accuracy": score})
             else:
@@ -78,6 +85,11 @@ class ModelTrainer:
         os.makedirs(os.path.dirname(path), exist_ok=True)
         joblib.dump(self.trained_models[model_name], path)
         print(f"Model {model_name} saved to {path}")
+        
+        if self.label_encoder:
+            le_path = os.path.join(os.path.dirname(path), "label_encoder.pkl")
+            joblib.dump(self.label_encoder, le_path)
+            print(f"Label encoder saved to {le_path}")
 
 
 if __name__ == "__main__":

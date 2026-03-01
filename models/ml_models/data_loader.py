@@ -27,7 +27,7 @@ class DataLoader:
         return self.df
 
     def split_data(
-        self, target_col="Fertilizer", test_size=0.15, val_size=0.15, random_state=42
+        self, target_col="Fertilizer Name", test_size=0.15, val_size=0.15, random_state=42
     ):
         """Splits data into train, validation, and test sets with stratification if applicable."""
         if self.df is None:
@@ -37,8 +37,8 @@ class DataLoader:
             raise ValueError(f"Target column '{target_col}' not found in dataset.")
 
         X = self.df.drop(
-            columns=["Fertilizer", "Quantity"]
-        )  # Drop both possible targets
+            columns=[target_col]
+        )
         y = self.df[target_col]
 
         # Use stratification only for classification (discrete targets)

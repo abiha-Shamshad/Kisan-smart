@@ -78,15 +78,14 @@ if __name__ == "__main__":
     # Example usage
     fe = FeatureEngineer()
     num_cols = [
-        "Nitrogen",
-        "Phosphorus",
-        "Potassium",
-        "pH",
+        "Temparature",
+        "Humidity ",
         "Moisture",
-        "Temperature",
-        "Farm_Area",
+        "Nitrogen",
+        "Potassium",
+        "Phosphorous",
     ]
-    cat_cols = ["Crop_Type", "Growth_Stage"]
+    cat_cols = ["Soil Type", "Crop Type"]
     fe.create_pipeline(num_cols, cat_cols)
     print("Pipeline created successfully.")
 
