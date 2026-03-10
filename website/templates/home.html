@@ -6,156 +6,173 @@
 {% endblock %}
 
 {% block content %}
-<div class="home-container">
-    <!-- Welcome Header -->
-    <div class="welcome-header reveal">
-        <h1 class="fw-bold mb-2">Hello, <span id="userName" class="text-primary">Farmer</span>!</h1>
-        <p class="text-muted fs-5">Welcome to your agricultural command center. Here is your latest data.</p>
-    </div>
-
-    <!-- Quick Stats Cards -->
-    <div class="row g-4 mb-5">
-        <!-- Total Predictions -->
-        <div class="col-lg-3 col-md-6 reveal animate-fade-in">
-            <div class="stat-card glass-panel hover-lift">
-                <div class="stat-icon">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <div class="stat-content">
-                    <h3 class="stat-number" id="totalPredictionsDisplay">0</h3>
-                    <p class="stat-label">Total Reports</p>
-                </div>
+<div class="landing-wrapper">
+    <!-- Hero Section -->
+    <section class="hero-section reveal">
+        <div class="container">
+            <div class="badge-ai">
+                <i class="fas fa-seedling"></i> AI-Powered Agriculture
+            </div>
+            <h1 class="hero-title">
+                Smart Fertilizer
+                <span class="text-gradient">Recommendations</span>
+            </h1>
+            <p class="hero-subtitle">
+                Optimize soil nutrients and maximize crop yield with machine learning. 
+                Make data-driven decisions for better harvests.
+            </p>
+            <div class="hero-actions">
+                <a href="/predict" class="btn-start-analysis">
+                    Start Analysis <i class="fas fa-arrow-right"></i>
+                </a>
+                <a href="#features" class="btn-learn-more">Learn More</a>
             </div>
         </div>
+    </section>
 
-        <!-- This Month -->
-        <div class="col-lg-3 col-md-6 reveal animate-fade-in-delay-1">
-            <div class="stat-card glass-panel hover-lift">
-                <div class="stat-icon text-success">
-                    <i class="fas fa-calendar-check"></i>
+    <!-- Stats Section -->
+    <section class="stats-section reveal">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number-large">50,000+</div>
+                        <div class="stat-label-large">Farmers Served</div>
+                    </div>
                 </div>
-                <div class="stat-content">
-                    <h3 class="stat-number" id="monthlyPredictionsDisplay">0</h3>
-                    <p class="stat-label">This Month</p>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number-large">2M+</div>
+                        <div class="stat-label-large">Acres Analyzed</div>
+                    </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Average Confidence -->
-        <div class="col-lg-3 col-md-6 reveal animate-fade-in-delay-2">
-            <div class="stat-card glass-panel hover-lift">
-                <div class="stat-icon text-warning">
-                    <i class="fas fa-shield-alt"></i>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number-large">95%</div>
+                        <div class="stat-label-large">Accuracy Rate</div>
+                    </div>
                 </div>
-                <div class="stat-content">
-                    <h3 class="stat-number" id="avgConfidenceDisplay">0</h3>
-                    <p class="stat-label">Reliability %</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Crops Analyzed -->
-        <div class="col-lg-3 col-md-6 reveal animate-fade-in-delay-3">
-            <div class="stat-card glass-panel hover-lift">
-                <div class="stat-icon text-info">
-                    <i class="fas fa-leaf"></i>
-                </div>
-                <div class="stat-content">
-                    <h3 class="stat-number" id="cropsAnalyzedDisplay">0</h3>
-                    <p class="stat-label">Crop Types</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Quick Actions -->
-    <div class="d-flex flex-wrap gap-3 mb-5 reveal">
-        <a href="/predict" class="btn-premium px-4 py-3">
-            <i class="fas fa-plus-circle me-2"></i>New Prediction
-        </a>
-        <a href="/history" class="btn glass-panel px-4 py-3">
-            <i class="fas fa-history me-2"></i>View History
-        </a>
-        <button class="btn glass-panel px-4 py-3" onclick="HomeDashboard.exportAll()">
-            <i class="fas fa-file-export me-2"></i>Export Data
-        </button>
-    </div>
-
-    <div class="row">
-        <!-- Recent Activity -->
-        <div class="col-lg-8 mb-4">
-            <div class="card glass-panel recent-activity reveal h-100">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0 fw-bold"><i class="fas fa-clipboard-list me-2 text-primary"></i>Recent Reports</h5>
-                    <a href="/history" class="text-decoration-none small fw-bold">View Full History <i
-                            class="fas fa-chevron-right ms-1"></i></a>
-                </div>
-                <div class="card-body p-0">
-                    <div id="recentActivityContainer">
-                        <!-- Loading state -->
-                        <div class="text-center py-5">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                        </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number-large">40%</div>
+                        <div class="stat-label-large">Yield Increase</div>
                     </div>
                 </div>
             </div>
         </div>
+    </section>
 
-        <!-- Stats Overview -->
-        <div class="col-lg-4 mb-4">
-            <div class="card glass-panel reveal h-100">
-                <div class="card-header">
-                    <h5 class="mb-0 fw-bold"><i class="fas fa-chart-pie me-2 text-primary"></i>Quick Summary</h5>
-                </div>
-                <div class="card-body">
-                    <p class="text-muted small">Your AI-driven insights are helping optimize soil health and increase
-                        crop yield.</p>
-                    <div class="mt-4">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="small fw-semibold">Soil Health Index</span>
-                            <span class="small text-success fw-bold">Good</span>
+    <!-- Features Section -->
+    <section id="features" class="features-section reveal">
+        <div class="container">
+            <div class="section-header">
+                <h2>Powerful Features</h2>
+                <p class="text-muted">Everything you need to make informed decisions about your farm's nutrition management.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon-wrapper">
+                            <i class="fas fa-brain"></i>
                         </div>
-                        <div class="progress" style="height: 6px; background: var(--border);">
-                            <div class="progress-bar bg-success" role="progressbar" style="width: 75%"></div>
-                        </div>
-                    </div>
-                    <div class="mt-4">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="small fw-semibold">Data Accuracy</span>
-                            <span class="small text-primary fw-bold">98%</span>
-                        </div>
-                        <div class="progress" style="height: 6px; background: var(--border);">
-                            <div class="progress-bar bg-primary" role="progressbar" style="width: 98%"></div>
-                        </div>
-                    </div>
-                    <div class="mt-4 p-3 rounded-3" style="background: hsla(142, 60%, 50%, 0.1);">
-                        <p class="x-small mb-0 text-success fw-bold"><i class="fas fa-lightbulb me-2"></i>AI Tip:</p>
-                        <p class="x-small mb-0 text-muted">Consider checking Nitrogen levels for your Wheat crop next
-                            week based on local weather trends.</p>
+                        <h4>AI Soil Analysis</h4>
+                        <p>Advanced machine learning algorithms analyze your soil data to provide accurate nutrient recommendations.</p>
                     </div>
                 </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon-wrapper">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <h4>Smart Fertilizer Planning</h4>
+                        <p>Get precise fertilizer quantities and application timing tailored to your specific crop and soil conditions.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon-wrapper">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <h4>Crop Recommendations</h4>
+                        <p>Discover the best crops for your soil type and climate conditions to maximize your yield.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon-wrapper">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <h4>Historical Tracking</h4>
+                        <p>Keep track of all your soil tests and recommendations over time for better decision making.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon-wrapper">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h4>Real-Time Monitoring</h4>
+                        <p>Visual dashboards show your soil nutrient levels and health status at a glance.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon-wrapper">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <h4>Sustainability Focus</h4>
+                        <p>Optimize fertilizer use to reduce environmental impact while maintaining high crop yields.</p>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Charts Section -->
-    <div class="row mt-4" id="chartsSection" style="display: none;">
-        <div class="col-md-6 mb-4">
-            <div class="card glass-panel h-100 p-3">
-                <h5 class="fw-bold mb-4"><i class="fas fa-chart-line me-2 text-primary"></i>Reports Timeline</h5>
-                <canvas id="timelineChart" height="250"></canvas>
+    <!-- How It Works Section -->
+    <section class="how-it-works reveal">
+        <div class="container">
+            <div class="section-header">
+                <h2>How It Works</h2>
+                <p class="text-muted">Get personalized fertilizer recommendations in three simple steps.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <h5>Enter Soil Data</h5>
+                        <p>Input your soil test results including NPK levels, pH value, crop type, and farm size.</p>
+                        <div class="step-line d-none d-md-block"></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <h5>AI Analysis</h5>
+                        <p>Our ML model processes your data against thousands of agricultural datasets to find patterns.</p>
+                        <div class="step-line d-none d-md-block"></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <h5>Get Fertilizer Plan</h5>
+                        <p>Receive detailed recommendations with confidence scores and application instructions.</p>
+                    </div>
+                </div>
             </div>
         </div>
+    </section>
 
-        <div class="col-md-6 mb-4">
-            <div class="card glass-panel h-100 p-3">
-                <h5 class="fw-bold mb-4"><i class="fas fa-chart-bar me-2 text-primary"></i>Crops Distribution</h5>
-                <canvas id="cropChart" height="250"></canvas>
-            </div>
+    <!-- CTA Banner Section -->
+    <section class="container mb-5 reveal">
+        <div class="cta-banner">
+            <h2>Ready to Transform Your Farm?</h2>
+            <p>Join thousands of farmers who are using AI to optimize their crop yields and reduce costs.</p>
+            <a href="/register" class="btn-cta-main">
+                Start Free Analysis <i class="fas fa-arrow-right"></i>
+            </a>
         </div>
-    </div>
+    </section>
 </div>
 </div>
 {% endblock %}

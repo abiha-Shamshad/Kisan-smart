@@ -22,6 +22,16 @@
 /* 3D Rotation */
 .rotate-y-180 {
     transform: rotateY(180deg);
+
+    .hover-white:hover {
+        color: white !important;
+        transition: color 0.3s ease;
+    }
+
+    .hover-primary:hover {
+        color: var(--primary) !important;
+        transition: color 0.3s ease;
+    }
 }
 
 .rotate-x-12 {
