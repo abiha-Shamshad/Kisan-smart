@@ -2,7 +2,7 @@ from marshmallow import Schema, fields, validate
 
 
 class RegisterSchema(Schema):
-    full_name = fields.Str(required=True, validate=validate.Length(min=2, max=100))
+    full_name = fields.Str(required=False, validate=validate.Length(min=2, max=100))
     username = fields.Str(validate=validate.Length(min=3, max=50))
     email = fields.Email(required=True)
     password = fields.Str(required=True, validate=validate.Length(min=8))
@@ -12,6 +12,7 @@ class RegisterSchema(Schema):
 class LoginSchema(Schema):
     email = fields.Email(required=True)
     password = fields.Str(required=True)
+    remember_me = fields.Boolean(load_default=False)
 
 
 class UserSchema(Schema):

@@ -1,0 +1,409 @@
+/* ============================================
+   KISAN SMART - 3D & ANIMATION UTILITIES
+   ============================================ */
+
+/* === 3D TRANSFORM UTILITIES === */
+.transform-3d {
+    transform-style: preserve-3d;
+}
+
+.perspective {
+    perspective: 1000px;
+}
+
+.perspective-lg {
+    perspective: 1500px;
+}
+
+.backface-hidden {
+    backface-visibility: hidden;
+}
+
+/* 3D Rotation */
+.rotate-y-180 {
+    transform: rotateY(180deg);
+
+    .hover-white:hover {
+        color: white !important;
+        transition: color 0.3s ease;
+    }
+
+    .hover-primary:hover {
+        color: var(--primary) !important;
+        transition: color 0.3s ease;
+    }
+}
+
+.rotate-x-12 {
+    transform: rotateX(12deg);
+}
+
+/* === GLASSMORPHISM EFFECTS === */
+.glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-strong {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-dark {
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+}
+
+/* === SMOOTH SCROLLING === */
+html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* === CUSTOM SCROLLBAR === */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(229, 231, 235, 0.3);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #22c55e, #10b981);
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to bottom, #16a34a, #059669);
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-track {
+    background: rgba(51, 65, 85, 0.3);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #34d399, #059669);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to bottom, #10b981, #047857);
+}
+
+/* === RANGE INPUT STYLING === */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(to right,
+            var(--primary) 0%,
+            var(--primary) var(--value, 50%),
+            var(--muted) var(--value, 50%),
+            var(--muted) 100%);
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+input[type="range"]:hover {
+    box-shadow: 0 0 8px rgba(34, 197, 94, 0.3);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+}
+
+input[type="range"]::-webkit-slider-thumb:active {
+    transform: scale(1.1);
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+}
+
+input[type="range"]::-moz-range-thumb:active {
+    transform: scale(1.1);
+}
+
+/* === ANIMATED GRADIENTS === */
+@keyframes gradient-shift {
+
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+.animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient-shift 10s ease infinite;
+}
+
+.animate-gradient-fast {
+    background-size: 200% 200%;
+    animation: gradient-shift 5s ease infinite;
+}
+
+/* === PULSE ANIMATIONS === */
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* === BOUNCE ANIMATIONS === */
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.animate-bounce {
+    animation: bounce 1s ease-in-out infinite;
+}
+
+/* === FLOAT ANIMATIONS === */
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+/* === FADE IN ANIMATIONS === */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animate-fade-in-delay-1 {
+    animation: fadeIn 0.6s ease-out 0.2s forwards;
+    opacity: 0;
+}
+
+.animate-fade-in-delay-2 {
+    animation: fadeIn 0.6s ease-out 0.4s forwards;
+    opacity: 0;
+}
+
+.animate-fade-in-delay-3 {
+    animation: fadeIn 0.6s ease-out 0.6s forwards;
+    opacity: 0;
+}
+
+/* === SLIDE IN ANIMATIONS === */
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.animate-slide-in-left {
+    animation: slideInLeft 0.6s ease-out forwards;
+}
+
+.animate-slide-in-right {
+    animation: slideInRight 0.6s ease-out forwards;
+}
+
+/* === SCALE ANIMATIONS === */
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.animate-scale-in {
+    animation: scaleIn 0.4s ease-out forwards;
+}
+
+/* === SHIMMER EFFECT === */
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+.shimmer {
+    background: linear-gradient(90deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.2) 20%,
+            rgba(255, 255, 255, 0.5) 60%,
+            rgba(255, 255, 255, 0));
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite;
+}
+
+/* === HOVER EFFECTS === */
+.hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.hover-grow {
+    transition: transform 0.3s ease;
+}
+
+.hover-grow:hover {
+    transform: scale(1.05);
+}
+
+.hover-glow {
+    transition: box-shadow 0.3s ease;
+}
+
+.hover-glow:hover {
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+}
+
+/* === LOADING SPINNER === */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* === SKELETON LOADER === */
+@keyframes skeleton-loading {
+    0% {
+        background-position: -200px 0;
+    }
+
+    100% {
+        background-position: calc(200px + 100%) 0;
+    }
+}
+
+.skeleton {
+    background: linear-gradient(90deg,
+            var(--muted) 0px,
+            rgba(229, 229, 229, 0.8) 40px,
+            var(--muted) 80px);
+    background-size: 200px 100%;
+    animation: skeleton-loading 1.4s ease infinite;
+}

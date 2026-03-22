@@ -1,0 +1,263 @@
+{% extends "base.html" %}
+{% block title %}Register - Kisan Smart{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper d-flex align-items-center justify-content-center"
+    style="min-height: 90vh; padding: 40px 20px;">
+    <div class="glass-panel p-4 p-md-5 reveal" style="max-width: 800px; width: 100%;">
+        <div class="text-center mb-4">
+            <div class="brand-icon mb-3 float" style="font-size: 3rem; color: var(--primary);">
+                <i class="fas fa-seedling"></i>
+            </div>
+            <h2 class="fw-bold" style="font-family: var(--font-poppins);">Create Your Account</h2>
+            <p class="text-muted">Start optimizing your crop yield with AI-driven insights</p>
+        </div>
+
+        <form id="registerForm">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="username" class="form-label fw-semibold">Username *</label>
+                    <input type="text" class="input-premium w-100" id="username" name="username" placeholder="johndoe"
+                        required />
+                    <div class="invalid-feedback"></div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="email" class="form-label fw-semibold">Email Address *</label>
+                    <input type="email" class="input-premium w-100" id="email" name="email"
+                        placeholder="john@example.com" required />
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="full_name" class="form-label fw-semibold">Full Name</label>
+                    <input type="text" class="input-premium w-100" id="full_name" name="full_name"
+                        placeholder="John Doe" />
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="phone_number" class="form-label fw-semibold">Phone Number</label>
+                    <input type="tel" class="input-premium w-100" id="phone_number" name="phone_number"
+                        placeholder="+1 (555) 000-0000" />
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="password" class="form-label fw-semibold">Password *</label>
+                    <div class="password-input-wrapper position-relative">
+                        <input type="password" class="input-premium w-100" id="password" name="password"
+                            placeholder="••••••••" required />
+                        <button type="button"
+                            class="password-toggle position-absolute end-0 top-50 translate-middle-y border-0 bg-transparent px-3 py-2 text-muted">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="invalid-feedback"></div>
+
+                    <div class="password-strength mt-2">
+                        <div class="password-strength-bar"
+                            style="height: 4px; background: var(--border); border-radius: 2px; overflow: hidden;">
+                            <div id="strength-fill" class="password-strength-fill"
+                                style="height: 100%; width: 0; transition: width 0.3s var(--ease);"></div>
+                        </div>
+                        <small id="strength-label" class="text-muted x-small"></small>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="confirm_password" class="form-label fw-semibold">Confirm Password *</label>
+                    <div class="password-input-wrapper position-relative">
+                        <input type="password" class="input-premium w-100" id="confirm_password" name="confirm_password"
+                            placeholder="••••••••" required />
+                        <button type="button"
+                            class="password-toggle position-absolute end-0 top-50 translate-middle-y border-0 bg-transparent px-3 py-2 text-muted">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+
+            <div class="form-check mb-4">
+                <input type="checkbox" class="form-check-input" id="terms" required />
+                <label class="form-check-label small" for="terms">
+                    I agree to the <a href="/terms" target="_blank" class="fw-semibold"
+                        style="color: var(--primary);">Terms and Conditions</a>
+                </label>
+            </div>
+
+            <button type="submit" id="submitBtn" class="btn-premium w-100 py-3 mb-3">
+                <i class="fas fa-user-plus me-2"></i>Create Account
+            </button>
+        </form>
+
+        <div class="text-center">
+            <p class="small text-muted mb-0">Already have an account? <a href="/login"
+                    class="fw-bold text-decoration-none" style="color: var(--primary);">Sign In</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('registerForm');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirm_password');
+        const usernameInput = document.getElementById('username');
+        const emailInput = document.getElementById('email');
+        const phoneInput = document.getElementById('phone_number');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Real-time password strength indicator
+        passwordInput.addEventListener('input', function () {
+            const password = this.value;
+            const checks = Validators.validatePassword(password);
+            const strengthInfo = Validators.getPasswordStrengthInfo(password);
+
+            // Update strength bar
+            const strengthFill = document.getElementById('strength-fill');
+            const strengthLabel = document.getElementById('strength-label');
+
+            strengthFill.className = `password-strength-fill ${strengthInfo.class}`;
+            strengthLabel.textContent = password ? `Strength: ${strengthInfo.label}` : '';
+
+            // Update requirements
+            document.getElementById('req-length').classList.toggle('met', checks.length);
+            document.getElementById('req-uppercase').classList.toggle('met', checks.uppercase);
+            document.getElementById('req-lowercase').classList.toggle('met', checks.lowercase);
+            document.getElementById('req-number').classList.toggle('met', checks.number);
+            document.getElementById('req-special').classList.toggle('met', checks.special);
+        });
+
+        // Real-time validation on blur
+        usernameInput.addEventListener('blur', function () {
+            const result = Validators.validateUsername(this.value);
+            if (!result.valid) {
+                ValidationUI.showFieldError('username', result.message);
+            } else {
+                ValidationUI.showFieldSuccess('username');
+            }
+        });
+
+        emailInput.addEventListener('blur', function () {
+            const result = Validators.validateEmail(this.value);
+            if (!result.valid) {
+                ValidationUI.showFieldError('email', result.message);
+            } else {
+                ValidationUI.showFieldSuccess('email');
+            }
+        });
+
+        phoneInput.addEventListener('blur', function () {
+            if (this.value) {
+                const result = Validators.validatePhoneNumber(this.value);
+                if (!result.valid) {
+                    ValidationUI.showFieldError('phone_number', result.message);
+                } else {
+                    ValidationUI.showFieldSuccess('phone_number');
+                }
+            }
+        });
+
+        confirmPasswordInput.addEventListener('input', function () {
+            const result = Validators.validatePasswordMatch(passwordInput.value, this.value);
+            if (this.value && !result.valid) {
+                ValidationUI.showFieldError('confirm_password', result.message);
+            } else if (this.value) {
+                ValidationUI.showFieldSuccess('confirm_password');
+            }
+        });
+
+        // Form submission
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            // Clear previous errors
+            ValidationUI.clearAllFeedback('registerForm');
+
+            // Validate all fields
+            const username = usernameInput.value;
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+            const phone = phoneInput.value;
+
+            let isValid = true;
+
+            // Validate username
+            const usernameResult = Validators.validateUsername(username);
+            if (!usernameResult.valid) {
+                ValidationUI.showFieldError('username', usernameResult.message);
+                isValid = false;
+            }
+
+            // Validate email
+            const emailResult = Validators.validateEmail(email);
+            if (!emailResult.valid) {
+                ValidationUI.showFieldError('email', emailResult.message);
+                isValid = false;
+            }
+
+            // Validate password strength
+            const checks = Validators.validatePassword(password);
+            const allChecksPassed = Object.values(checks).every(Boolean);
+            if (!allChecksPassed) {
+                ValidationUI.showFieldError('password', 'Password does not meet all requirements');
+                isValid = false;
+            }
+
+            // Validate password match
+            const matchResult = Validators.validatePasswordMatch(password, confirmPassword);
+            if (!matchResult.valid) {
+                ValidationUI.showFieldError('confirm_password', matchResult.message);
+                isValid = false;
+            }
+
+            // Validate phone if provided
+            if (phone) {
+                const phoneResult = Validators.validatePhoneNumber(phone);
+                if (!phoneResult.valid) {
+                    ValidationUI.showFieldError('phone_number', phoneResult.message);
+                    isValid = false;
+                }
+            }
+
+            if (!isValid) {
+                Toast.error('Please fix the validation errors');
+                return;
+            }
+
+            // Submit to API
+            FormHelpers.setButtonLoading(submitBtn, true);
+
+            try {
+                const userData = {
+                    username: username,
+                    email: email,
+                    password: password,
+                    full_name: document.getElementById('full_name').value || null,
+                    phone_number: phone || null
+                };
+
+                const response = await api.register(userData);
+
+                Toast.success('Registration successful! Please check your email to verify your account.');
+
+                // Redirect to login after 2 seconds
+                setTimeout(() => {
+                    window.location.href = '/login';
+                }, 2000);
+
+            } catch (error) {
+                Toast.error(error.message || 'Registration failed. Please try again.');
+            } finally {
+                FormHelpers.setButtonLoading(submitBtn, false);
+            }
+        });
+    });
+</script>
+{% endblock %}

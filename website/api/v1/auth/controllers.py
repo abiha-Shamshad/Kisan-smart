@@ -26,7 +26,7 @@ def register_user():
     hashed_pw = bcrypt.generate_password_hash(data["password"]).decode("utf-8")
     new_user = User(
         username=data.get("username"),
-        full_name=data["full_name"],
+        full_name=data.get("full_name"),
         email=data["email"],
         password_hash=hashed_pw,
         phone_number=data.get("phone_number"),
