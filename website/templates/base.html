@@ -78,6 +78,9 @@
                             <li><a class="dropdown-item py-2 px-3" href="/history"><i
                                         class="fas fa-history me-2 text-primary"></i>History</a>
                             </li>
+                            <li><a class="dropdown-item py-2 px-3" href="/app/pest_alerts.html"><i
+                                        class="fas fa-bug me-2 text-primary"></i>Pest Alerts</a>
+                            </li>
                             {% if user.is_authenticated and user.role.role_name == 'Admin' %}
                             <li>
                                 <hr class="dropdown-divider opacity-10">
@@ -203,6 +206,17 @@
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
     {% block extra_js %}{% endblock %}
+
+    <!-- Service Worker for PWA Push Notifications -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/static/sw.js')
+                    .then(reg => console.log('SW registered:', reg.scope))
+                    .catch(err => console.log('SW registration failed:', err));
+            });
+        }
+    </script>
 </body>
 
 </html>

@@ -30,6 +30,13 @@ class User(db.Model, UserMixin):
     last_login_attempt = db.Column(db.DateTime(timezone=True))
     locked_until = db.Column(db.DateTime(timezone=True))
 
+    # Location & Notification Fields
+    lat = db.Column(db.Numeric(9, 6))
+    lon = db.Column(db.Numeric(9, 6))
+    crop = db.Column(db.String(50))
+    fcm_token = db.Column(db.String(512))
+    phone = db.Column(db.String(20))
+
     # Timestamps
     created_at = db.Column(db.DateTime(timezone=True), default=func.now())
     updated_at = db.Column(
@@ -110,3 +117,49 @@ class Recommendation(db.Model):
 
     # Relationships
     user = db.relationship("User", backref="recommendations")
+
+
+class PestAlertLog(db.Model):
+    __tablename__ = "pest_alert_logs"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    crop = db.Column(db.String(50), nullable=False)
+    pest_name = db.Column(db.String(100), nullable=False)
+    lat = db.Column(db.Numeric(9, 6), nullable=False)
+    lon = db.Column(db.Numeric(9, 6), nullable=False)
+    severity = db.Column(db.String(20), nullable=False)  # Low, Medium, High, Critical
+    photo_url = db.Column(db.Text)
+    reported_at = db.Column(db.DateTime(timezone=True), default=func.now())
+
+    user = db.relationship("User", backref="pest_reports")
+
+
+class PestRiskCache(db.Model):
+    __tablename__ = "pest_risk_cache"
+    id = db.Column(db.Integer, primary_key=True)
+    lat = db.Column(db.Numeric(6, 3), nullable=False)
+    lon = db.Column(db.Numeric(6, 3), nullable=False)
+    crop = db.Column(db.String(50), nullable=False)
+    pest_name = db.Column(db.String(100), nullable=False)
+    risk_score = db.Column(db.Numeric(5, 1), nullable=False)
+    severity = db.Column(db.String(20), nullable=False)
+    triggered_by = db.Column(db.Text)  # JSON string
+    assessed_at = db.Column(db.DateTime(timezone=True), default=func.now())
+    expires_at = db.Column(db.DateTime(timezone=True), nullable=False)
+
+    __table_args__ = (
+        db.UniqueConstraint("lat", "lon", "crop", "pest_name", name="uq_risk_cache"),
+    )
+
+
+class NotificationLog(db.Model):
+    __tablename__ = "notification_log"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    channel = db.Column(db.String(20), nullable=False)  # push, whatsapp, sms
+    message_type = db.Column(db.String(50), nullable=False)
+    payload = db.Column(db.Text)
+    status = db.Column(db.String(20), default="sent")
+    sent_at = db.Column(db.DateTime(timezone=True), default=func.now())
+
+    user = db.relationship("User", backref="notifications")
