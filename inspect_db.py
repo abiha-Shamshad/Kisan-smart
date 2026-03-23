@@ -1,7 +1,7 @@
 import sqlite3
 import os
 
-db_path = r"c:\Users\Each One Teach One\Desktop\Kisan smart\instance\test_kisan.db"
+db_path = os.path.join(os.getcwd(), "instance", "kisan_smart.db")
 if os.path.exists(db_path):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()

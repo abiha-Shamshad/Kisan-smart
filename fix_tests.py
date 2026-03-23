@@ -1,6 +1,6 @@
 import os
 
-path = r"c:\Users\Each One Teach One\Desktop\Kisan smart\tests\unit\test_models.py"
+path = os.path.join(os.getcwd(), "tests", "unit", "test_models.py")
 
 with open(path, "r", encoding="utf-8") as f:
     lines = f.readlines()

@@ -32,9 +32,11 @@ def process_docs():
         "tests/sprint7_testing_guide.md",
         "tests/sprint8_testing_guide.md",
         "tests/sprint9_testing_guide.md",
-        r"C:\Users\Each One Teach One\.gemini\antigravity\brain\fc4696aa-726c-4f84-b17a-fcc8a6dfd8bf\walkthrough.md",
-        r"C:\Users\Each One Teach One\.gemini\antigravity\brain\fc4696aa-726c-4f84-b17a-fcc8a6dfd8bf\implementation_plan.md",
-        r"C:\Users\Each One Teach One\.gemini\antigravity\brain\fc4696aa-726c-4f84-b17a-fcc8a6dfd8bf\task.md",
+        # These were hardcoded to a specific user's brain directory. 
+        # We now skip them or use a relative path if they were moved to docs/
+        "docs/walkthrough.md",
+        "docs/implementation_plan.md",
+        "docs/task.md",
     ]
 
     print("--- STEP 1: Copying Files ---")

@@ -1,7 +1,7 @@
 # Database Schema
 
 ## Overview
-The database uses **MySQL** with `InnoDB` engine for ACID compliance.
+The database uses **PostgreSQL** in production and **SQLite** for local development. Both are handled via the SQLAlchemy ORM for seamless switching.
 
 ## Tables
 
@@ -9,12 +9,12 @@ The database uses **MySQL** with `InnoDB` engine for ACID compliance.
 Stores user account information.
 | Column | Type | Constraints | Description |
 |---|---|---|---|
-| `id` | INT | PK, Auto Inc | Unique ID |
-| `username` | VARCHAR(50) | Unique, Not Null | Login name |
+| `id` | SERIAL / INT | PK | Unique ID |
+| `username` | VARCHAR(50) | Unique | Login name |
 | `email` | VARCHAR(120) | Unique, Not Null | Contact email |
 | `password_hash` | VARCHAR(255) | Not Null | Bcrypt hash |
-| `is_admin` | BOOLEAN | Default False | Role flag |
-| `created_at` | DATETIME | Default Now | Timestamp |
+| `role_id` | INT | FK -> roles.id | Role reference (1=Admin, 2=User) |
+| `created_at` | TIMESTAMP | Default Now | Creation date |
 
 ### 2. `recommendations`
 Stores prediction history.

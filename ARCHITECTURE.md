@@ -15,10 +15,12 @@ Kisan Smart is a web-based application built on the **Flask** microframework, fo
 - **SQLAlchemy (ORM)**: Database abstraction.
 - **Pandas/Scikit-Learn**: Data processing and inference.
 
-### 3. Database (MySQL)
-- **Users**: Authentication data.
-- **Recommendations**: History of predictions.
-- **Crops/Fertilizers**: Static reference data.
+### 3. Database (PostgreSQL / SQLite)
+- **Production**: PostgreSQL for reliability and performance.
+- **Development/Testing**: SQLite for simplicity and portability.
+- **Users**: Authentication data with role mapping.
+- **Recommendations**: Prediction history and audit logs.
+- **Pest Alerts**: Risk assessments and sighting reports.
 
 ### 4. Machine Learning
 - **Models**: Random Forest (Classifier), Regression models.

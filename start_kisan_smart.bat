@@ -1,5 +1,6 @@
 @echo off
 setlocal
+cd /d "%~dp0"
 
 :: ── Kisan Smart Startup Script (Windows Optimized) ──────────────────────────
 :: This script starts the Flask backend and background services (Celery/Beat).
@@ -8,6 +9,9 @@ setlocal
 echo ==========================================================
 echo           Starting Kisan Smart — System Launch
 echo ==========================================================
+
+:: Set Python path to current directory to ensure modules are found
+set PYTHONPATH=.
 
 :: 1. Try to start Redis (Optional)
 echo [STEP 1] Checking for Redis...
@@ -20,18 +24,25 @@ if %ERRORLEVEL% EQU 0 (
 )
 timeout /t 2 /nobreak > nul
 
-:: 2. Start Celery Worker + Beat (Unified Command)
-:: Note: On Windows, Celery worker requires '-P solo' or '-P eventlet' due to fork issues.
-echo [STEP 2] Starting Celery (Automated Alerts & Tasks)...
-start "Kisan-Celery" cmd /k "celery -A website.api.v1.pest.services.scheduler worker --beat --loglevel=info -P solo"
+:: 2. Start Celery Worker
+echo [STEP 2] Starting Celery Worker...
+start "Kisan-Worker" cmd /k "celery -A website.api.v1.pest.services.scheduler worker --loglevel=info -P solo"
+
+:: 3. Start Celery Beat
+echo [STEP 3] Starting Celery Beat (Scheduler)...
+start "Kisan-Beat" cmd /k "celery -A website.api.v1.pest.services.scheduler beat --loglevel=info"
 timeout /t 3 /nobreak > nul
 
-:: 3. Start Flask Backend
-echo [STEP 3] Starting Flask Backend on http://127.0.0.1:5005
+:: 4. Start Flask Backend
+echo [STEP 4] Starting Flask Backend on http://127.0.0.1:5005
 echo.
 echo Dashboard: http://127.0.0.1:5005/app/dashboard.html
 echo Login:     http://127.0.0.1:5005/app/login.html
 echo.
 python app.py
+if %ERRORLEVEL% NEQ 0 (
+    echo Flask failed to start. 
+    pause
+)
 
 pause
