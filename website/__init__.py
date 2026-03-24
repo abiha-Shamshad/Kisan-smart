@@ -19,13 +19,20 @@ limiter = Limiter(
 
 
 def create_app(config_name=None):
-    app = Flask(__name__)
+    # Root of the project (one level up from this file)
+    project_root = path.abspath(path.join(path.dirname(__file__), ".."))
+    instance_path = path.join(project_root, "instance")
     
-    if config_name == "testing":
-        from config import TestingConfig
-        app.config.from_object(TestingConfig)
-    else:
-        app.config.from_object(Config)
+    # Ensure instance folder exists
+    if not path.exists(instance_path):
+        import os
+        os.makedirs(instance_path)
+
+    app = Flask(__name__, instance_path=instance_path, instance_relative_config=True)
+    
+    from config import get_config
+    config_obj = get_config(config_name)
+    app.config.from_object(config_obj)
 
     db.init_app(app)
     migrate.init_app(app, db)

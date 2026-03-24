@@ -23,10 +23,11 @@ def update_profile():
         return error_response("User not found", "NOT_FOUND", None, 404)
 
     data = request.get_json()
-    if "full_name" in data:
-        user.full_name = data["full_name"]
-    if "phone_number" in data:
-        user.phone_number = data["phone_number"]
+    fields_to_update = ["full_name", "phone_number", "fcm_token", "lat", "lon", "crop", "phone"]
+    
+    for field in fields_to_update:
+        if field in data:
+            setattr(user, field, data[field])
 
     db.session.commit()
     return success_response(user_schema.dump(user), "Profile updated")

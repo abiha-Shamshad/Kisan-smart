@@ -1,37 +1,23 @@
-"""
-FIXED app.py
-============
-Bugs fixed:
-1. db.create_all() in __main__ block is fine for dev but was running unconditionally,
-   could cause issues if migrations (Alembic/Flask-Migrate) are used — now guarded.
-2. No config environment selection — always ran with default (dev) config.
-3. debug=True hardcoded — production deployments should read from env.
-4. No logging setup — errors were silent in production.
-5. Port hardcoded as 5005 — now reads from env with 5005 as default.
-"""
-
 import os
 import logging
 from website import create_app, db
-from config import get_config
 
-# ── Logging setup ─────────────────────────────────────────────────────────────
+# Logging setup
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
 )
 logger = logging.getLogger("kisan_smart")
 
-# ── App factory ───────────────────────────────────────────────────────────────
+# App factory
 env = os.environ.get("FLASK_ENV", "development")
 app = create_app(env)
 
 if __name__ == "__main__":
     with app.app_context():
-        # FIX: only auto-create tables in dev/testing; production should use migrations
-        # Database is already initialized manually or through previous runs.
-        # Tables auto-creation is disabled to prevent SQLite locking issues during startup.
-        pass
+        # Auto-create tables if they don't exist
+        db.create_all()
+        logger.info("Database initialized (tables verified)")
 
     port = int(os.environ.get("PORT", 5005))
     debug = env == "development"

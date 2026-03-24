@@ -23,3 +23,9 @@ class UserSchema(Schema):
     phone_number = fields.Str()
     is_verified = fields.Boolean()
     created_at = fields.DateTime()
+    # Notification & Location fields
+    fcm_token = fields.Str()
+    lat = fields.Float()
+    lon = fields.Float()
+    crop = fields.Str()
+    phone = fields.Str()
