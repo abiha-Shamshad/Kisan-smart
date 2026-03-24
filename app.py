@@ -29,14 +29,9 @@ app = create_app(env)
 if __name__ == "__main__":
     with app.app_context():
         # FIX: only auto-create tables in dev/testing; production should use migrations
-        if env in ("development", "testing"):
-            db.create_all()
-            logger.info("Database tables created/verified.")
-        else:
-            logger.warning(
-                "Running in production — skipping db.create_all(). "
-                "Run 'flask db upgrade' to apply migrations."
-            )
+        # Database is already initialized manually or through previous runs.
+        # Tables auto-creation is disabled to prevent SQLite locking issues during startup.
+        pass
 
     port = int(os.environ.get("PORT", 5005))
     debug = env == "development"

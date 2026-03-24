@@ -17,7 +17,8 @@ def frontend(filename="login.html"):
 @views.route("/")
 @login_required
 def home():
-    return render_template("home.html", user=current_user)
+    from flask import redirect, url_for
+    return redirect(url_for("views.dashboard"))
 
 
 @views.route("/admin")
