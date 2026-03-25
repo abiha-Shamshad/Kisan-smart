@@ -1,18 +1,17 @@
 // [firebase-messaging-sw.js] SERVICE WORKER FOR BACKGROUND NOTIFICATIONS
-// NOTE: This file MUST be placed in the project root to have the correct scope.
 
 importScripts('https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js');
 importScripts('https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js');
 
 // Initialize Firebase in the service worker
-// MUST match your web app configuration
+// REPLACE THESE with your Web App configuration
 firebase.initializeApp({
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyB23KL_XMbPFHqYdwf0ixXAJ8orgOYKbbg",
+  authDomain: "kissan-smart-48.firebaseapp.com",
+  projectId: "kissan-smart-48",
+  storageBucket: "kissan-smart-48.firebasestorage.app",
+  messagingSenderId: "111302122582",
+  appId: "1:111302122582:web:03a9015a338d96fcdceff7"
 });
 
 const messaging = firebase.messaging();
@@ -22,7 +21,7 @@ messaging.onBackgroundMessage((payload) => {
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
-    icon: '/static/img/favicon.png', // Replace with your actual icon
+    icon: '/static/img/favicon.png', 
     data: payload.data
   };
 

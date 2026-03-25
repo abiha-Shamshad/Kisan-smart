@@ -13,6 +13,11 @@ def frontend(filename="login.html"):
     return send_from_directory(_FRONTEND_DIR, filename)
 
 
+@views.route("/firebase-messaging-sw.js")
+def service_worker():
+    return send_from_directory(os.path.join(os.path.dirname(__file__), 'static'), 'firebase-messaging-sw.js')
+
+
 
 @views.route("/")
 @login_required
@@ -38,8 +43,14 @@ def profile():
     return render_template("profile.html", user=current_user)
 
 @views.route("/history")
+@login_required
 def history():
     return render_template("history.html", user=current_user)
+
+@views.route("/pest-alerts")
+@login_required
+def pest_alerts():
+    return render_template("pest_alerts.html", user=current_user)
 
 
 @views.route("/health")
