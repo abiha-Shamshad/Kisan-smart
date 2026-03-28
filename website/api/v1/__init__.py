@@ -9,6 +9,7 @@ from .history.routes import history_api
 from .profile.routes import profile_api
 from .reference.routes import reference_api
 from .pest.routes import pest_api
+from .voice.routes import voice_api
 
 # Register sub-blueprints
 api_v1.register_blueprint(auth_api, url_prefix="/auth")
@@ -17,6 +18,7 @@ api_v1.register_blueprint(history_api, url_prefix="/history")
 api_v1.register_blueprint(profile_api, url_prefix="/profile")
 api_v1.register_blueprint(reference_api, url_prefix="/reference")
 api_v1.register_blueprint(pest_api, url_prefix="/pest")
+api_v1.register_blueprint(voice_api, url_prefix="/voice")
 
 
 @api_v1.route("/health")

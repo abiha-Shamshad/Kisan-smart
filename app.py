@@ -19,6 +19,24 @@ if __name__ == "__main__":
         db.create_all()
         logger.info("Database initialized (tables verified)")
 
+        # Pre-load Whisper model on startup specifically for the Voice UI
+        if env != 'testing':
+            logger.info("Pre-loading Whisper STT model (this may take a moment)...")
+            os.environ.setdefault("WHISPER_MODEL", "tiny")
+            
+            # Injecting FFmpeg into live PATH since the 5-hour old server cannot see new system variables
+            import os
+            ffmpeg_dir = os.path.expanduser(r"~\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-8.1-full_build\bin")
+            if os.path.exists(ffmpeg_dir):
+                os.environ["PATH"] += os.pathsep + ffmpeg_dir
+                logger.info(f"Appended FFmpeg path to environment: {ffmpeg_dir}")
+
+            try:
+                from website.api.v1.voice.services.urdu_stt import _get_whisper_model
+                _get_whisper_model()
+            except Exception as e:
+                logger.error(f"Whisper preload failed (safely bypassing): {e}")
+
     port = int(os.environ.get("PORT", 5005))
     debug = env == "development"
 

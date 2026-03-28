@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="jwt-token" content="{{ jwt_token }}"/>
+<title>کسان سمارٹ — آواز سے سفارش</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g1:#1B4332;--g2:#2D6A4F;--g3:#40916C;--g4:#74C69D;--g5:#D8F3DC;
+  --amber:#FEF3C7;--amber-t:#B45309;
+  --red-bg:#FEE2E2;--red-t:#991B1B;
+  --bg:#F0F4EF;--card:#fff;--text:#1A2E1E;--muted:#5A7060;--border:#C9DEC9;
+  --r:14px;
+}
+body{font-family:'Noto Nastaliq Urdu','DM Sans',sans-serif;background:var(--bg);color:var(--text);direction:rtl;min-height:100vh}
+
+nav{background:var(--g1);height:60px;display:flex;align-items:center;padding:0 1.5rem;gap:.75rem;position:sticky;top:0;z-index:50}
+.nav-logo{font-size:1.1rem;font-weight:700;color:#fff;display:flex;align-items:center;gap:.4rem}
+.nav-logo span{color:var(--g4)}
+
+.page{max-width:720px;margin:0 auto;padding:1.5rem}
+
+/* Mic button */
+.mic-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:2rem;text-align:center;margin-bottom:1.25rem}
+.mic-title{font-size:1.1rem;font-weight:700;margin-bottom:.4rem}
+.mic-sub{font-size:.85rem;color:var(--muted);margin-bottom:1.5rem}
+
+#voice-btn{
+  width:90px;height:90px;border-radius:50%;border:none;cursor:pointer;
+  background:var(--g2);color:#fff;font-size:2rem;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  margin:0 auto 1rem;transition:background .2s,transform .1s,box-shadow .2s;
+  box-shadow:0 4px 20px rgba(45,106,79,.3);
+}
+#voice-btn:hover:not(:disabled){background:var(--g3);transform:scale(1.05)}
+#voice-btn:disabled{background:#9CA3AF;box-shadow:none;cursor:not-allowed}
+#voice-btn[data-state="recording"]{background:#DC2626;animation:pulse 1.2s ease-in-out infinite}
+#voice-btn[data-state="confirming"]{background:#D97706}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.4)}50%{box-shadow:0 0 0 14px rgba(220,38,38,0)}}
+
+.voice-icon{font-size:1.8rem;line-height:1}
+.voice-label{font-size:.65rem;font-weight:500;opacity:.85;font-family:'DM Sans',sans-serif}
+
+#voice-status{
+  font-size:.85rem;color:var(--muted);min-height:1.4rem;margin-bottom:.75rem;
+  direction:rtl;line-height:1.5;
+}
+#voice-status[data-type="recording"]{color:#DC2626;font-weight:500}
+#voice-status[data-type="error"]{color:#991B1B;background:var(--red-bg);padding:.4rem .7rem;border-radius:8px}
+#voice-status[data-type="success"]{color:#14532D}
+#voice-status[data-type="confirming"]{color:#92400E;background:var(--amber);padding:.4rem .7rem;border-radius:8px}
+
+canvas#voice-waveform{
+  width:100%;height:50px;border-radius:8px;
+  background:var(--g5);display:block;margin:0 auto .75rem;
+}
+
+#voice-transcript{
+  font-size:.88rem;color:var(--muted);background:var(--bg);
+  border-radius:8px;padding:.7rem 1rem;min-height:36px;
+  direction:rtl;line-height:1.8;display:none;
+}
+#voice-transcript:not(:empty){display:block}
+
+/* Slow mode toggle */
+.slow-toggle{display:flex;align-items:center;justify-content:center;gap:.5rem;margin-top:.75rem;font-size:.8rem;color:var(--muted)}
+.toggle-track{position:relative;width:36px;height:20px;background:var(--border);border-radius:10px;transition:background .2s;flex-shrink:0;cursor:pointer}
+.toggle-track:has(input:checked){background:var(--g3)}
+.toggle-track input{position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;margin:0}
+.toggle-knob{position:absolute;top:2px;right:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:right .2s;pointer-events:none}
+.toggle-track:has(input:checked) .toggle-knob{right:18px}
+
+/* Values display */
+.values-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:1.25rem;display:none}
+.values-card.visible{display:block;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.values-header{background:var(--g2);color:#fff;padding:.9rem 1.2rem;font-size:.95rem;font-weight:700}
+.values-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--border)}
+.value-box{background:var(--card);padding:.85rem 1.1rem}
+.value-lbl{font-size:.72rem;color:var(--muted);margin-bottom:.2rem;font-family:'DM Sans',sans-serif;text-transform:uppercase;letter-spacing:.04em}
+.value-num{font-size:1.3rem;font-weight:500;color:var(--text);font-family:'DM Sans',sans-serif}
+.value-num.missing{color:#9CA3AF;font-size:.85rem}
+
+/* Submit button */
+.btn-submit{
+  width:100%;padding:.9rem;background:var(--g2);color:#fff;border:none;
+  border-radius:12px;font-family:'Noto Nastaliq Urdu',sans-serif;
+  font-size:1rem;font-weight:700;cursor:pointer;
+  transition:background .15s;margin-top:.75rem;display:none;
+}
+.btn-submit.visible{display:block}
+.btn-submit:hover{background:var(--g3)}
+
+/* Recommendation panel */
+.rec-card{background:var(--g1);border-radius:var(--r);padding:1.5rem;margin-bottom:1.25rem;display:none;position:relative;overflow:hidden}
+.rec-card.visible{display:block;animation:fadeUp .4s ease}
+.rec-card::after{content:'🌾';position:absolute;left:-10px;bottom:-15px;font-size:5rem;opacity:.1;pointer-events:none}
+.rec-lbl{font-size:.72rem;color:rgba(255,255,255,.6);margin-bottom:.3rem;font-family:'DM Sans',sans-serif;text-transform:uppercase;letter-spacing:.08em}
+.rec-name{font-size:1.8rem;font-weight:700;color:#fff;margin-bottom:.3rem;font-family:'DM Sans',sans-serif}
+.rec-guide{font-size:.85rem;color:rgba(255,255,255,.75);margin-bottom:1rem}
+.rec-speak-btn{
+  background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);
+  color:#fff;border-radius:100px;padding:.4rem 1.1rem;font-size:.8rem;
+  cursor:pointer;transition:background .15s;
+}
+.rec-speak-btn:hover{background:rgba(255,255,255,.25)}
+
+/* Instruction steps */
+.steps-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.3rem}
+.steps-title{font-size:.88rem;font-weight:700;margin-bottom:.9rem}
+.step{display:flex;align-items:flex-start;gap:.75rem;margin-bottom:.7rem}
+.step:last-child{margin:0}
+.step-num{width:24px;height:24px;border-radius:50%;background:var(--g5);color:var(--g2);font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-family:'DM Sans',sans-serif}
+.step-text{font-size:.82rem;color:var(--muted);line-height:1.6}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">🌱 کسان <span>سمارٹ</span></div>
+</nav>
+
+<div class="page">
+
+  <!-- Mic Card -->
+  <div class="mic-card">
+    <div class="mic-title">آواز سے مٹی کی قدریں داخل کریں</div>
+    <div class="mic-sub">بٹن دبائیں اور اپنی فصل اور این پی کے کی قدریں بولیں</div>
+
+    <canvas id="voice-waveform" width="400" height="50"></canvas>
+
+    <button id="voice-btn" data-kisan-voice data-state="idle">
+      <span class="voice-icon">🎙️</span>
+      <span class="voice-label">بولیں</span>
+    </button>
+
+    <div id="voice-status" data-type="idle">مائیک کا بٹن دبائیں</div>
+    <div id="voice-transcript"></div>
+
+    <!-- Slow speech toggle -->
+    <div class="slow-toggle">
+      <label class="toggle-track">
+        <input type="checkbox" id="slow-toggle" onchange="window._kisanVoice && (window._kisanVoice.slowSpeech = this.checked)"/>
+        <div class="toggle-knob"></div>
+      </label>
+      <span>آہستہ بولیں (بزرگوں کے لیے)</span>
+    </div>
+  </div>
+
+  <!-- Parsed values display -->
+  <div class="values-card" id="values-card">
+    <div class="values-header">سمجھی گئی قدریں</div>
+    <div class="values-grid">
+      <div class="value-box">
+        <div class="value-lbl">فصل</div>
+        <div class="value-num" id="v-crop">—</div>
+      </div>
+      <div class="value-box">
+        <div class="value-lbl">نائٹروجن (N)</div>
+        <div class="value-num" id="v-n">—</div>
+      </div>
+      <div class="value-box">
+        <div class="value-lbl">فاسفورس (P)</div>
+        <div class="value-num" id="v-p">—</div>
+      </div>
+      <div class="value-box">
+        <div class="value-lbl">پوٹاشیم (K)</div>
+        <div class="value-num" id="v-k">—</div>
+      </div>
+      <div class="value-box">
+        <div class="value-lbl">پی ایچ</div>
+        <div class="value-num" id="v-ph">—</div>
+      </div>
+      <div class="value-box" style="background:var(--g5)">
+        <div class="value-lbl">درستگی</div>
+        <div class="value-num" id="v-conf" style="color:var(--g2)">—</div>
+      </div>
+    </div>
+    <div style="padding:.75rem 1.1rem">
+      <button class="btn-submit visible" id="predict-btn" onclick="submitPrediction()">
+        سفارش حاصل کریں ←
+      </button>
+    </div>
+  </div>
+
+  <!-- Recommendation result -->
+  <div class="rec-card" id="rec-card">
+    <div class="rec-lbl">تجویز کردہ کھاد</div>
+    <div class="rec-name" id="rec-name">—</div>
+    <div class="rec-guide" id="rec-guide">—</div>
+    <button class="rec-speak-btn" onclick="speakResult()">🔊 دوبارہ سنیں</button>
+  </div>
+
+  <!-- How-to steps -->
+  <div class="steps-card">
+    <div class="steps-title">کیسے استعمال کریں</div>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-text">سرخ مائیک بٹن دبائیں</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-text">اپنی فصل کا نام بولیں، مثلاً "گندم" یا "چاول"</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-text">نائٹروجن، فاسفورس، پوٹاشیم اور پی ایچ کی قدریں بولیں</div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-text">قدریں تصدیق کر کے "سفارش حاصل کریں" دبائیں</div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-text">اردو میں سفارش سنیں اور پڑھیں</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Hidden form fields for ML submission -->
+<input type="hidden" id="crop"/>
+<input type="hidden" id="nitrogen"/>
+<input type="hidden" id="phosphorus"/>
+<input type="hidden" id="potassium"/>
+<input type="hidden" id="ph"/>
+
+<script src="{{ url_for('static', filename='js/voice_input.js') }}"></script>
+<script>
+const JWT = document.querySelector('meta[name="jwt-token"]').content;
+
+const CROP_URDU = {
+  Wheat:'گندم', Rice:'چاول', Maize:'مکئی', Cotton:'کپاس', Sugarcane:'گنا'
+};
+const FERT_URDU = {
+  'Urea':'یوریا', 'DAP':'ڈی اے پی',
+  'NPK 15-15-15':'این پی کے', 'SOP':'ایس او پی', 'SSP':'ایس ایس پی'
+};
+const GUIDELINES_URDU = {
+  'Urea':         'نصف بوائی پر، نصف اگاؤ کے بعد ڈالیں',
+  'DAP':          'بوائی سے پہلے مٹی میں ملائیں',
+  'NPK 15-15-15': 'پہلی آبپاشی سے پہلے یکساں طور پر ڈالیں',
+  'SOP':          'پوٹاشیم کم ہونے پر بنیادی کھاد کے طور پر',
+  'SSP':          'بوائی کی نالیوں میں ڈالیں',
+};
+
+let lastResult = null;
+
+// Wire up voice callback
+document.addEventListener('DOMContentLoaded', () => {
+  const voice = new KisanVoice({
+    jwtToken:  JWT,
+    micBtnId:  'voice-btn',
+    statusId:  'voice-status',
+    transcriptId: 'voice-transcript',
+    canvasId:  'voice-waveform',
+    onValues:  showParsedValues,
+    onError:   (e) => console.error('Voice error:', e),
+  });
+  voice.init();
+  window._kisanVoice = voice;
+});
+
+function showParsedValues(result) {
+  lastResult = result;
+  document.getElementById('v-crop').textContent = result.crop ? CROP_URDU[result.crop] || result.crop : '—';
+  document.getElementById('v-n').textContent   = result.nitrogen   !== null ? result.nitrogen   : '—';
+  document.getElementById('v-p').textContent   = result.phosphorus !== null ? result.phosphorus : '—';
+  document.getElementById('v-k').textContent   = result.potassium  !== null ? result.potassium  : '—';
+  document.getElementById('v-ph').textContent  = result.ph         !== null ? result.ph         : '—';
+  document.getElementById('v-conf').textContent = Math.round(result.parse_confidence * 100) + '%';
+  document.getElementById('values-card').classList.add('visible');
+}
+
+async function submitPrediction() {
+  if (!lastResult || !lastResult.crop) return;
+
+  const btn = document.getElementById('predict-btn');
+  btn.textContent = 'انتظار کریں...';
+  btn.disabled = true;
+
+  try {
+    const resp = await fetch('/api/predict', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${JWT}`,
+      },
+      body: JSON.stringify({
+        crop:       lastResult.crop,
+        nitrogen:   lastResult.nitrogen,
+        phosphorus: lastResult.phosphorus,
+        potassium:  lastResult.potassium,
+        ph:         lastResult.ph,
+      }),
+    });
+
+    if (!resp.ok) throw new Error(`Prediction failed: ${resp.status}`);
+    const rec = await resp.json();
+
+    showRecommendation(rec);
+
+    // Auto-play TTS
+    if (window._kisanVoice) {
+      await window._kisanVoice.speakRecommendation(
+        lastResult.crop,
+        rec.fertilizer,
+        rec.recommended_quantity_kg_ha,
+        rec.confidence,
+      );
+    }
+  } catch (e) {
+    btn.textContent = 'دوبارہ کوشش کریں';
+    btn.disabled = false;
+  }
+}
+
+function showRecommendation(rec) {
+  document.getElementById('rec-name').textContent  = FERT_URDU[rec.fertilizer] || rec.fertilizer;
+  document.getElementById('rec-guide').textContent = GUIDELINES_URDU[rec.fertilizer] || '';
+  document.getElementById('rec-card').classList.add('visible');
+  window._lastRec = rec;
+}
+
+async function speakResult() {
+  const rec = window._lastRec;
+  if (!rec || !window._kisanVoice) return;
+  await window._kisanVoice.speakRecommendation(
+    lastResult?.crop, rec.fertilizer,
+    rec.recommended_quantity_kg_ha, rec.confidence
+  );
+}
+</script>
+</body>
+</html>

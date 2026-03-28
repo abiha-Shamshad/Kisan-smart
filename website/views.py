@@ -64,3 +64,7 @@ def about():
 @views.route("/health")
 def health_check():
     return {"status": "healthy", "database": "connected"}, 200
+
+@views.route("/voice")
+def voice():
+    return render_template("voice_dashboard.html")
