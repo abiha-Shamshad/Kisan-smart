@@ -3,7 +3,7 @@ from website.api.v1.utils.responses import success_response, error_response
 from website.api.v1.prediction.schemas import PredictionRequestSchema
 from website.api.v1.prediction.ml_service import ml_service
 from website.models import Recommendation, db
-from flask_jwt_extended import get_jwt_identity
+from flask_login import current_user
 import uuid
 from datetime import datetime
 
@@ -57,7 +57,7 @@ def get_prediction():
         result = ml_service.predict(data)
 
         # Save to history if user is logged in
-        user_id = get_jwt_identity()
+        user_id = getattr(current_user, "id", None) if current_user.is_authenticated else None
         prediction_id = f"pred_{int(datetime.now().timestamp())}_{uuid.uuid4().hex[:6]}"
 
         if user_id:

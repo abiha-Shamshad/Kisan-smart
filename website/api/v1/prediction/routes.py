@@ -6,13 +6,11 @@ predict_api = Blueprint("predict_api", __name__)
 
 
 @predict_api.route("", methods=["POST"])
-@jwt_required()  # Require authentication for predictions
 def predict():
     return get_prediction()
 
 
 @predict_api.route("/batch", methods=["POST"])
-@jwt_required()
 def predict_batch():
     return get_batch_prediction()
 
