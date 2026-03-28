@@ -1,87 +1,160 @@
 {% extends "base.html" %}
+{% block title %}Pest Control Center — Kisan Smart{% endblock %}
 
-{% block title %}Kisan Smart — Pest Alerts{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/pest_alerts_premium.css') }}" />
+{% block head %}
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  .sev-badge-critical { background:#FEE2E2; color:#DC2626; }
+  .sev-badge-high     { background:#FEF3C7; color:#D97706; }
+  .sev-badge-medium   { background:#FFF7ED; color:#EA580C; }
+  .sev-badge-low      { background:#D1FAE5; color:#059669; }
+  .bar-fill-critical  { background: linear-gradient(90deg,#EF4444,#DC2626); }
+  .bar-fill-high      { background: linear-gradient(90deg,#F59E0B,#D97706); }
+  .bar-fill-medium    { background: linear-gradient(90deg,#FB923C,#EA580C); }
+  .bar-fill-low       { background: linear-gradient(90deg,#34D399,#059669); }
+  .pest-card { transition: all .2s; cursor: pointer; }
+  .pest-card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(45,106,79,.15); }
+  .pest-card.selected { border-color: #2D6A4F; box-shadow: 0 0 0 3px rgba(45,106,79,.2); }
+</style>
 {% endblock %}
 
 {% block content %}
-    <div class="page">
-        <!-- Weather summary strip -->
-        <div id="weather-strip" class="weather-row" style="display:none"></div>
+<!-- Toast -->
+<div id="toast" class="fixed bottom-6 right-6 z-50 hidden px-5 py-3 rounded-xl text-white text-sm font-semibold shadow-xl transition-all" id="toast"></div>
 
-        <!-- Top alert banners (Critical / High only) -->
-        <div id="banners"></div>
-
-        <!-- All scores -->
-        <div class="sec-head">
-            <h2 class="fw-bold" style="font-family: var(--font-poppins);">All pest & disease risks</h2>
-            <span class="sec-tag" id="crop-label">Loading assessments...</span>
-        </div>
-        <div class="score-grid" id="score-grid">
-            <p style="padding: 2rem; color: var(--muted); text-align: center; grid-column: 1/-1;">Fetching latest
-                data...</p>
-        </div>
-
-        <!-- Detail panel -->
-        <div class="detail" id="detail-panel" style="display:none"></div>
-
-        <!-- Report sighting -->
-        <div class="sec-head">
-            <h2 class="fw-bold" style="font-family: var(--font-poppins);">Report a sighting</h2>
-            <span class="sec-tag">Help other farmers</span>
-        </div>
-        <div class="report-card glass-panel">
-            <div class="report-title fw-bold">📋 I spotted a pest / disease</div>
-            <div class="form-row">
-                <div class="form-field">
-                    <label class="form-label small fw-semibold">Crop</label>
-                    <select id="r-crop" class="input-premium w-100">
-                        <option value="Wheat">Wheat (گندم)</option>
-                        <option value="Rice">Rice (چاول)</option>
-                        <option value="Maize">Maize (مکئی)</option>
-                        <option value="Cotton">Cotton (کپاس)</option>
-                        <option value="Sugarcane">Sugarcane (گنا)</option>
-                    </select>
-                </div>
-                <div class="form-field">
-                    <label class="form-label small fw-semibold">Pest / Disease</label>
-                    <select id="r-pest" class="input-premium w-100">
-                        <option value="Yellow Rust">Yellow Rust — پیلی کنگی</option>
-                        <option value="Brown Rust">Brown Rust — بھوری کنگی</option>
-                        <option value="Rice Blast">Rice Blast — بلاسٹ</option>
-                        <option value="Whitefly">Whitefly — سفید مکھی</option>
-                        <option value="Fall Armyworm">Fall Armyworm — فال آرمی ورم</option>
-                        <option value="Desert Locust">Desert Locust — ٹڈی دل</option>
-                        <option value="Other">Other / دیگر</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-field">
-                    <label class="form-label small fw-semibold">Severity</label>
-                    <select id="r-severity" class="input-premium w-100">
-                        <option value="Low">Low — کم</option>
-                        <option value="Medium">Medium — درمیانہ</option>
-                        <option value="High" selected>High — زیادہ</option>
-                        <option value="Critical">Critical — خطرناک</option>
-                    </select>
-                </div>
-                <div class="form-field">
-                    <label class="form-label small fw-semibold">Field location (optional)</label>
-                    <input type="text" id="r-location" class="input-premium w-100" placeholder="Village / Tehsil name" />
-                </div>
-            </div>
-            <button class="btn-premium w-100 py-3 mt-3" id="btn-submit" onclick="submitReport()">
-                <i class="fas fa-paper-plane me-2"></i>Submit Report — رپورٹ کریں
-            </button>
-        </div>
+<!-- Hero -->
+<div class="relative overflow-hidden rounded-3xl mb-8 text-white" style="background:linear-gradient(135deg,#0A2615 0%,#1B4332 50%,#2D6A4F 100%); padding:3rem 2rem 2.5rem;">
+  <div class="absolute inset-0 opacity-10" style="background-image:url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='white' fill-opacity='1'%3E%3Cpath d='M20 20h4v4h-4zM0 0h4v4H0z'/%3E%3C/g%3E%3C/svg%3E\");"></div>
+  <div class="relative flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+    <div>
+      <span class="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-white/90 text-xs font-bold tracking-widest uppercase rounded-full px-3 py-1 mb-4">🐛 AI Pest Intelligence</span>
+      <h1 class="font-syne text-4xl font-black mb-2">Pest <span style="color:#74C69D">Control</span> Center</h1>
+      <p class="text-white/70 text-sm max-w-md leading-relaxed">Real-time AI risk assessment for your crops based on live weather data. Select your crop and location to get started.</p>
     </div>
+    <div class="flex flex-col gap-3 min-w-[220px]">
+      <div>
+        <label class="text-white/60 text-xs font-semibold uppercase tracking-widest block mb-1">Crop</label>
+        <select id="crop-select" class="w-full rounded-xl px-4 py-2.5 text-sm font-semibold" style="background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.2); color:#fff;">
+          <option value="Wheat">🌾 Wheat (گندم)</option>
+          <option value="Rice">🌾 Rice (چاول)</option>
+          <option value="Maize">🌽 Maize (مکئی)</option>
+          <option value="Cotton">🌿 Cotton (کپاس)</option>
+          <option value="Sugarcane">🎋 Sugarcane (گنا)</option>
+        </select>
+      </div>
+      <button onclick="loadPestData()" id="analyze-btn"
+        class="w-full bg-white font-bold text-sm px-4 py-2.5 rounded-xl transition-all hover:-translate-y-0.5"
+        style="color:#2D6A4F;">
+        <i class="fas fa-sync-alt me-2"></i> Analyze Now
+      </button>
+    </div>
+  </div>
+</div>
 
-    <div class="toast" id="toast"></div>
-{% endblock %}
+<!-- Stats Row -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8" id="stats-row">
+  <div class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm text-center">
+    <div class="text-2xl font-syne font-black text-gray-800" id="stat-total">--</div>
+    <div class="text-xs text-gray-400 mt-0.5">Pests Assessed</div>
+  </div>
+  <div class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm text-center">
+    <div class="text-2xl font-syne font-black text-red-500" id="stat-critical">--</div>
+    <div class="text-xs text-gray-400 mt-0.5">Critical / High</div>
+  </div>
+  <div class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm text-center">
+    <div class="text-2xl font-syne font-black text-amber-500" id="stat-avg">--</div>
+    <div class="text-xs text-gray-400 mt-0.5">Avg Risk Score</div>
+  </div>
+  <div class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm text-center">
+    <div class="text-2xl font-syne font-black text-green-600" id="stat-location">Gujrat</div>
+    <div class="text-xs text-gray-400 mt-0.5">Location</div>
+  </div>
+</div>
 
-{% block extra_js %}
-<script src="{{ url_for('static', filename='js/pest_alerts_premium.js') }}"></script>
+<!-- District Alert Banner -->
+<div id="district-banners" class="mb-8 space-y-3"></div>
+
+<!-- Main Grid -->
+<div class="grid lg:grid-cols-3 gap-6 mb-8">
+  <!-- Risk Cards -->
+  <div class="lg:col-span-2">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="font-syne text-xl font-bold text-gray-900">Risk Assessment</h2>
+      <span class="text-xs text-gray-400 font-semibold" id="assessed-label">Loading...</span>
+    </div>
+    <div id="pest-grid" class="grid sm:grid-cols-2 gap-4">
+      <!-- JS populates -->
+      <div class="sm:col-span-2 bg-white border border-gray-100 rounded-2xl p-10 text-center text-gray-400 shadow-sm">
+        <i class="fas fa-spinner fa-spin text-3xl mb-3 block" style="color:#2D6A4F"></i>
+        <p class="text-sm">Analyzing weather and risk patterns...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail Panel -->
+  <div>
+    <h2 class="font-syne text-xl font-bold text-gray-900 mb-4">Pest Details</h2>
+    <div id="detail-panel" class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+      <div class="p-8 text-center text-gray-400">
+        <i class="fas fa-hand-pointer text-3xl mb-3 block" style="color:#2D6A4F"></i>
+        <p class="text-sm">Click a pest card to see detailed information, treatment recommendations, and chemical controls.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Report a Sighting -->
+<div class="bg-white border border-gray-100 rounded-3xl shadow-sm p-8 mb-8">
+  <div class="flex items-center gap-3 mb-6">
+    <div class="w-10 h-10 rounded-xl flex items-center justify-center text-lg" style="background:#D8F3DC; color:#2D6A4F;"><i class="fas fa-camera"></i></div>
+    <div>
+      <h3 class="font-syne font-bold text-lg text-gray-900">Report a Sighting</h3>
+      <p class="text-gray-400 text-xs">Help other farmers by reporting pest sightings in your area</p>
+    </div>
+  </div>
+  <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+    <div>
+      <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1.5">Crop</label>
+      <select id="r-crop" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-green-200 focus:border-green-400 outline-none">
+        <option value="Wheat">🌾 Wheat</option>
+        <option value="Rice">🌾 Rice</option>
+        <option value="Maize">🌽 Maize</option>
+        <option value="Cotton">🌿 Cotton</option>
+        <option value="Sugarcane">🎋 Sugarcane</option>
+      </select>
+    </div>
+    <div>
+      <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1.5">Pest / Disease</label>
+      <select id="r-pest" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-green-200 focus:border-green-400 outline-none">
+        <option value="Yellow Rust">Yellow Rust — پیلی کنگی</option>
+        <option value="Brown Rust">Brown Rust — بھوری کنگی</option>
+        <option value="Rice Blast">Rice Blast — بلاسٹ</option>
+        <option value="Whitefly">Whitefly — سفید مکھی</option>
+        <option value="Fall Armyworm">Fall Armyworm — فال آرمی ورم</option>
+        <option value="Desert Locust">Desert Locust — ٹڈی دل</option>
+        <option value="Other">Other / دیگر</option>
+      </select>
+    </div>
+    <div>
+      <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1.5">Severity</label>
+      <select id="r-severity" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-green-200 focus:border-green-400 outline-none">
+        <option value="Low">Low — کم</option>
+        <option value="Medium">Medium — درمیانہ</option>
+        <option value="High" selected>High — زیادہ</option>
+        <option value="Critical">Critical — خطرناک</option>
+      </select>
+    </div>
+    <div>
+      <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1.5">Location (optional)</label>
+      <input type="text" id="r-location" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-green-200 focus:border-green-400 outline-none" placeholder="Village / Tehsil name" />
+    </div>
+  </div>
+  <button onclick="submitReport()" id="btn-submit"
+    class="inline-flex items-center gap-2 font-bold text-sm px-6 py-3 rounded-xl text-white transition-all hover:-translate-y-0.5"
+    style="background:linear-gradient(135deg,#2D6A4F,#40916C); box-shadow:0 4px 16px rgba(45,106,79,.3);">
+    <i class="fas fa-paper-plane"></i> Submit Report — رپورٹ کریں
+  </button>
+</div>
+
+<script src="{{ url_for('static', filename='js/pest_control_full.js') }}"></script>
 {% endblock %}

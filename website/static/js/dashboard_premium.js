@@ -1,3 +1,46 @@
+/* ── Hub Initialization ───────────────────────────────────── */
+async function initHub() {
+  try {
+    // 1. Get Pest Alerts Summary
+    const pestData = await api.request('/pest/assess?lat=32.57&lon=74.08&crop=Wheat');
+    const pestEl = document.getElementById('hub-pest-summary');
+    if (pestEl && pestData && pestData.risks) {
+      if (pestData.risks.length > 0) {
+        const top = pestData.risks[0];
+        pestEl.textContent = `${top.severity} Risk: ${top.pest}`;
+        if (top.severity === 'Critical' || top.severity === 'High') {
+          pestEl.style.color = '#ef4444';
+          pestEl.style.fontWeight = '600';
+        }
+      } else {
+        pestEl.textContent = 'No active risks detected';
+      }
+    }
+
+    // 2. Get Profile Summary
+    const user = api.getUser();
+    const profileEl = document.getElementById('hub-profile-summary');
+    if (profileEl && user) {
+      profileEl.textContent = `Hello, ${user.username || 'Farmer'}`;
+    }
+
+    // 3. Get History Summary (Mocked for now or fetched if endpoint exists)
+    const historyEl = document.getElementById('hub-history-summary');
+    if (historyEl) {
+      // In a real app, fetch /api/v1/history/recent
+      historyEl.textContent = 'View your last 5 scans';
+    }
+
+  } catch (err) {
+    console.error('Hub initialization failed:', err);
+    // Silent fail for hub summaries to avoid breaking main app
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initHub();
+});
+
 /* ── Premium Dashboard Scripts ── */
 
 /* ── Slider helpers ─────────────────────────────────────── */

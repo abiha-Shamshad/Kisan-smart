@@ -26,6 +26,44 @@
     </div>
   </div>
 
+  <!-- Navigation Hub -->
+  <div class="page hub-section">
+    <div class="hub-grid">
+      <a href="/pest-alerts" class="hub-card">
+        <div class="hub-icon pest"><i class="fas fa-bug"></i></div>
+        <div class="hub-info">
+          <h3>Pest Control Center</h3>
+          <p id="hub-pest-summary">AI Risk Assessment</p>
+        </div>
+        <i class="fas fa-chevron-right hub-arrow"></i>
+      </a>
+      <a href="/weather-alerts" class="hub-card">
+        <div class="hub-icon" style="background:rgba(59,130,246,0.1); color:#3B82F6;"><i class="fas fa-cloud-sun"></i></div>
+        <div class="hub-info">
+          <h3>Weather Monitor</h3>
+          <p id="hub-weather-summary">Live forecasts & alerts</p>
+        </div>
+        <i class="fas fa-chevron-right hub-arrow"></i>
+      </a>
+      <a href="/history" class="hub-card">
+        <div class="hub-icon history"><i class="fas fa-history"></i></div>
+        <div class="hub-info">
+          <h3>Field History</h3>
+          <p id="hub-history-summary">View past scans</p>
+        </div>
+        <i class="fas fa-chevron-right hub-arrow"></i>
+      </a>
+      <a href="/profile" class="hub-card">
+        <div class="hub-icon profile"><i class="fas fa-user-circle"></i></div>
+        <div class="hub-info">
+          <h3>My Profile</h3>
+          <p id="hub-profile-summary">Manage account</p>
+        </div>
+        <i class="fas fa-chevron-right hub-arrow"></i>
+      </a>
+    </div>
+  </div>
+
   <!-- Main grid -->
   <div class="page">
     <div class="main-grid">
@@ -240,38 +278,3 @@
 {% block extra_js %}
 <script src="{{ url_for('static', filename='js/dashboard_premium.js') }}"></script>
 {% endblock %}
-ject.entries(r.all_probs).sort((a, b) => b[1] - a[1]);
-      sorted.forEach(([name, pct]) => {
-        const div = document.createElement('div');
-        div.className = 'prob-row' + (name === r.fertilizer ? ' top' : '');
-        div.innerHTML = `<span class="prob-name">${name}</span><span class="prob-pct">${pct}%</span>`;
-        grid.appendChild(div);
-      });
-    }
-
-    function addHistory(crop, N, P, K, ph, result) {
-      const tbody = document.getElementById('history-body');
-      const tr = document.createElement('tr');
-      const isGreen = result.confidence > 85;
-      tr.innerHTML = `
-    <td>${crop}</td>
-    <td>${N}/${P}/${K}</td>
-    <td>${ph}</td>
-    <td><span class="badge ${isGreen ? 'badge-green' : 'badge-amber'}">${result.fertilizer}</span></td>
-    <td>${result.confidence}%</td>
-  `;
-      tbody.insertBefore(tr, tbody.firstChild);
-      if (tbody.children.length > 5) tbody.removeChild(tbody.lastChild);
-    }
-
-    /* ── Toast ───────────────────────────────────────────────── */
-    function showToast(msg, isError = false) {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.className = 'toast show' + (isError ? ' error' : '');
-      setTimeout(() => t.className = 'toast', 3000);
-    }
-  </script>
-</body>
-
-</html>

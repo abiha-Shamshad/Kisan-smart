@@ -43,14 +43,22 @@ def profile():
     return render_template("profile.html", user=current_user)
 
 @views.route("/history")
-@login_required
 def history():
     return render_template("history.html", user=current_user)
 
 @views.route("/pest-alerts")
-@login_required
 def pest_alerts():
     return render_template("pest_alerts.html", user=current_user)
+
+
+@views.route("/weather-alerts")
+def weather_alerts():
+    return render_template("weather_alerts.html", user=current_user)
+
+
+@views.route("/about")
+def about():
+    return render_template("about.html", user=current_user)
 
 
 @views.route("/health")

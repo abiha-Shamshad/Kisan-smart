@@ -106,9 +106,97 @@
   display: grid;
   grid-template-columns: 420px 1fr;
   gap: 1.5rem;
-  margin-top: -2.5rem;
+  margin-top: 1.5rem;
   padding-bottom: 4rem;
   align-items: start;
+}
+
+/* ── Navigation Hub ── */
+.hub-section {
+  margin-top: -3rem;
+  position: relative;
+  z-index: 10;
+}
+
+.hub-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+@media(max-width:1100px) {
+  .hub-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media(max-width:600px) {
+  .hub-grid { grid-template-columns: 1fr; }
+  .hub-section { margin-top: -2rem; }
+}
+
+.hub-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px rgba(45, 106, 79, 0.08);
+}
+
+.hub-card:hover {
+  transform: translateY(-4px);
+  background: #fff;
+  border-color: var(--green3);
+  box-shadow: 0 12px 30px rgba(45, 106, 79, 0.15);
+}
+
+.hub-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.hub-icon.pest { background: #fee2e2; color: #ef4444; }
+.hub-icon.history { background: #fef3c7; color: #d97706; }
+.hub-icon.profile { background: #dcfce7; color: #16a34a; }
+
+.hub-info { flex-grow: 1; min-width: 0; }
+.hub-info h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 0.15rem 0;
+}
+.hub-info p {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hub-arrow {
+  font-size: 0.8rem;
+  color: var(--border);
+  transition: transform 0.3s ease;
+}
+
+.hub-card:hover .hub-arrow {
+  transform: translateX(3px);
+  color: var(--green);
 }
 
 @media(max-width:860px) {
@@ -234,6 +322,7 @@ input[type=range] {
 }
 
 input[type=range]::-webkit-slider-thumb {
+  appearance: none;
   -webkit-appearance: none;
   width: 18px;
   height: 18px;

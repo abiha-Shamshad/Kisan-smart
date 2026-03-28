@@ -1,203 +1,166 @@
 {% extends "base.html" %}
-{% block title %}Prediction History - Kisan Smart{% endblock %}
+
+{% block title %}Prediction History | Kisan Smart{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/history.css') }}" />
+<style>
+/* Base Reset & Variables imported implicitly from base.html Tailwind */
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 24px rgba(45, 106, 79, 0.05);
+}
+
+.table-row-hover:hover {
+    background: rgba(240, 248, 245, 0.6);
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+}
+
+thead th {
+    letter-spacing: 0.05em;
+}
+
+.sev-badge-critical { background: #FEE2E2; color: #DC2626; border: 1px solid #FECACA; }
+.sev-badge-high { background: #FEF3C7; color: #D97706; border: 1px solid #FDE68A; }
+.sev-badge-medium { background: #FFEDD5; color: #EA580C; border: 1px solid #FED7AA; }
+.sev-badge-low { background: #DCFCE7; color: #059669; border: 1px solid #BBF7D0; }
+
+.page-transition {
+    animation: fadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="history-container">
-    <!-- Page Header -->
-    <div class="history-container">
-        <!-- Page Header -->
-        <div class="page-header reveal mb-5">
-            <div>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="/home" class="text-decoration-none">Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Prediction History</li>
-                    </ol>
-                </nav>
-                <h1 class="fw-bold"><i class="fas fa-history me-3 text-primary"></i>Archive</h1>
-                <p class="text-muted">A comprehensive log of all your AI-driven soil analyses and recommendations.</p>
-            </div>
-            <a href="/predict" class="btn-premium px-4 py-3">
-                <i class="fas fa-plus me-2"></i>New Analysis
-            </a>
+<div class="max-w-7xl mx-auto pt-6 pb-20 page-transition">
+
+    <!-- Header -->
+    <div class="mb-8 px-4 sm:px-0 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+            <h1 class="font-syne font-extrabold text-3xl md:text-4xl text-gray-900 tracking-tight">
+                Archive <span class="text-green-500 font-light">History</span>
+            </h1>
+            <p class="text-gray-500 text-sm mt-2 max-w-lg leading-relaxed">
+                A comprehensive log of all your AI-driven soil analyses and fertilizer recommendations.
+            </p>
         </div>
+        <a href="/dashboard" class="flex-shrink-0 inline-flex items-center gap-2 bg-gray-900 hover:bg-gray-800 text-white px-5 py-2.5 rounded-full font-bold text-sm transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+            <i class="fas fa-plus text-green-400"></i> New Analysis
+        </a>
+    </div>
 
-        <!-- Filters & Search -->
-        <div class="glass-panel reveal mb-5 p-4">
-            <div class="row g-4">
-                <!-- Search Bar -->
-                <div class="col-md-4">
-                    <label class="form-label fw-bold">Search</label>
-                    <div class="position-relative">
-                        <input type="text" class="input-premium w-100 ps-5" id="searchInput"
-                            placeholder="Search by crop or fertilizer...">
-                        <i
-                            class="fas fa-search position-absolute start-0 top-50 translate-middle-y ms-3 text-muted"></i>
-                    </div>
-                </div>
-
-                <!-- Crop Type -->
-                <div class="col-md-3">
-                    <label class="form-label fw-bold">Crop Filter</label>
-                    <select class="input-premium w-100" id="cropFilter">
-                        <option value="">All Crop Types</option>
-                        <option value="wheat">Wheat (Kanak)</option>
-                        <option value="rice">Rice (Chawal)</option>
-                        <option value="maize">Maize (Makka)</option>
-                        <option value="cotton">Cotton (Kapaas)</option>
-                        <option value="sugarcane">Sugarcane (Ganna)</option>
-                        <option value="potato">Potato (Aloo)</option>
-                        <option value="tomato">Tomato (Tamatar)</option>
-                    </select>
-                </div>
-
-                <!-- Confidence Level -->
-                <div class="col-md-3">
-                    <label class="form-label fw-bold">Reliability</label>
-                    <select class="input-premium w-100" id="confidenceFilter">
-                        <option value="">All Confidence Levels</option>
-                        <option value="high">High (≥80%)</option>
-                        <option value="medium">Medium (60-79%)</option>
-                        <option value="low">Low (<60%)< /option>
-                    </select>
-                </div>
-
-                <!-- Action Buttons -->
-                <div class="col-md-2 d-flex align-items-end">
-                    <button class="btn glass-panel border w-100 py-2 fw-bold" onclick="HistoryManager.applyFilters()">
-                        <i class="fas fa-filter me-2 text-primary"></i>Filter
-                    </button>
+    <!-- Filters & Search -->
+    <div class="glass-card rounded-2xl p-5 mb-8 mx-4 sm:mx-0">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-end">
+            <!-- Search -->
+            <div class="md:col-span-4">
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Search</label>
+                <div class="relative">
+                    <input type="text" id="searchInput" placeholder="Search by crop, fertilizer..." 
+                           class="w-full pl-11 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
                 </div>
             </div>
 
-            <!-- Custom Date Range (Hidden by default) -->
-            <div id="customDateRange" class="row g-3 mt-4 animate slideIn" style="display: none;">
-                <div class="col-md-3">
-                    <label class="form-label fw-bold">From</label>
-                    <input type="date" class="input-premium w-100" id="dateFrom">
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label fw-bold">To</label>
-                    <input type="date" class="input-premium w-100" id="dateTo">
-                </div>
-            </div>
-
-            <!-- Active Filters Tags -->
-            <div id="activeFilters" class="active-filters mt-4 d-flex flex-wrap gap-2"></div>
-        </div>
-
-        <!-- Toolbar -->
-        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 reveal">
-            <div class="toolbar-left">
-                <span id="resultsCount" class="text-muted fw-semibold">Loading records...</span>
-            </div>
-            <div class="toolbar-right d-flex gap-3 align-items-center">
-                <!-- Sort -->
-                <select class="input-premium py-1 px-3 border-0 bg-transparent text-muted small" id="sortBy"
-                    onchange="HistoryManager.applySorting()">
-                    <option value="date_desc">Newest First</option>
-                    <option value="date_asc">Oldest First</option>
-                    <option value="confidence_desc">Confidence (High)</option>
-                    <option value="confidence_asc">Confidence (Low)</option>
+            <!-- Crop Filter -->
+            <div class="md:col-span-3">
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Crop Focus</label>
+                <select id="cropFilter" class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow appearance-none cursor-pointer">
+                    <option value="">All Crops</option>
+                    <option value="wheat">Wheat (گندم)</option>
+                    <option value="rice">Rice (چاول)</option>
+                    <option value="maize">Maize (مکئی)</option>
+                    <option value="cotton">Cotton (کپاس)</option>
+                    <option value="sugarcane">Sugarcane (گنا)</option>
                 </select>
+            </div>
 
-                <!-- Bulk Actions -->
-                <div class="btn-group">
-                    <button class="btn btn-sm glass-panel border px-3" onclick="HistoryManager.exportSelected()">
-                        <i class="fas fa-download me-1 text-primary"></i>Export
-                    </button>
-                    <button class="btn btn-sm glass-panel border px-3 text-danger"
-                        onclick="HistoryManager.deleteSelected()">
-                        <i class="fas fa-trash me-1"></i>Delete
-                    </button>
-                </div>
+            <!-- Confidence Filter -->
+            <div class="md:col-span-3">
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Model Confidence</label>
+                <select id="confidenceFilter" class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow appearance-none cursor-pointer">
+                    <option value="">Any Confidence</option>
+                    <option value="high">High (≥80%)</option>
+                    <option value="medium">Medium (60-79%)</option>
+                    <option value="low">Low (<60%)</option>
+                </select>
+            </div>
+
+            <!-- Filter Button -->
+            <div class="md:col-span-2">
+                <button onclick="applyFilters()" class="w-full bg-green-50 hover:bg-green-100 text-green-700 font-bold py-2.5 rounded-xl text-sm transition-colors border border-green-200 flex items-center justify-center gap-2">
+                    <i class="fas fa-filter"></i> Apply
+                </button>
             </div>
         </div>
+    </div>
 
-        <!-- History Table -->
-        <div class="glass-panel reveal overflow-hidden mb-5">
-            <div id="historyTableContainer">
-                <!-- Loading state -->
-                <div class="text-center py-5">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                    <p class="mt-3 text-muted fw-bold">Accessing Archived Data...</p>
-                </div>
-            </div>
+    <!-- Toolbar -->
+    <div class="flex flex-col sm:flex-row justify-between items-center mb-4 px-4 sm:px-0 gap-4">
+        <div class="text-sm font-semibold text-gray-500" id="resultsCount">Loading records...</div>
+        <div class="flex gap-3 w-full sm:w-auto">
+            <button onclick="exportHistory()" class="flex-1 sm:flex-none bg-white border border-gray-200 hover:border-gray-300 text-gray-700 px-4 py-2 rounded-xl text-sm font-semibold shadow-sm transition-all flex items-center justify-center gap-2">
+                <i class="fas fa-file-export text-blue-500"></i> Export CSV
+            </button>
+            <button onclick="clearHistory()" class="flex-1 sm:flex-none bg-white border border-gray-200 hover:border-red-300 hover:bg-red-50 text-red-600 px-4 py-2 rounded-xl text-sm font-semibold shadow-sm transition-all flex items-center justify-center gap-2">
+                <i class="fas fa-trash-alt"></i> Clear All
+            </button>
         </div>
+    </div>
 
+    <!-- Data Table -->
+    <div class="glass-card rounded-2xl overflow-hidden mx-4 sm:mx-0 shadow-sm border border-gray-100">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-50/80 border-b border-gray-200 text-xs text-gray-400 uppercase tracking-widest font-bold">
+                        <th class="py-4 px-6 font-semibold">Date & Crop</th>
+                        <th class="py-4 px-6 font-semibold">Soil Health (N-P-K)</th>
+                        <th class="py-4 px-6 font-semibold">pH</th>
+                        <th class="py-4 px-6 font-semibold">AI Recommendation</th>
+                        <th class="py-4 px-6 font-semibold text-right">Confidence</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTableBody" class="divide-y divide-gray-100 bg-white/50 text-sm">
+                    <tr>
+                        <td colspan="5" class="py-12 text-center text-gray-400">
+                            <i class="fas fa-circle-notch fa-spin text-3xl mb-3 text-green-500"></i>
+                            <p>Loading your history...</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         <!-- Pagination -->
-        <div id="paginationContainer" class="mt-4 mb-5 pb-5"></div>
-    </div>
-
-    <!-- Pagination -->
-    <div id="paginationContainer" class="mt-4"></div>
-</div>
-
-<!-- View Details Modal -->
-<div class="modal fade" id="detailsModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Prediction Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body" id="detailsModalBody">
-                <!-- Details will be loaded here -->
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-outline-primary" onclick="HistoryManager.downloadPDF()">
-                    <i class="fas fa-file-pdf me-2"></i>Download PDF
+        <div class="bg-white/80 border-t border-gray-200 px-6 py-4 flex items-center justify-between" id="paginationContainer" style="display: none;">
+            <div class="text-xs font-semibold text-gray-500">Page <span id="currentPage">1</span> of <span id="totalPages">1</span></div>
+            <div class="flex gap-2">
+                <button id="prevBtn" onclick="changePage(-1)" class="px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i class="fas fa-chevron-left"></i>
                 </button>
-                <button type="button" class="btn btn-danger" onclick="HistoryManager.deleteFromModal()">
-                    <i class="fas fa-trash me-2"></i>Delete
+                <button id="nextBtn" onclick="changePage(1)" class="px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i class="fas fa-chevron-right"></i>
                 </button>
             </div>
         </div>
     </div>
+
 </div>
 
-<!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title">Confirm Delete</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="text-center mb-3">
-                    <i class="fas fa-exclamation-triangle text-danger" style="font-size: 3rem;"></i>
-                </div>
-                <p id="deleteMessage" class="text-center">Are you sure you want to delete this prediction?</p>
-                <p class="text-center text-muted"><strong>This action cannot be undone.</strong></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" onclick="HistoryManager.confirmDelete()">
-                    <i class="fas fa-trash me-2"></i>Delete
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Toast -->
+<div id="toast" class="fixed bottom-6 right-6 z-50 px-5 py-3 rounded-xl text-white text-sm font-semibold shadow-xl transition-all translate-y-20 opacity-0 pointer-events-none hidden"></div>
+
 {% endblock %}
 
 {% block extra_js %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
-<script src="{{ url_for('static', filename='js/export.js') }}"></script>
-<script src="{{ url_for('static', filename='js/history.js') }}"></script>
-<script>
-    // Initialize history manager on page load
-    document.addEventListener('DOMContentLoaded', function () {
-        HistoryManager.init();
-    });
-</script>
+<script src="{{ url_for('static', filename='js/history_premium.js') }}"></script>
 {% endblock %}

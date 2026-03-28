@@ -10,6 +10,30 @@
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            corePlugins: { preflight: false },
+            theme: {
+                extend: {
+                    colors: {
+                        green: {
+                            50: '#D8F3DC', 100: '#B7E4C7', 200: '#74C69D',
+                            300: '#52B788', 400: '#40916C', 500: '#2D6A4F',
+                            600: '#1B4332', 700: '#0A2615',
+                        },
+                        soil: { DEFAULT: '#6B4226', light: '#A05C36' },
+                    },
+                    fontFamily: {
+                        syne: ['Syne', 'Poppins', 'sans-serif'],
+                        sans: ['Inter', 'DM Sans', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
@@ -31,76 +55,92 @@
         style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: linear-gradient(135deg, hsla(142, 70%, 10%, 0.1) 0%, hsla(210, 40%, 98%, 1) 100%);">
     </div>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top glass-nav mx-2 mx-md-4 mt-3 rounded-pill p-2"
-        style="z-index: 1000;">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand fw-bold d-flex align-items-center" href="/"
-                style="font-family: var(--font-poppins); color: var(--primary);">
-                <i class="fas fa-seedling me-2"></i>Kisan Smart
+    {% block navbar %}
+    <style>.main-content { padding-top: 100px; }</style>
+    <nav class="fixed-top mx-2 mx-md-4 mt-3 rounded-pill p-2 px-4 d-flex align-items-center justify-content-between"
+        style="z-index:1000; background:rgba(15,30,20,0.85); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); box-shadow:0 4px 24px rgba(0,0,0,.25);">
+
+        <!-- Brand -->
+        <a class="fw-bold d-flex align-items-center text-decoration-none" href="/"
+            style="font-family:var(--font-poppins); color:#52B788; white-space:nowrap;">
+            <i class="fas fa-seedling me-2"></i>Kisan Smart
+        </a>
+
+        <!-- Nav Links (always visible) -->
+        <div class="d-flex align-items-center gap-1 flex-wrap" id="mainNav">
+            <a href="/" class="nav-pill-link">Home</a>
+            <a href="{{ url_for('views.about') }}" class="nav-pill-link">About</a>
+
+            <!-- Shown when logged in -->
+            <a href="/dashboard" class="nav-pill-link user-nav" style="display: none;">Dashboard</a>
+            <a href="{{ url_for('views.profile') }}" class="nav-pill-link user-nav" style="display: none;">
+                <i class="fas fa-user me-1 d-none d-md-inline" style="font-size:.7rem;"></i>Profile
             </a>
-            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item">
-                        <a class="nav-link px-3" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-3" href="/about">About</a>
-                    </li>
+            <a href="{{ url_for('views.history') }}" class="nav-pill-link user-nav" style="display: none;">
+                <i class="fas fa-history me-1 d-none d-md-inline" style="font-size:.7rem;"></i>History
+            </a>
+            <a href="/pest-alerts" class="nav-pill-link user-nav" style="display: none;">
+                <i class="fas fa-bug me-1 d-none d-md-inline" style="font-size:.7rem;"></i>Pest Alerts
+            </a>
+            <a href="/weather-alerts" class="nav-pill-link user-nav" style="display: none;">
+                <i class="fas fa-cloud-sun me-1 d-none d-md-inline" style="font-size:.7rem;"></i>Weather
+            </a>
 
-                    <!-- Auth Links (shown when NOT logged in) -->
-                    <li class="nav-item auth-links">
-                        <a class="nav-link px-3" href="/login">Login</a>
-                    </li>
-                    <li class="nav-item auth-links">
-                        <a class="btn-premium py-2 px-4 ms-lg-2 text-decoration-none" href="/register">Join Us</a>
-                    </li>
+            <!-- Logout (shown when logged in) -->
+            <a href="#" onclick="auth.logout(); return false;" class="nav-pill-logout user-nav" style="display: none;">
+                <i class="fas fa-sign-out-alt me-1"></i>Logout
+            </a>
 
-                    <!-- User Menu (shown when logged in) -->
-                    <li class="nav-item dropdown user-menu d-none">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" id="userDropdown"
-                            role="button" data-bs-toggle="dropdown">
-                            <div class="avatar-sm rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
-                                style="width: 32px; height: 32px;">
-                                <i class="fas fa-user small"></i>
-                            </div>
-                            <span class="user-name">User</span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end glass-panel mt-2 animate slideIn">
-                            <li><a class="dropdown-item py-2 px-3" href="{{ url_for('views.dashboard') }}"><i
-                                        class="fas fa-tachometer-alt me-2 text-primary"></i>Dashboard</a></li>
-                            <li><a class="dropdown-item py-2 px-3" href="{{ url_for('views.profile') }}"><i
-                                        class="fas fa-user me-2 text-primary"></i>Profile</a>
-                            </li>
-                            <li><a class="dropdown-item py-2 px-3" href="{{ url_for('views.history') }}"><i
-                                        class="fas fa-history me-2 text-primary"></i>History</a>
-                            </li>
-                            <li><a class="dropdown-item py-2 px-3" href="{{ url_for('views.pest_alerts') }}"><i
-                                        class="fas fa-bug me-2 text-primary"></i>Pest Alerts</a>
-                            </li>
-                            {% if user.is_authenticated and user.role.role_name == 'Admin' %}
-                            <li>
-                                <hr class="dropdown-divider opacity-10">
-                            </li>
-                            <li><a class="dropdown-item py-2 px-3" href="/admin"><i
-                                        class="fas fa-cog me-2 text-primary"></i>Admin Panel</a>
-                            </li>
-                            {% endif %}
-                            <li>
-                                <hr class="dropdown-divider opacity-10">
-                            </li>
-                            <li><a class="dropdown-item py-2 px-3 text-danger" href="#"
-                                    onclick="auth.logout(); return false;"><i
-                                        class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
+            <!-- Shown when NOT logged in -->
+            <a href="/login" class="nav-pill-link auth-links">Login</a>
+            <a href="/register" class="nav-pill-cta auth-links">Join Us</a>
         </div>
     </nav>
+
+    <style>
+        .nav-pill-link {
+            color: rgba(255,255,255,.8);
+            text-decoration: none;
+            font-size: .86rem;
+            font-weight: 600;
+            padding: .4rem .85rem;
+            border-radius: 100px;
+            transition: all .2s;
+            white-space: nowrap;
+        }
+        .nav-pill-link:hover {
+            background: rgba(255,255,255,.1);
+            color: #fff;
+        }
+        .nav-pill-logout {
+            color: #fca5a5;
+            text-decoration: none;
+            font-size: .86rem;
+            font-weight: 600;
+            padding: .4rem .85rem;
+            border-radius: 100px;
+            transition: all .2s;
+            white-space: nowrap;
+        }
+        .nav-pill-logout:hover {
+            background: rgba(239,68,68,.15);
+            color: #f87171;
+        }
+        .nav-pill-cta {
+            background: #2D6A4F;
+            color: #fff !important;
+            text-decoration: none;
+            font-size: .86rem;
+            font-weight: 700;
+            padding: .45rem 1.1rem;
+            border-radius: 100px;
+            transition: all .2s;
+            margin-left: .25rem;
+            white-space: nowrap;
+        }
+        .nav-pill-cta:hover { background: #40916C; }
+    </style>
+    {% endblock %}
 
     <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -119,7 +159,7 @@
     {% endwith %}
 
     <!-- Main Content -->
-    <div class="main-content" style="margin-top: 100px; min-height: calc(100vh - 200px);">
+    <div class="main-content" style="min-height: calc(100vh - 200px);">
         <div class="container">
             {% block content %}{% endblock %}
         </div>

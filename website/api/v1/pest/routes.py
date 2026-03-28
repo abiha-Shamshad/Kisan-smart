@@ -5,7 +5,7 @@ Flask Blueprint for pest & disease outbreak alert endpoints.
 """
 
 from flask import Blueprint, request, jsonify, current_app
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_login import login_required, current_user
 from datetime import datetime, timezone
 
 from .services.engine import assess_risk
@@ -17,7 +17,6 @@ pest_api = Blueprint("pest_api", __name__)
 
 
 @pest_api.route("/assess", methods=["GET"])
-@jwt_required()
 def assess():
     lat  = request.args.get("lat",  type=float)
     lon  = request.args.get("lon",  type=float)
@@ -53,9 +52,8 @@ def assess():
 
 
 @pest_api.route("/report", methods=["POST"])
-@jwt_required()
 def report_sighting():
-    user_id = get_jwt_identity()
+    user_id = getattr(current_user, 'id', 1) if current_user.is_authenticated else 1
     data    = request.get_json(silent=True)
 
     if not data:
@@ -85,7 +83,6 @@ def report_sighting():
 
 
 @pest_api.route("/district-alerts", methods=["GET"])
-@jwt_required()
 def district_alerts():
     lat  = request.args.get("lat",  type=float)
     lon  = request.args.get("lon",  type=float)
@@ -129,6 +126,42 @@ def district_alerts():
         "radius_km": 50,
         "alerts": sorted(alerts, key=lambda a: -a["report_count"]),
     })
+
+
+@pest_api.route("/weather", methods=["GET"])
+def get_weather():
+    lat = request.args.get("lat", type=float)
+    lon = request.args.get("lon", type=float)
+    days = request.args.get("days", default=7, type=int)
+
+    if lat is None or lon is None:
+        return jsonify({"error": "lat and lon are required"}), 400
+
+    from .services.engine import fetch_weather
+    try:
+        w = fetch_weather(lat, lon, days=days)
+        
+        # Generate some weather-specific alerts based on the window
+        alerts = []
+        if w.rain_total_mm > 30:
+            alerts.append({"type": "warning", "title": "Heavy Rain Forecast", "body": f"Total expected rainfall: {w.rain_total_mm:.1f}mm. Avoid spraying."})
+        if w.temp_max > 42:
+            alerts.append({"type": "critical", "title": "Extreme Heatwave", "body": f"Temps reaching {w.temp_max:.1f}°C. Ensure adequate irrigation."})
+        if w.rh_mean > 85:
+            alerts.append({"type": "info", "title": "High Humidity", "body": "Ideal conditions for fungal growth. Monitor crops closely."})
+
+        return jsonify({
+            "summary": {
+                "temp_min": w.temp_min,
+                "temp_max": w.temp_max,
+                "temp_mean": w.temp_mean,
+                "rain_total": w.rain_total_mm,
+                "humidity_avg": w.rh_mean
+            },
+            "alerts": alerts
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 503
 
 
 def _maybe_broadcast_district_alert(crop, pest_name, lat, lon):

@@ -97,23 +97,26 @@ class AuthManager {
      * Update UI based on authentication state
      */
     updateUI() {
-        const authLinks = document.querySelector('.auth-links');
-        const userMenu = document.querySelector('.user-menu');
+        const authLinks    = document.querySelectorAll('.auth-links');
+        const userMenu     = document.querySelector('.user-menu');
+        const userNavItems = document.querySelectorAll('.user-nav');
         const userNameSpan = document.querySelector('.user-name');
 
         if (this.isAuthenticated() && this.user) {
-            // Hide auth links, show user menu
-            if (authLinks) authLinks.classList.add('d-none');
-            if (userMenu) userMenu.classList.remove('d-none');
+            // Hide auth links, show user-specific nav
+            authLinks.forEach(el => el.style.display = 'none');
+            if (userMenu) userMenu.style.display = '';
+            userNavItems.forEach(el => el.style.display = '');
 
             // Update user name
             if (userNameSpan) {
                 userNameSpan.textContent = this.user.full_name || this.user.email;
             }
         } else {
-            // Show auth links, hide user menu
-            if (authLinks) authLinks.classList.remove('d-none');
-            if (userMenu) userMenu.classList.add('d-none');
+            // Show auth links, hide user-specific nav
+            authLinks.forEach(el => el.style.display = '');
+            if (userMenu) userMenu.style.display = 'none';
+            userNavItems.forEach(el => el.style.display = 'none');
         }
     }
 
