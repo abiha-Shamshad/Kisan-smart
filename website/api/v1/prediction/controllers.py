@@ -10,6 +10,16 @@ from datetime import datetime
 predict_schema = PredictionRequestSchema()
 
 
+from website.api.v1.prediction.tools_service import (
+    calculate_npk_formula,
+    optimize_budget_logic,
+    generate_schedule_logic,
+)
+from website.api.v1.prediction.vision_service import (
+    analyze_plant_image,
+)
+
+
 def get_prediction():
     """
     Get Fertilizer Recommendation
@@ -111,6 +121,77 @@ def get_batch_prediction():
             results.append({"error": str(e), "success": False})
 
     return success_response(results, f"Processed {len(results)} predictions")
+
+
+def get_npk_formula_prediction():
+    """Formula-based NPK Calculator"""
+    try:
+        data = request.get_json()
+        result = calculate_npk_formula(data)
+        
+        # Save to history if logged in
+        if current_user.is_authenticated:
+            prediction_id = f"calc_{int(datetime.now().timestamp())}"
+            new_rec = Recommendation(
+                user_id=int(current_user.id),
+                prediction_id=prediction_id,
+                crop_type=data.get("crop_type", "Wheat"),
+                nitrogen=float(data.get("nitrogen", 0)),
+                phosphorus=float(data.get("phosphorus", 0)),
+                potassium=float(data.get("potassium", 0)),
+                ph=float(data.get("ph", 7)),
+                moisture=40, temperature=25, # defaults
+                farm_area=float(data.get("field_area", 1)),
+                growth_stage="Basal",
+                fertilizer_type=f"DAP: {result['fertilizers']['dap']}kg, Urea: {result['fertilizers']['urea']}kg",
+                quantity=result['fertilizers']['dap'] + result['fertilizers']['urea'] + result['fertilizers']['sop'],
+                type_confidence=100.0,
+                quantity_confidence=100.0,
+                overall_confidence=100.0,
+                confidence_level="Calculated",
+            )
+            db.session.add(new_rec)
+            db.session.commit()
+
+        return success_response(result, "Calculation completed")
+    except Exception as e:
+        return error_response(str(e), "CALCULATION_FAILED", None, 500)
+
+
+def get_budget_optimization():
+    """Budget Optimizer Controller"""
+    try:
+        data = request.get_json()
+        result = optimize_budget_logic(data)
+        return success_response(result, "Optimization successful")
+    except Exception as e:
+        return error_response(str(e), "OPTIMIZATION_FAILED", None, 500)
+
+
+def get_schedule():
+    """Schedule Generator Controller"""
+    try:
+        data = request.get_json()
+        result = generate_schedule_logic(data)
+        return success_response(result, "Schedule generated")
+    except Exception as e:
+        return error_response(str(e), "SCHEDULE_GENERATION_FAILED", None, 500)
+
+
+def get_ai_scan():
+    """AI Vision Diagnostic Controller"""
+    try:
+        data = request.get_json()
+        # Currently, we don't handle file uploads directly in JSON,
+        # but the frontend sends it as a base64 string or we use Multipart.
+        # For simplicity, we assume 'image' key has base64.
+        img_b64 = data.get("image")
+        crop = data.get("crop_type", "wheat")
+        
+        result = analyze_plant_image(img_b64, crop)
+        return success_response(result, "Diagnosis complete")
+    except Exception as e:
+        return error_response(str(e), "AI_SCAN_FAILED", None, 500)
 
 
 def validate_input():

@@ -110,7 +110,7 @@ class APIClient {
    * Prediction Methods
    */
   async predict(inputData) {
-    return await this.request('/predict/', {
+    return await this.request('/predict', {
       method: 'POST',
       body: JSON.stringify(inputData)
     });
@@ -139,7 +139,7 @@ class APIClient {
       per_page: perPage,
       ...filters
     });
-    return await this.request(`/history/?${params}`);
+    return await this.request(`/history?${params}`);
   }
 
   async getPredictionDetail(predictionId) {
@@ -174,7 +174,7 @@ class APIClient {
   }
 
   async savePrediction(predictionData) {
-    return await this.request('/history/', {
+    return await this.request('/history', {
       method: 'POST',
       body: JSON.stringify(predictionData)
     });
@@ -188,11 +188,11 @@ class APIClient {
    * Profile Methods
    */
   async getProfile() {
-    return await this.request('/profile/');
+    return await this.request('/profile');
   }
 
   async updateProfile(profileData) {
-    return await this.request('/profile/', {
+    return await this.request('/profile', {
       method: 'PUT',
       body: JSON.stringify(profileData)
     });
