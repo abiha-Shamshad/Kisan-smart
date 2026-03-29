@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Application Schedule — Kisan Smart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_premium.css') }}" />
+<style>
+  .tool-container { max-width: 1000px; margin: 0 auto; padding: 2.5rem 1rem; }
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .schedule-table-wrapper { overflow-x: auto; background: white; border-radius: var(--radius-sm); border: 1px solid var(--gray-2); }
+  .schedule-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  .schedule-table th { background: var(--gray-1); padding: 12px; text-align: left; font-weight: 600; text-transform: uppercase; color: var(--gray-4); font-size: 0.8rem; }
+  .schedule-table td { padding: 14px 12px; border-bottom: 1px solid var(--gray-1); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="tool-container">
+    <div class="mb-4 reveal">
+        <h2 class="fw-bold mb-1" style="font-family: var(--font-dm-serif);">Agricultural Application Calendar</h2>
+        <p class="text-gray-4">Timeline for split-dose fertilizer applications throughout the season.</p>
+    </div>
+
+    <div class="card-premium reveal">
+      <div class="card-title-premium"><i class="fas fa-calendar-alt text-blue"></i> Customized Application Cycle</div>
+      <div class="field-grid">
+        <div class="mb-3">
+          <label class="small fw-bold">Sowing Date</label>
+          <input type="date" id="sched-sow-date" class="input-premium w-100">
+        </div>
+        <div class="mb-3">
+          <label class="small fw-bold">Total Requirements (kg/ac)</label>
+          <div class="d-flex gap-2">
+            <input type="number" id="sched-n" class="input-premium w-50" placeholder="N" value="60">
+            <input type="number" id="sched-p" class="input-premium w-50" placeholder="P" value="30">
+          </div>
+        </div>
+      </div>
+      <button class="btn-premium w-100" onclick="runScheduleGeneration()">Generate Calendar</button>
+    </div>
+
+    <div id="schedule-result-view" style="display: none;" class="mt-4"></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/api.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dashboard_premium.js') }}"></script>
+{% endblock %}

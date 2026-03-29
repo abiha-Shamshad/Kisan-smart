@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}NPK Calculator — Kisan Smart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_premium.css') }}" />
+<style>
+  .tool-container { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; }
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media(max-width: 600px) { .field-grid { grid-template-columns: 1fr; } }
+  .hint { font-size: 11px; color: var(--gray-4); margin-top: 4px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="tool-container">
+    <div class="mb-4 reveal">
+        <h2 class="fw-bold mb-1" style="font-family: var(--font-dm-serif);">NPK Calculator Expert</h2>
+        <p class="text-gray-4">Calculate precision fertilizer doses for your specific soil and crop.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-7">
+        <div class="card-premium reveal" style="animation-delay: 0.1s;">
+          <div class="card-title-premium"><i class="fas fa-seedling text-green"></i> Crop & Field Details</div>
+          <div class="field-grid">
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Select Crop</label>
+              <select id="calc-crop" class="form-select input-premium">
+                <option value="wheat">Wheat (گندم)</option>
+                <option value="rice">Rice (چاول)</option>
+                <option value="maize">Maize (مکئی)</option>
+                <option value="cotton">Cotton (کپاس)</option>
+                <option value="sugarcane">Sugarcane (گنا)</option>
+                <option value="potato">Potato (آلو)</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Field Area (Acres)</label>
+              <input type="number" id="calc-area" class="input-premium w-100" value="1" step="0.1">
+            </div>
+          </div>
+          <div class="field-grid">
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Previous Crop</label>
+              <select id="calc-prev-crop" class="form-select input-premium">
+                <option value="none">None / Fresh</option>
+                <option value="legume">Legume (Pulse)</option>
+                <option value="wheat">Wheat</option>
+                <option value="rice">Rice</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Organic Matter</label>
+              <select id="calc-org-matter" class="form-select input-premium">
+                <option value="none">None</option>
+                <option value="fym_light">Farmyard Manure (Light)</option>
+                <option value="fym_heavy">Farmyard Manure (Heavy)</option>
+                <option value="compost">Compost</option>
+                <option value="green_manure">Green Manure</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-premium reveal" style="animation-delay: 0.2s;">
+          <div class="card-title-premium"><i class="fas fa-vial text-blue"></i> Soil Test Values</div>
+          
+          <div class="mb-4">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                  <label class="form-label mb-0 fw-bold"><i class="fas fa-layer-group text-blue-300"></i> Field Variability (VRM)</label>
+                  <div class="form-check form-switch">
+                      <input class="form-check-input" type="checkbox" id="vrm-toggle" onchange="toggleVRM()">
+                      <label class="form-check-label small" for="vrm-toggle">Enable Zones</label>
+                  </div>
+              </div>
+              <div id="vrm-container" style="display: none;">
+                  <div id="zones-list"></div>
+                  <button type="button" class="btn btn-outline-primary btn-sm w-100 py-2 border-dashed" onclick="addZone()">
+                      <i class="fas fa-plus-circle me-1"></i> Add Soil Zone
+                  </button>
+              </div>
+          </div>
+
+          <label class="form-label fw-600"><i class="fas fa-flask text-green-300"></i> Soil Test Results</label>
+          <div class="row g-3">
+            <div class="col-4">
+              <label class="small fw-bold">N (kg/ac)</label>
+              <input type="number" id="calc-n" class="input-premium w-100" value="20">
+            </div>
+            <div class="col-4">
+              <label class="small fw-bold">P (kg/ac)</label>
+              <input type="number" id="calc-p" class="input-premium w-100" value="8">
+            </div>
+            <div class="col-4">
+              <label class="small fw-bold">K (kg/ac)</label>
+              <input type="number" id="calc-k" class="input-premium w-100" value="120">
+            </div>
+          </div>
+          
+          <div class="mt-4">
+            <label class="small fw-bold">Soil pH: <span id="ph-display" class="text-primary fw-bold">7.2</span></label>
+            <div class="ph-slider-track">
+              <div class="ph-marker" id="ph-marker" style="left: 58%;"></div>
+              <input type="range" id="calc-ph" min="4" max="9" step="0.1" value="7.2" 
+                     style="position:absolute; width:100%; opacity:0; cursor:pointer;"
+                     oninput="updatePHSlider(this.value)">
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <label class="small fw-bold">Soil Texture</label>
+            <select id="calc-texture" class="form-select input-premium">
+              <option value="loam">Loam (دومٹ) — Ideal</option>
+              <option value="clay">Clay (چکنی مٹی)</option>
+              <option value="sandy">Sandy (ریتلی مٹی)</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn-premium w-100 py-3 reveal" onclick="runCalculation()">
+          <i class="fas fa-magic me-2"></i> Generate Smart Recommendation
+        </button>
+      </div>
+
+      <div class="col-lg-5">
+        <div id="calc-result-placeholder" class="card-premium h-100 d-flex flex-column align-items-center justify-content-center text-center opacity-75">
+          <i class="fas fa-chart-pie fa-3x text-gray-3 mb-3"></i>
+          <p class="text-gray-4">Calculate to see your AI-optimized fertilizer plan.</p>
+        </div>
+        <div id="calc-result-view" style="display: none;"></div>
+      </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard_premium.js') }}"></script>
+<script>
+  function updatePHSlider(val) {
+    const v = parseFloat(val);
+    document.getElementById('ph-display').textContent = v.toFixed(1);
+    const pct = ((v - 4) / (9 - 4) * 100);
+    document.getElementById('ph-marker').style.left = pct + '%';
+  }
+</script>
+{% endblock %}

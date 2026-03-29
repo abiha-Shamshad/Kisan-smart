@@ -14,7 +14,66 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Initial zone for VRM
   addZone();
+
+  // Deep linking: Switch tab based on URL hash (Feature: Tool-First Nav)
+  // ONLY auto-default to 'hub' if we are on the main dashboard page
+  const isDashboardPage = window.location.pathname === '/dashboard' || window.location.pathname === '/';
+  const hash = window.location.hash.substring(1);
+  
+  if (isDashboardPage) {
+      const target = hash || 'hub';
+      setTimeout(() => switchTab(target), 100);
+  }
+  
+  // Update Hub Stats if on dashboard
+  if (document.getElementById('hub')) {
+      updateHubSummary();
+  }
 });
+
+function updateHubSummary() {
+    // These would ideally come from a 'status' API or stored state
+    // For now, we simulate a 'Health' dashboard feel
+    const soilVal = document.getElementById('hub-soil-val');
+    const budgetVal = document.getElementById('hub-budget-val');
+    
+    // Check if we have some data in local inputs to show a 'live' feel
+    const area = document.getElementById('calc-area')?.value;
+    if (area > 1) soilVal.textContent = "Data Ready";
+}
+
+function switchTab(tabId) {
+    const content = document.getElementById(tabId);
+    const btn = document.getElementById('tab-btn-' + tabId);
+
+    // If we are NOT on the Hub dashboard, or the content doesn't exist, we must navigate
+    if (!content || !btn) {
+        const routes = {
+            'calc': '/npk-calculator',
+            'budget': '/budget-optimizer',
+            'schedule': '/schedule',
+            'scan': '/ai-scan',
+            'history': '/field-history',
+            'hub': '/dashboard'
+        };
+        if (routes[tabId]) {
+            window.location.href = routes[tabId];
+        }
+        return;
+    }
+
+    // Normal in-page tab switching (for Hub)
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.tab-pill').forEach(t => t.classList.remove('active'));
+
+    content.classList.add('active');
+    btn.classList.add('active');
+
+    if (tabId === 'history') loadServerHistory();
+
+    // Update hash without jumping page
+    history.replaceState(null, null, '#' + tabId);
+}
 
 /* ── Tab 1: NPK Calculator & VRM (Feature 8) ──────────────── */
 let zones = [];

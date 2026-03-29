@@ -47,6 +47,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/utilities.css') }}" />
 
     {% block extra_css %}{% endblock %}
+    {% block head %}{% endblock %}
     <!-- PWA Support -->
     <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
     <meta name="theme-color" content="#2d6a4f">
@@ -78,34 +79,34 @@
             <i class="fas fa-seedling me-2"></i>Kisan Smart
         </a>
 
-        <!-- Nav Links (always visible) -->
+        <!-- Nav Links (always accessible) -->
         <div class="d-flex align-items-center gap-1 flex-wrap" id="mainNav">
-            <a href="/" class="nav-pill-link">Home</a>
             <a href="{{ url_for('views.about') }}" class="nav-pill-link">About</a>
 
-            <!-- Shown when logged in -->
-            <a href="/dashboard" class="nav-pill-link user-nav" style="display: none;">Dashboard</a>
-            <a href="{{ url_for('views.profile') }}" class="nav-pill-link user-nav" style="display: none;">
-                <i class="fas fa-user me-1 d-none d-md-inline" style="font-size:.7rem;"></i>Profile
-            </a>
-            <a href="{{ url_for('views.history') }}" class="nav-pill-link user-nav" style="display: none;">
-                <i class="fas fa-history me-1 d-none d-md-inline" style="font-size:.7rem;"></i>History
-            </a>
-            <a href="/pest-alerts" class="nav-pill-link user-nav" style="display: none;">
-                <i class="fas fa-bug me-1 d-none d-md-inline" style="font-size:.7rem;"></i>Pest Alerts
-            </a>
-            <a href="/weather-alerts" class="nav-pill-link user-nav" style="display: none;">
-                <i class="fas fa-cloud-sun me-1 d-none d-md-inline" style="font-size:.7rem;"></i>Weather
-            </a>
+            {% if current_user.is_authenticated %}
+                <!-- Tools (Authenticated Only) -->
+                <a href="{{ url_for('views.dashboard') }}" class="nav-pill-link">Dashboard</a>
+                <a href="{{ url_for('views.calculator') }}" class="nav-pill-link">NPK Calculator</a>
+                <a href="{{ url_for('views.optimizer') }}" class="nav-pill-link">Budget Optimizer</a>
+                <a href="{{ url_for('views.schedule') }}" class="nav-pill-link">Schedule</a>
+                <a href="{{ url_for('views.scan') }}" class="nav-pill-link">AI Scan</a>
+                <a href="{{ url_for('views.field_history') }}" class="nav-pill-link">Field History</a>
+                <a href="{{ url_for('views.pest_alerts') }}" class="nav-pill-link">Pest Alerts</a>
+                <a href="{{ url_for('views.weather_alerts') }}" class="nav-pill-link">Weather</a>
 
-            <!-- Logout (shown when logged in) -->
-            <a href="#" onclick="auth.logout(); return false;" class="nav-pill-logout user-nav" style="display: none;">
-                <i class="fas fa-sign-out-alt me-1"></i>Logout
-            </a>
+                <a href="{{ url_for('views.profile') }}" class="nav-pill-link ms-2">
+                    <i class="fas fa-user me-1 d-none d-md-inline" style="font-size:.7rem;"></i>Profile
+                </a>
 
-            <!-- Shown when NOT logged in -->
-            <a href="/login" class="nav-pill-link auth-links">Login</a>
-            <a href="/register" class="nav-pill-cta auth-links">Join Us</a>
+                <!-- Logout -->
+                <a href="/logout" class="nav-pill-logout">
+                    <i class="fas fa-sign-out-alt me-1"></i>Logout
+                </a>
+            {% else %}
+                <!-- Public Links -->
+                <a href="/login" class="nav-pill-link">Login</a>
+                <a href="/register" class="nav-pill-cta">Join Us</a>
+            {% endif %}
         </div>
     </nav>
 
@@ -202,11 +203,11 @@
                 <div class="col-6 col-lg-4 text-center text-lg-start">
                     <h5 class="text-white fw-bold mb-4">Quick Links</h5>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="/dashboard"
+                        <li class="mb-2"><a href="{{ url_for('views.dashboard') }}"
                                 class="text-decoration-none text-muted hover-white">Dashboard</a></li>
-                        <li class="mb-2"><a href="/history"
+                        <li class="mb-2"><a href="{{ url_for('views.field_history') }}"
                                 class="text-decoration-none text-muted hover-white">History</a></li>
-                        <li class="mb-2"><a href="/profile"
+                        <li class="mb-2"><a href="{{ url_for('views.profile') }}"
                                 class="text-decoration-none text-muted hover-white">Profile</a></li>
                     </ul>
                 </div>

@@ -7,6 +7,7 @@ from flask import (
     url_for,
     current_app,
 )
+from urllib.parse import urlparse
 from .models import User, Role
 from . import db, bcrypt, limiter
 from .forms import RegistrationForm, LoginForm, RequestResetForm, ResetPasswordForm
@@ -21,7 +22,7 @@ auth = Blueprint("auth", __name__)
 @limiter.limit("3 per hour")
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for("views.home"))
+        return redirect(url_for("views.dashboard"))
     form = RegistrationForm()
     if form.validate_on_submit():
         role = Role.query.filter_by(role_name="Farmer").first()
@@ -62,7 +63,7 @@ def register():
 @limiter.limit("5 per 15 minutes")
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for("views.home"))
+        return redirect(url_for("views.dashboard"))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
@@ -93,11 +94,16 @@ def login():
 
                 login_user(user, remember=form.remember.data)
                 next_page = request.args.get("next")
-                return (
-                    redirect(next_page)
-                    if next_page
-                    else redirect(url_for("views.home"))
+                # Only follow next if it's a safe relative URL and not just "/"
+                # (visiting "/" unauthenticated sets next="/" which would
+                # double-redirect through views.home → views.dashboard)
+                parsed = urlparse(next_page) if next_page else None
+                is_safe_next = (
+                    parsed
+                    and not parsed.netloc  # no external domain
+                    and parsed.path not in ("/", "")
                 )
+                return redirect(next_page if is_safe_next else url_for("views.dashboard"))
             else:
                 # Increment failed attempts
                 user.failed_login_attempts += 1
@@ -123,7 +129,7 @@ def login():
 @auth.route("/logout")
 def logout():
     logout_user()
-    return redirect(url_for("views.home"))
+    return redirect(url_for("views.about"))
 
 
 @auth.route("/verify-email/<token>")
@@ -143,7 +149,7 @@ def verify_email(token):
 @auth.route("/forgot-password", methods=["GET", "POST"])
 def forgot_password():
     if current_user.is_authenticated:
-        return redirect(url_for("views.home"))
+        return redirect(url_for("views.dashboard"))
     form = RequestResetForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
@@ -160,7 +166,7 @@ def forgot_password():
 @auth.route("/reset-password/<token>", methods=["GET", "POST"])
 def reset_password(token):
     if current_user.is_authenticated:
-        return redirect(url_for("views.home"))
+        return redirect(url_for("views.dashboard"))
     email = verify_token(token, salt="password-reset", expiration=3600)  # 1 hour
     if email is None:
         flash("That is an invalid or expired token", "warning")

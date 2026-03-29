@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}AI Plant Scan — Kisan Smart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_premium.css') }}" />
+<style>
+  .tool-container { max-width: 800px; margin: 0 auto; padding: 2.5rem 1rem; }
+  .scan-dropzone { 
+      border: 2px dashed var(--gray-3); border-radius: var(--radius-md); 
+      padding: 3rem; text-align: center; cursor: pointer; transition: all 0.2s; 
+      background: rgba(255,255,255,0.5);
+  }
+  .scan-dropzone:hover { border-color: var(--green); background: var(--green-light-50, rgba(45,106,79,0.05)); }
+  #image-preview { max-width: 100%; max-height: 300px; border-radius: var(--radius-sm); display: none; margin: 1rem auto; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="tool-container">
+    <div class="mb-4 reveal text-center">
+        <h2 class="fw-bold mb-1" style="font-family: var(--font-dm-serif);">AI Deficiency Vision Scanner</h2>
+        <p class="text-gray-4">Identify nutrient deficiencies in seconds using advanced image recognition.</p>
+    </div>
+
+    <div class="card-premium reveal shadow-lg">
+      <div class="scan-dropzone" onclick="document.getElementById('ai-image-input').click()">
+        <span style="font-size: 3rem;">🌿</span>
+        <div class="fw-bold fs-5 mt-2">Take or Upload Photo</div>
+        <div class="text-muted small">Target a clear view of yellowing or spotted leaves</div>
+        <img id="image-preview" src="" alt="Sample Preview">
+      </div>
+      <input type="file" id="ai-image-input" hidden accept="image/*" onchange="previewScanImage(event)">
+      
+      <div class="mt-4">
+        <button class="btn-premium w-100 py-3 mt-2" id="scan-btn" onclick="runAIScan()">
+          🔍 Analyze with Claude AI
+        </button>
+      </div>
+    </div>
+    
+    <div id="scan-result-view" style="display: none;" class="mt-4"></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/api.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dashboard_premium.js') }}"></script>
+{% endblock %}

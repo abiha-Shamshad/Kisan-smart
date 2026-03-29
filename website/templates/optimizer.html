@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Budget Optimizer — Kisan Smart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_premium.css') }}" />
+<style>
+  .tool-container { max-width: 900px; margin: 0 auto; padding: 2.5rem 1rem; }
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media(max-width: 600px) { .field-grid { grid-template-columns: 1fr; } }
+  .budget-metric { text-align: center; padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--gray-1); }
+  .metric-val { font-family: var(--font-dm-serif); font-size: 1.5rem; margin-top: 0.25rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="tool-container">
+    <div class="mb-4 reveal">
+        <h2 class="fw-bold mb-1" style="font-family: var(--font-dm-serif);">Fertilizer Portfolio Optimizer</h2>
+        <p class="text-gray-4">Maximize your yield while minimizing seasonal costs.</p>
+    </div>
+
+    <div class="card-premium reveal" style="animation-delay: 0.1s;">
+      <div class="card-title-premium"><i class="fas fa-wallet text-amber"></i> Financial Constraints</div>
+      <div class="field-grid">
+        <div class="mb-3">
+          <label class="small fw-bold">Total Budget (PKR)</label>
+          <input type="number" id="budget-amount" class="input-premium w-100" value="15000">
+        </div>
+        <div class="mb-3">
+          <label class="small fw-bold">Expected Crop Price (PKR/40kg)</label>
+          <input type="number" id="budget-crop-price" class="input-premium w-100" value="4200">
+        </div>
+      </div>
+      
+      <div class="small fw-bold text-gray-4 mb-3 uppercase tracking-wider">Local Market Prices (Per 50kg Bag)</div>
+      <div class="row g-3 mb-4">
+        <div class="col-md-4"><label class="hint">Urea</label><input type="number" id="price-urea" class="input-premium w-100" value="3400"></div>
+        <div class="col-md-4"><label class="hint">DAP</label><input type="number" id="price-dap" class="input-premium w-100" value="9800"></div>
+        <div class="col-md-4"><label class="hint">SOP (Potash)</label><input type="number" id="price-sop" class="input-premium w-100" value="6500"></div>
+      </div>
+      
+      <div class="row g-3 mb-4">
+        <div class="col-md-4"><label class="hint">SSP</label><input type="number" id="price-ssp" class="input-premium w-100" value="2200"></div>
+        <div class="col-md-4"><label class="hint">NP (Nitrophos)</label><input type="number" id="price-np" class="input-premium w-100" value="5500"></div>
+        <div class="col-md-4"><label class="hint">Nitrogen (Needs)</label><input type="number" id="sched-n" class="input-premium w-100" value="60"></div>
+      </div>
+
+      <button class="btn btn-warning w-100 fw-bold border-0 shadow-sm py-2" style="background: var(--amber);" onclick="runBudgetOptimization()">
+        💰 Optimize Distribution
+      </button>
+    </div>
+
+    <div id="budget-result-view" style="display: none;"></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/api.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dashboard_premium.js') }}"></script>
+{% endblock %}
