@@ -11,21 +11,81 @@ document.addEventListener('DOMContentLoaded', () => {
   // Set default date for schedule
   const dateInput = document.getElementById('sched-sow-date');
   if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
+  
+  // Initial zone for VRM
+  addZone();
 });
 
-/* ── Tab 1: NPK Calculator ────────────────────────────────── */
+/* ── Tab 1: NPK Calculator & VRM (Feature 8) ──────────────── */
+let zones = [];
+
+function toggleVRM() {
+    const isEnabled = document.getElementById('vrm-toggle').checked;
+    document.getElementById('vrm-container').style.display = isEnabled ? 'block' : 'none';
+}
+
+function addZone() {
+    const id = Date.now();
+    const zoneHtml = `
+        <div class="zone-pill d-flex justify-content-between align-items-center mb-2 animate-in" id="zone-${id}">
+            <div>
+                <span class="badge bg-light text-blue border small me-2">${zones.length + 1}</span>
+                <input type="text" class="border-0 bg-transparent small fw-bold" placeholder="Zone Name (e.g. Sandy)" style="width: 120px;">
+            </div>
+            <div class="d-flex gap-2">
+                <input type="number" class="zone-input" placeholder="N" title="Nitrogen" style="width: 45px;">
+                <input type="number" class="zone-input" placeholder="P" title="Phosphorus" style="width: 45px;">
+                <button class="btn btn-link text-danger p-0 ms-1" onclick="removeZone(${id})"><i class="fas fa-times-circle"></i></button>
+            </div>
+        </div>
+    `;
+    const container = document.getElementById('zones-list');
+    if (container) {
+        container.insertAdjacentHTML('beforeend', zoneHtml);
+        zones.push(id);
+    }
+}
+
+function removeZone(id) {
+    if (zones.length <= 1) return;
+    const el = document.getElementById(`zone-${id}`);
+    if (el) el.remove();
+    zones = zones.filter(zid => zid !== id);
+}
 
 async function runCalculation() {
+    // Check for VRM (Feature 8)
+    const isVRM = document.getElementById('vrm-toggle').checked;
+    let nVal = parseFloat(document.getElementById('calc-n').value) || 20;
+    let pVal = parseFloat(document.getElementById('calc-p').value) || 8;
+    
+    if (isVRM && zones.length > 0) {
+        // Average the zones for the main calculation
+        let totalN = 0, totalP = 0, count = 0;
+        zones.forEach(id => {
+            const zN = parseFloat(document.querySelector(`#zone-${id} input[placeholder="N"]`).value);
+            const zP = parseFloat(document.querySelector(`#zone-${id} input[placeholder="P"]`).value);
+            if (!isNaN(zN) && !isNaN(zP)) {
+                totalN += zN; totalP += zP; count++;
+            }
+        });
+        if (count > 0) {
+            nVal = totalN / count;
+            pVal = totalP / count;
+        }
+    }
+
     const data = {
         crop_type: document.getElementById('calc-crop').value,
         field_area: parseFloat(document.getElementById('calc-area').value) || 1,
-        nitrogen: parseFloat(document.getElementById('calc-n').value) || 20,
-        phosphorus: parseFloat(document.getElementById('calc-p').value) || 8,
+        nitrogen: nVal,
+        phosphorus: pVal,
         potassium: parseFloat(document.getElementById('calc-k').value) || 120,
         ph: parseFloat(document.getElementById('calc-ph').value) || 7.2,
         soil_texture: document.getElementById('calc-texture').value,
         prev_crop: document.getElementById('calc-prev-crop').value,
-        organic_matter: document.getElementById('calc-org-matter').value
+        organic_matter: document.getElementById('calc-org-matter').value,
+        is_vrm: isVRM
     };
 
     const btn = event.currentTarget;
@@ -166,13 +226,18 @@ function renderBudgetResult(r) {
         </div>
         
         <div class="card-premium mt-3 border-green-light">
-            <div class="small fw-bold text-gray-5 mb-3">CHEAPEST FERTILIZER ALLOCATION</div>
+            <div class="small fw-bold text-gray-5 mb-3 uppercase tracking-wider">CHEAPEST FERTILIZER ALLOCATION</div>
             ${r.plan.fertilizers.map(f => `
                 <div class="d-flex justify-content-between border-bottom py-2">
                     <span>${f.name}</span>
                     <span class="fw-bold">${f.qty} kg <small class="text-muted">(Rs. ${f.cost})</small></span>
                 </div>
             `).join('')}
+            <div class="mt-4 pt-3 border-top">
+                <button class="btn-wa w-100 justify-content-center" onclick='shareResult("budget", ${JSON.stringify(r)})'>
+                    <i class="fab fa-whatsapp"></i> Share Financial Plan
+                </button>
+            </div>
         </div>
     `;
 }
@@ -326,6 +391,10 @@ function renderScanResult(r) {
                 </div>
             </div>
             
+            <button class="btn-wa w-100 justify-content-center mt-3" onclick='shareResult("scan", ${JSON.stringify(r)})'>
+                <i class="fab fa-whatsapp"></i> Share Diagnostic
+            </button>
+            
             ${isMock ? `<div class="mt-2 text-center"><small class="text-muted italic text-xs">Note: AI Model is currently in simulation mode.</small></div>` : ''}
         </div>
     `;
@@ -390,6 +459,20 @@ function renderHistoryRecords(data) {
 }
 
 /* ── UI Helpers ───────────────────────────────────────────── */
+
+function shareResult(type, data) {
+    let text = "";
+    if (type === 'calc') {
+        text = `*Kisan Smart Plan* 🌾\nCrop: ${data.crop}\nArea: ${data.acres}ac\n------------\nUrea: ${data.fertilizers.urea}kg\nDAP: ${data.fertilizers.dap}kg\nSOP: ${data.fertilizers.sop}kg\n------------\nAdvice: ${data.ph_status.message}`;
+    } else if (type === 'budget') {
+        text = `*KisanSmart Budget* 💰\nROI: ${data.financials.roi}%\nProfit: Rs. ${data.financials.profit.toLocaleString()}\nAllocation:\n${data.plan.fertilizers.map(f => `- ${f.name}: ${f.qty}kg`).join('\n')}`;
+    } else if (type === 'scan') {
+        text = `*KisanSmart Diagnostic* 🍂\nIssue: ${data.deficiency}\nSolution: ${data.solution}\nConfidence: ${Math.round(data.confidence*100)}%`;
+    }
+
+    const waUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(waUrl, '_blank');
+}
 
 function showToast(msg, isError = false) {
     const t = document.getElementById('toast');

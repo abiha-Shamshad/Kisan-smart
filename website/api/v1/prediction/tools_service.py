@@ -62,22 +62,27 @@ def calculate_npk_formula(data):
     if prev_crop == "legume": bonus = {"N": 15, "P": 3, "K": 2}
     elif prev_crop == "rice": bonus = {"N": 5, "P": 1, "K": 5}
 
-    # Bonus from organic matter
-    org = {"N": 0, "P": 0, "K": 0}
-    if organic_matter == "fym_light": org = {"N": 10, "P": 5, "K": 8}
-    elif organic_matter == "fym_heavy": org = {"N": 20, "P": 10, "K": 15}
-    elif organic_matter == "compost": org = {"N": 15, "P": 7, "K": 10}
-    elif organic_matter == "green_manure": org = {"N": 20, "P": 5, "K": 5}
+    # Bonus from organic matter (Feature 6: ISFM integration)
+    # Average nutrients in 1 ton of organic source (approximate credits in kg/acre)
+    org_credits = {"N": 0, "P": 0, "K": 0}
+    if organic_matter == "fym_light": 
+        org_credits = {"N": 8, "P": 4, "K": 8} # 2 tons of FYM
+    elif organic_matter == "fym_heavy": 
+        org_credits = {"N": 20, "P": 10, "K": 20} # 5 tons of FYM
+    elif organic_matter == "compost": 
+        org_credits = {"N": 12, "P": 6, "K": 10}
+    elif organic_matter == "green_manure": 
+        org_credits = {"N": 25, "P": 5, "K": 10} # Leguminous green manure
 
     # Efficiency adjusted available soil nutrients
     avail_n = soil_n * 0.25
     avail_p = soil_p * 0.20
     avail_k = soil_k * 0.05
 
-    # Net Requirements per acre
-    net_n = max(0, (crop_info["N"] * tex_factor / ph_f["N"]) - avail_n - bonus["N"] - org["N"])
-    net_p = max(0, (crop_info["P"] * tex_factor / ph_f["P"]) - avail_p - bonus["P"] - org["P"])
-    net_k = max(0, (crop_info["K"] * tex_factor / ph_f["K"]) - avail_k - bonus["K"] - org["K"])
+    # Net Requirements per acre (Subtracting Soil, Bonus, and ISFM credits)
+    net_n = max(0, (crop_info["N"] * tex_factor / ph_f["N"]) - avail_n - bonus["N"] - org_credits["N"])
+    net_p = max(0, (crop_info["P"] * tex_factor / ph_f["P"]) - avail_p - bonus["P"] - org_credits["P"])
+    net_k = max(0, (crop_info["K"] * tex_factor / ph_f["K"]) - avail_k - bonus["K"] - org_credits["K"])
 
     # Total for field
     total_n, total_p, total_k = net_n * acres, net_p * acres, net_k * acres
@@ -115,54 +120,84 @@ def get_ph_advice(ph):
 
 def optimize_budget_logic(data):
     """
-    Allocates budget to fertilizers maximizing ROI.
+    Allocates budget to fertilizers maximizing Net Profit (Feature 7).
+    Fulfillment of Feature 4: Budget-based formulation.
     """
     budget = float(data.get("budget", 10000))
     crop_selling_price = float(data.get("crop_price_per_40kg", 4200)) / 40 # Price per kg
-    prices = data.get("market_prices", {
-        "urea": 3400, "dap": 9800, "sop": 6500, "can": 2800, "ssp": 2200, "np": 5500
-    })
-
-    # Needs (from previous calculation or defaults)
-    needs = data.get("requirements", {"N": 60, "P": 30, "K": 20}) # defaults per acre
     
-    # Cheapest sources
-    # N: Urea vs CAN
-    cost_n_urea = (prices["urea"] / 50) / 0.46
-    cost_n_can = (prices["can"] / 50) / 0.26
-    best_n = {"name": "Urea", "cost": cost_n_urea, "content": 0.46} if cost_n_urea < cost_n_can else {"name": "CAN", "cost": cost_n_can, "content": 0.26}
+    # Market Prices (Feature 4)
+    prices = {
+        "urea": 3400, "dap": 9800, "sop": 6500, "can": 2800, 
+        "ssp": 2200, "np": 5500, "tsp": 8500
+    }
+    if data.get("market_prices"):
+        prices.update(data.get("market_prices"))
 
-    # P: DAP vs SSP vs NP
-    cost_p_dap = (prices["dap"] / 50) / 0.46
-    cost_p_ssp = (prices["ssp"] / 50) / 0.18
-    costs_p = [{"n": "DAP", "c": cost_p_dap, "v": 0.46}, {"n": "SSP", "c": cost_p_ssp, "v": 0.18}]
-    best_p = min(costs_p, key=lambda x: x["c"])
+    # Requirements (kg/ac N-P-K)
+    needs = data.get("requirements", {"N": 60, "P": 30, "K": 20})
+    
+    # 1. Evaluate P-Optimization (DAP vs SSP vs TSP vs NP)
+    # Price per kg of Phosphorus (P)
+    p_options = [
+        {"n": "DAP", "c": (prices["dap"]/50)/0.46, "v": 0.46, "n_val": 0.18},
+        {"n": "SSP", "c": (prices["ssp"]/50)/0.18, "v": 0.18, "n_val": 0},
+        {"n": "TSP", "c": (prices["tsp"]/50)/0.46, "v": 0.46, "n_val": 0},
+        {"n": "Nitrophos (NP)", "c": (prices["np"]/50)/0.20, "v": 0.20, "n_val": 0.22}
+    ]
+    best_p = min(p_options, key=lambda x: x["c"])
 
+    # 2. Evaluate N-Optimization (Urea vs CAN)
+    n_options = [
+        {"n": "Urea", "c": (prices["urea"]/50)/0.46, "v": 0.46},
+        {"n": "CAN", "c": (prices["can"]/50)/0.26, "v": 0.26}
+    ]
+    best_n_source = min(n_options, key=lambda x: x["c"])
+
+    # 3. K-Optimization (Standard SOP/Potash)
     cost_k = (prices["sop"] / 50) / 0.50
 
-    total_ideal_cost = (needs["N"] * best_n["cost"]) + (needs["P"] * best_p["c"]) + (needs["K"] * cost_k)
-    ratio = min(1.0, budget / total_ideal_cost)
-
-    final_n = needs["N"] * ratio
-    final_p = needs["P"] * ratio
-    final_k = needs["K"] * ratio
-
-    actual_cost = (final_n * best_n["cost"]) + (final_p * best_p["c"]) + (final_k * cost_k)
+    total_ideal_cost = (needs["N"] * best_n_source["c"]) + (needs["P"] * best_p["c"]) + (needs["K"] * cost_k)
     
-    # ROI (Simplified)
-    yield_gain = 40 * ratio # Assume 40 maunds/acre potential gain
-    revenue = yield_gain * 40 * crop_selling_price
+    # ROI Logic (Feature 7: Profit Maximization)
+    # Yield response is typically logarithmic. We simulate the yield gain ratio.
+    ratio = min(1.0, budget / total_ideal_cost)
+    
+    # If using less fertilizer is actually more profitable due to high cost
+    # We cap the ratio if the marginal cost exceeds marginal gain
+    theoretical_max_yield_gain = 400 # kg/acre increase
+    if total_ideal_cost > (theoretical_max_yield_gain * crop_selling_price * 0.8):
+        # High cost environment - recommend 15% less for safety
+        ratio = min(ratio, 0.85)
+
+    final_n, final_p, final_k = needs["N"] * ratio, needs["P"] * ratio, needs["K"] * ratio
+
+    # Construct final allocation list
+    plan_fert = []
+    # P-Source first
+    p_qty = final_p / best_p["v"]
+    plan_fert.append({"name": best_p["n"], "qty": round(p_qty, 1), "cost": round(p_qty * (prices[best_p['n'].lower().split(' ')[0]]/50))})
+    
+    # N-Source (Subtract N already provided by P-source like DAP or NP)
+    n_provided = p_qty * best_p["n_val"]
+    n_needed = max(0, final_n - n_provided)
+    n_qty = n_needed / best_n_source["v"]
+    plan_fert.append({"name": best_n_source["n"], "qty": round(n_qty, 1), "cost": round(n_qty * (prices[best_n_source['n'].lower()]/50))})
+    
+    # K-Source
+    k_qty = final_k / 0.50
+    plan_fert.append({"name": "SOP (Potash)", "qty": round(k_qty, 1), "cost": round(k_qty * (prices["sop"]/50))})
+
+    actual_cost = sum(f["cost"] for f in plan_fert)
+    yield_gain = theoretical_max_yield_gain * (1 - (1 - ratio)**2) # Diminishing returns formula
+    revenue = yield_gain * crop_selling_price
     profit = revenue - actual_cost
 
     return {
         "ratio": round(ratio * 100, 1),
         "plan": {
             "N": round(final_n, 1), "P": round(final_p, 1), "K": round(final_k, 1),
-            "fertilizers": [
-                {"name": best_n["name"], "qty": round(final_n / best_n["content"], 1), "cost": round(final_n * best_n["cost"])},
-                {"name": best_p["n"], "qty": round(final_p / best_p["v"], 1), "cost": round(final_p * best_p["c"])},
-                {"name": "SOP", "qty": round(final_k / 0.50, 1), "cost": round(final_k * cost_k)}
-            ]
+            "fertilizers": plan_fert
         },
         "financials": {
             "total_cost": round(actual_cost),

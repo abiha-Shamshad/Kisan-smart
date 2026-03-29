@@ -1,22 +1,44 @@
-// Service Worker Placeholder for Kisan Smart PWA
-// To be implemented with Firebase Cloud Messaging (FCM) push notification handling.
-self.addEventListener('install', event => {
-    console.log('Service Worker: Installed');
+const CACHE_NAME = 'kisan-smart-v1';
+const ASSETS = [
+  '/dashboard',
+  '/static/css/theme.css',
+  '/static/css/dashboard_premium.css',
+  '/static/js/api.js',
+  '/static/js/dashboard_premium.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css',
+  'https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap'
+];
+
+// Install Event
+self.addEventListener('install', (e) => {
+  e.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS);
+    })
+  );
 });
 
-self.addEventListener('activate', event => {
-    console.log('Service Worker: Activated');
+// Activate Event
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+      );
+    })
+  );
 });
 
-self.addEventListener('push', event => {
-    const data = event.data ? event.data.json() : {};
-    const title = data.title || 'Kisan Smart Alert';
-    const body = data.body || 'New agricultural update available.';
-    const options = {
-        body: body,
-        icon: '/static/img/logo.png', // Update if logo path is different
-        badge: '/static/img/badge.png',
-        data: data
-    };
-    event.waitUntil(self.registration.showNotification(title, options));
+// Fetch Event (Offline first for assets)
+self.addEventListener('fetch', (e) => {
+  e.respondWith(
+    caches.match(e.request).then((cachedResponse) => {
+      return cachedResponse || fetch(e.request).catch(() => {
+        // If offline and request is for a page, return the cached dashboard
+        if (e.request.mode === 'navigate') {
+          return caches.match('/dashboard');
+        }
+      });
+    })
+  );
 });

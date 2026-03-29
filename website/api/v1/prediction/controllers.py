@@ -18,6 +18,9 @@ from website.api.v1.prediction.tools_service import (
 from website.api.v1.prediction.vision_service import (
     analyze_plant_image,
 )
+from website.api.v1.prediction.ai_vision_service import (
+    analyze_plant_with_claude,
+)
 
 
 def get_prediction():
@@ -182,13 +185,11 @@ def get_ai_scan():
     """AI Vision Diagnostic Controller"""
     try:
         data = request.get_json()
-        # Currently, we don't handle file uploads directly in JSON,
-        # but the frontend sends it as a base64 string or we use Multipart.
-        # For simplicity, we assume 'image' key has base64.
         img_b64 = data.get("image")
         crop = data.get("crop_type", "wheat")
         
-        result = analyze_plant_image(img_b64, crop)
+        # Use Claude for advanced diagnostics (Feature 1)
+        result = analyze_plant_with_claude(img_b64, crop)
         return success_response(result, "Diagnosis complete")
     except Exception as e:
         return error_response(str(e), "AI_SCAN_FAILED", None, 500)

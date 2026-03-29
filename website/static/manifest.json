@@ -1,0 +1,21 @@
+{
+  "name": "Kisan Smart - Agri Advisor",
+  "short_name": "KisanSmart",
+  "description": "Premium AI-powered fertilizer optimizer for farmers.",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#2d6a4f",
+  "theme_color": "#2d6a4f",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2910/2910811.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2910/2910811.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
