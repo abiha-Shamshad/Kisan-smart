@@ -1,4 +1,6 @@
 from flask import request, current_app
+from flask_login import login_user as flask_login_user
+
 from website.models import User, db
 from website import bcrypt
 from .schemas import RegisterSchema, LoginSchema, UserSchema
@@ -60,8 +62,20 @@ def login_user():
         if user.is_locked:
             return error_response("Account is locked", "ACCOUNT_LOCKED", None, 403)
 
+        if not user.is_verified:
+            return error_response(
+                "Please verify your email address before logging in.",
+                "EMAIL_NOT_VERIFIED",
+                None,
+                401,
+            )
+
         access_token = create_access_token(identity=str(user.id))
+        # Establish Flask-Login session for template-based routes (like /dashboard)
+        flask_login_user(user, remember=data.get("remember_me", False))
+        
         return success_response(
+
             {"access_token": access_token, "user": user_schema.dump(user)},
             "Login successful",
         )
