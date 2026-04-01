@@ -1,159 +1,148 @@
-# Urdu Voice Input & Output — Integration Guide
+# Satellite Field Health Monitoring — Integration Guide
 
 ## Files delivered
 ```
-urdu-voice/
+satellite/
   services/
-    urdu_stt.py          ← Whisper STT + Urdu value extractor
-    urdu_tts.py          ← gTTS Urdu speech synthesis + template engine
+    satellite_service.py    ← Sentinel Hub NDVI/NDWI/EVI + trend engine
+    satellite_scheduler.py  ← Celery weekly auto-check + alerts
+  models/
+    field_models.py         ← SQLAlchemy + PostGIS ORM models
   routes/
-    voice.py             ← Flask Blueprint (3 API endpoints)
-  static/js/
-    voice_input.js       ← Browser recording + waveform + playback controller
+    satellite.py            ← Flask Blueprint (6 API endpoints)
   templates/
-    voice_dashboard.html ← Full RTL Urdu voice dashboard (Jinja2)
+    satellite_dashboard.html ← Leaflet map + Chart.js dashboard
   tests/
-    test_urdu_voice.py   ← 20 pytest tests (no network/audio needed)
+    test_satellite_service.py ← 18 pytest tests (all mocked)
+  satellite_schema.sql      ← PostGIS schema additions
 ```
 
 ---
 
-## Step 1 — Install dependencies
+## Step 1 — Enable PostGIS in your database
 ```bash
-# Core
-pip install openai-whisper gTTS --break-system-packages
-
-# System: ffmpeg (required by Whisper for audio decoding)
-sudo apt install ffmpeg           # Ubuntu/Debian
-# brew install ffmpeg             # macOS
-# choco install ffmpeg            # Windows
-
-# Optional offline TTS fallback
-pip install pyttsx3 --break-system-packages
+psql -U postgres -d kisan_smart -c "CREATE EXTENSION IF NOT EXISTS postgis;"
+psql -U postgres -d kisan_smart -f satellite_schema.sql
 ```
 
-## Step 2 — Add to .env
+## Step 2 — Install dependencies
+```bash
+pip install sentinelhub geoalchemy2 shapely --break-system-packages
+```
+
+## Step 3 — Get free Sentinel Hub credentials
+1. Register at https://dataspace.copernicus.eu (free)
+2. Go to: Dashboard → User Settings → OAuth Clients → New Client
+3. Copy Client ID and Client Secret
+
+## Step 4 — Add to .env
 ```env
-WHISPER_MODEL=small           # tiny | small | medium | large-v3
-                               # small = best Urdu/speed balance on CPU
-                               # medium = better accuracy, needs 5GB RAM
-                               # large-v3 = best quality, needs GPU
-TTS_CACHE_DIR=/tmp/kisan_tts_cache
+SENTINEL_HUB_CLIENT_ID=your-client-id-here
+SENTINEL_HUB_CLIENT_SECRET=your-client-secret-here
 ```
 
-## Step 3 — Register Blueprint in create_app()
+## Step 5 — Register Blueprint in create_app()
 ```python
-# In website/__init__.py, inside create_app():
-from routes.voice import voice_bp
-app.register_blueprint(voice_bp, url_prefix='/api/voice')
+from routes.satellite import satellite_bp
+app.register_blueprint(satellite_bp, url_prefix='/api/satellite')
 ```
 
-## Step 4 — Add Whisper model preload to app startup
-In app.py, add after `db.create_all()`:
-```python
-# Pre-load Whisper on startup (avoids 30s delay on first voice request)
-if env != 'testing':
-    from services.urdu_stt import _get_whisper_model
-    _get_whisper_model()   # loads and caches model
-```
-
-## Step 5 — Run tests
+## Step 6 — Run tests
 ```bash
-pytest tests/test_urdu_voice.py -v
-# Expected: 20 passed (no audio files or network needed)
+pytest tests/test_satellite_service.py -v
+# Expected: 18 passed
+```
+
+## Step 7 — Start weekly scheduler (optional)
+```bash
+# Add to your existing Celery worker command:
+celery -A services.satellite_scheduler worker --beat --loglevel=info
 ```
 
 ---
 
-## API Reference
+## API Endpoints
 
-### POST /api/voice/transcribe
-Send raw audio bytes. Returns Urdu transcript + parsed soil values.
-
-```
-Content-Type: audio/webm
-Authorization: Bearer <jwt>
-Body: <raw audio bytes>
-
-Response:
+### POST /api/satellite/fields
+Save a drawn field boundary.
+```json
 {
-  "transcript":         "گندم نائٹروجن نوے فاسفورس پچاس...",
-  "whisper_confidence": 0.82,
-  "crop":               "Wheat",
-  "nitrogen":           90.0,
-  "phosphorus":         50.0,
-  "potassium":          30.0,
-  "ph":                 6.8,
-  "parse_confidence":   1.0,
-  "needs_confirmation": false
+  "name": "Home Field",
+  "crop": "Wheat",
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [[[74.1, 32.5], [74.2, 32.5], [74.2, 32.6], [74.1, 32.6], [74.1, 32.5]]]
+  }
 }
 ```
 
-### POST /api/voice/speak
-Returns MP3 audio of a recommendation in Urdu.
+### GET /api/satellite/fields
+Returns all fields as GeoJSON FeatureCollection.
 
-```json
-{ "mode": "recommendation", "crop": "Wheat", "fertilizer": "Urea",
-  "quantity": 45, "confidence": 88, "detail": "full" }
+### GET /api/satellite/fields/{id}/health
+Returns latest NDVI, NDWI, EVI stats. Cached for 7 days.
+
+### GET /api/satellite/fields/{id}/timeseries?days=90
+Returns 90-day time series for Chart.js rendering + trend analysis.
+
+### GET /api/satellite/fields/{id}/summary
+Returns season peak NDVI, mean, trend, and alert status.
+
+---
+
+## How the satellite data pipeline works
+
+```
+Farmer draws polygon on Leaflet map
+        ↓
+GeoJSON polygon saved to PostGIS (fields table)
+        ↓
+Flask calls Sentinel Hub Statistical API
+  - evalscript runs IN THE CLOUD on Sentinel Hub servers
+  - Computes NDVI, NDWI, EVI per 10m pixel inside the polygon
+  - Returns only statistics (mean, std, min, max) — not raw imagery
+  - Cloud masking applied (max 20% cloud coverage)
+        ↓
+Results cached in satellite_cache table (7-day TTL)
+        ↓
+Frontend renders Chart.js time series + colours field polygon by health
+        ↓
+Celery Beat job repeats every Monday at 5 AM PKT
+  - Alerts farmer via push/WhatsApp if NDVI drops >20% from peak
 ```
 
-### GET /api/voice/greeting
-Returns MP3 of the Urdu welcome message.
+---
+
+## Processing Unit budget (free tier: 30,000 PU/month)
+
+| Operation | PU cost | Notes |
+|-----------|---------|-------|
+| 10-day NDVI stats for 1ha field | ~15 PU | 10m res × 1ha |
+| 10-day NDVI stats for 5ha field | ~75 PU | |
+| Weekly check, 1 field, 1 year | ~780 PU/year | Very affordable |
+| 100 fields × weekly | 78,000 PU/year | Need paid tier |
+
+Free tier supports ~38 fields with weekly checks.
+For more, upgrade to Sentinel Hub Basic (~€25/month = unlimited fields).
 
 ---
 
-## What a farmer says (example scripts)
+## Satellite indices explained (for farmers)
 
-Full form:
-> "میری گندم کی فصل ہے۔ نائٹروجن نوے، فاسفورس پچاس، پوٹاشیم تیس، پی ایچ سات"
+| Index | What it measures | Healthy range |
+|-------|-----------------|---------------|
+| NDVI  | Vegetation density and health | 0.4–0.9 |
+| NDWI  | Water content in leaves | 0.0–0.5 |
+| EVI   | Better NDVI for dense crops | 0.3–0.8 |
 
-Shorthand (4 numbers):
-> "گندم نوے پچاس تیس سات"
-
-With Indic numerals (Whisper may produce):
-> "چاول نائٹروجن ۸۰ فاسفورس ۴۰ پوٹاشیم ۵۰ پی ایچ ۶"
-
----
-
-## Whisper model comparison for Urdu
-
-| Model    | RAM   | CPU speed | Urdu WER | Recommendation |
-|----------|-------|-----------|----------|----------------|
-| tiny     | 1GB   | ~0.5s     | ~35%     | Dev only        |
-| small    | 2GB   | ~2s       | ~22%     | ✅ Production CPU |
-| medium   | 5GB   | ~6s       | ~15%     | ✅ GPU or high-RAM server |
-| large-v3 | 10GB  | ~15s      | ~10%     | GPU server only |
-
-For production on a low-cost VPS (2GB RAM), use `small`.
-For a GPU server (e.g. Colab, Vast.ai), use `medium` or `large-v3`.
+NDVI < 0.3 for a wheat field = action needed.
+NDWI < -0.1 = water stress — irrigate soon.
 
 ---
 
-## Urdu speech patterns supported
+## Sentinel-2 revisit time for Pakistan
 
-The extractor handles these real-world variations:
-
-| Farmer says                          | Extracted |
-|--------------------------------------|-----------|
-| نائٹروجن نوے                         | N=90      |
-| نائٹروجن: 90                         | N=90      |
-| نائٹروجن ۹۰ (Indic numerals)        | N=90      |
-| گندم 90 50 30 7 (shorthand)          | all 4     |
-| تیزابیت سات (pH synonym)            | pH=7      |
-| این پچانوے (spoken initials + word) | N=95*     |
-
-*Partial support — depends on Whisper transcription variant.
-
----
-
-## Cost breakdown
-
-| Component  | Cost      | Notes |
-|------------|-----------|-------|
-| Whisper    | Free      | Open-source, runs locally |
-| gTTS       | Free      | Uses Google Translate TTS (undocumented API) |
-| ffmpeg     | Free      | Audio decoding |
-| pyttsx3    | Free      | Offline TTS fallback |
-| Server RAM | ~2GB extra| For Whisper "small" model |
-
-Total additional cost: **PKR 0** per month on existing server.
+Pakistan falls under Sentinel-2 tiles 43RCP, 43RCQ, 43RDQ (Punjab region).
+Revisit time: approximately every 5 days.
+So you get 6 cloud-free observations per month in clear weather.
+During monsoon (July–September), expect 1–2 usable observations/month.

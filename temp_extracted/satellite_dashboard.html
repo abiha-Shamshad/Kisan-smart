@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="jwt-token" content="{{ jwt_token }}"/>
+<title>Kisan Smart — Satellite Field Monitor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<!-- Leaflet Draw CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g1:#1B4332;--g2:#2D6A4F;--g3:#40916C;--g4:#74C69D;--g5:#D8F3DC;
+  --bg:#F0F4EF;--card:#fff;--text:#1A2E1E;--muted:#5A7060;--border:#C9DEC9;
+  --red:#991B1B;--amber:#854F0B;--r:14px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+nav{background:var(--g1);height:60px;display:flex;align-items:center;padding:0 1.5rem;gap:.75rem;position:sticky;top:0;z-index:1000}
+.nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;color:#fff;display:flex;align-items:center;gap:.4rem}
+.nav-logo span{color:var(--g4)}
+.nav-badge{background:rgba(116,198,157,.2);border:1px solid rgba(116,198,157,.3);color:var(--g4);font-size:.72rem;padding:.2rem .7rem;border-radius:100px;margin-left:.5rem}
+
+.layout{display:grid;grid-template-columns:340px 1fr;height:calc(100vh - 60px)}
+@media(max-width:860px){.layout{grid-template-columns:1fr;grid-template-rows:auto 1fr}}
+
+/* Sidebar */
+.sidebar{background:var(--card);border-right:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column}
+.sidebar-section{padding:1.1rem 1.2rem;border-bottom:1px solid var(--border)}
+.sidebar-title{font-family:'Syne',sans-serif;font-size:.88rem;font-weight:700;margin-bottom:.75rem;color:var(--text)}
+
+/* Field list */
+.field-item{
+  border:1px solid var(--border);border-radius:10px;padding:.75rem .9rem;
+  margin-bottom:.5rem;cursor:pointer;transition:border-color .15s,background .15s;
+}
+.field-item:hover{border-color:var(--g3);background:var(--g5)}
+.field-item.active{border-color:var(--g2);background:var(--g5)}
+.field-name{font-size:.88rem;font-weight:500;margin-bottom:.2rem}
+.field-meta{font-size:.75rem;color:var(--muted);display:flex;gap:.75rem;align-items:center}
+.health-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ndvi-pill{font-size:.7rem;font-weight:600;padding:.15rem .55rem;border-radius:100px}
+
+/* Draw controls */
+.draw-btn{
+  width:100%;padding:.7rem;background:var(--g2);color:#fff;border:none;
+  border-radius:10px;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;
+  cursor:pointer;transition:background .15s;display:flex;align-items:center;justify-content:center;gap:.5rem
+}
+.draw-btn:hover{background:var(--g3)}
+.draw-btn.secondary{background:transparent;color:var(--g2);border:1.5px solid var(--g2)}
+.draw-btn.secondary:hover{background:var(--g5)}
+input[type=text],select{
+  width:100%;padding:.6rem .85rem;border:1.5px solid var(--border);border-radius:9px;
+  font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--text);background:#fff;
+  margin-bottom:.6rem;
+}
+input:focus,select:focus{outline:none;border-color:var(--g3);box-shadow:0 0 0 3px rgba(64,145,108,.1)}
+
+/* Stats cards */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom.75rem}
+.stat-box{background:var(--bg);border-radius:9px;padding:.7rem .8rem}
+.stat-lbl{font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:.2rem}
+.stat-val{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text)}
+
+/* Alert banner */
+.alert-bar{background:#FEE2E2;border:1px solid #FECACA;border-radius:10px;padding:.75rem 1rem;
+  font-size:.82rem;color:var(--red);margin-bottom:.75rem;display:none}
+.alert-bar.visible{display:flex;align-items:flex-start;gap:.5rem}
+
+/* Chart container */
+.chart-wrap{padding:.9rem;background:var(--bg);border-radius:10px;margin-top:.75rem}
+
+/* Map */
+#map{flex:1;width:100%;height:100%;min-height:400px}
+.leaflet-draw-toolbar .leaflet-draw-draw-polygon{background-color:var(--g2)!important}
+
+/* Legend */
+.map-legend{
+  position:absolute;bottom:20px;right:10px;z-index:999;
+  background:var(--card);border:1px solid var(--border);border-radius:10px;
+  padding:.75rem 1rem;font-size:.75rem;
+}
+.legend-row{display:flex;align-items:center;gap:.4rem;margin-bottom:.3rem}
+.legend-row:last-child{margin:0}
+.legend-swatch{width:14px;height:14px;border-radius:3px;flex-shrink:0}
+
+/* Loading overlay */
+.loading-overlay{
+  display:none;position:absolute;inset:0;background:rgba(255,255,255,.8);
+  z-index:998;align-items:center;justify-content:center;flex-direction:column;gap:.75rem;
+}
+.loading-overlay.show{display:flex}
+.spinner{width:32px;height:32px;border:3px solid var(--g5);border-top-color:var(--g2);
+  border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Toast */
+.toast{position:fixed;bottom:1.2rem;right:1.2rem;z-index:9999;background:var(--g1);color:#fff;
+  border-radius:10px;padding:.7rem 1.1rem;font-size:.83rem;opacity:0;transform:translateY(8px);
+  pointer-events:none;transition:all .25s}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.err{background:var(--red)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">🌱 Kisan <span>Smart</span></div>
+  <span class="nav-badge">🛰 Satellite Monitor</span>
+</nav>
+
+<div class="layout">
+
+  <!-- ── Sidebar ── -->
+  <div class="sidebar">
+
+    <!-- Draw new field -->
+    <div class="sidebar-section">
+      <div class="sidebar-title">Add New Field</div>
+      <input type="text" id="field-name" placeholder="Field name (e.g. Home Field)"/>
+      <select id="field-crop">
+        <option value="">Select crop</option>
+        <option value="Wheat">Wheat (گندم)</option>
+        <option value="Rice">Rice (چاول)</option>
+        <option value="Maize">Maize (مکئی)</option>
+        <option value="Cotton">Cotton (کپاس)</option>
+        <option value="Sugarcane">Sugarcane (گنا)</option>
+      </select>
+      <button class="draw-btn" id="draw-btn" onclick="startDrawing()">
+        ✏️ Draw Field Boundary
+      </button>
+      <div id="draw-hint" style="font-size:.75rem;color:var(--muted);margin-top:.5rem;display:none">
+        Click on the map to draw your field polygon. Double-click to finish.
+      </div>
+      <button class="draw-btn secondary" id="save-btn" onclick="saveField()" style="margin-top:.5rem;display:none">
+        💾 Save Field
+      </button>
+    </div>
+
+    <!-- Field list -->
+    <div class="sidebar-section" style="flex:1">
+      <div class="sidebar-title">My Fields <span id="field-count" style="font-size:.75rem;color:var(--muted);font-weight:400"></span></div>
+      <div id="field-list">
+        <div style="font-size:.82rem;color:var(--muted);text-align:center;padding:1.5rem 0">
+          No fields yet. Draw your first field boundary on the map.
+        </div>
+      </div>
+    </div>
+
+    <!-- Selected field stats -->
+    <div class="sidebar-section" id="field-stats-panel" style="display:none">
+      <div class="sidebar-title" id="stats-field-name">Field Name</div>
+
+      <!-- Alert -->
+      <div class="alert-bar" id="alert-bar">
+        <span>⚠️</span><span id="alert-text"></span>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row" style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:.75rem">
+        <div class="stat-box">
+          <div class="stat-lbl">NDVI</div>
+          <div class="stat-val" id="stat-ndvi">—</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-lbl">NDWI</div>
+          <div class="stat-val" id="stat-ndwi">—</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-lbl">EVI</div>
+          <div class="stat-val" id="stat-evi">—</div>
+        </div>
+      </div>
+      <div style="font-size:.75rem;color:var(--muted);margin-bottom:.75rem">
+        Last updated: <span id="stat-date">—</span> · Cloud: <span id="stat-cloud">—</span>%
+      </div>
+
+      <!-- Trend chart -->
+      <div class="chart-wrap">
+        <canvas id="ndvi-chart" height="120"></canvas>
+      </div>
+
+      <button class="draw-btn" style="margin-top:.75rem" onclick="refreshHealth()">
+        🔄 Refresh from Satellite
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ── Map ── -->
+  <div style="position:relative">
+    <div id="map"></div>
+
+    <!-- NDVI Legend -->
+    <div class="map-legend">
+      <div style="font-size:.7rem;font-weight:600;margin-bottom:.4rem;color:var(--text)">NDVI Health</div>
+      <div class="legend-row"><div class="legend-swatch" style="background:#1a7c1a"></div>Excellent (>0.7)</div>
+      <div class="legend-row"><div class="legend-swatch" style="background:#5cb85c"></div>Good (0.5–0.7)</div>
+      <div class="legend-row"><div class="legend-swatch" style="background:#f0ad4e"></div>Moderate (0.3–0.5)</div>
+      <div class="legend-row"><div class="legend-swatch" style="background:#d9534f"></div>Poor (0.1–0.3)</div>
+      <div class="legend-row"><div class="legend-swatch" style="background:#8B4513"></div>Stress/Bare</div>
+    </div>
+
+    <div class="loading-overlay" id="loading">
+      <div class="spinner"></div>
+      <div style="font-size:.85rem;color:var(--muted)">Fetching satellite data…</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+
+<script>
+const JWT = document.querySelector('meta[name="jwt-token"]').content;
+const API = (path) => fetch(path, { headers: { Authorization: `Bearer ${JWT}` } });
+const APOST = (path, body) => fetch(path, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${JWT}` },
+  body: JSON.stringify(body),
+});
+
+// ── Map init (centred on Gujrat, Punjab, Pakistan) ────────────────────────────
+const map = L.map('map', { zoomControl: true }).setView([32.57, 74.08], 13);
+
+// Satellite basemap (Esri World Imagery — best for farm boundary drawing)
+L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+  { attribution: 'Tiles © Esri', maxZoom: 20 }
+).addTo(map);
+
+// Labels overlay on top of satellite
+L.tileLayer(
+  'https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png',
+  { attribution: '', opacity: 0.7 }
+).addTo(map);
+
+// ── Leaflet Draw setup ────────────────────────────────────────────────────────
+const drawnItems = new L.FeatureGroup();
+map.addLayer(drawnItems);
+
+const drawControl = new L.Control.Draw({
+  draw: {
+    polygon:   { shapeOptions: { color: '#40916C', fillOpacity: 0.2, weight: 2 } },
+    rectangle: false, circle: false, marker: false,
+    circlemarker: false, polyline: false,
+  },
+  edit: { featureGroup: drawnItems, remove: true },
+});
+
+let pendingLayer = null;
+
+map.on(L.Draw.Event.CREATED, (e) => {
+  pendingLayer = e.layer;
+  drawnItems.addLayer(pendingLayer);
+  document.getElementById('save-btn').style.display = 'block';
+  document.getElementById('draw-hint').style.display = 'none';
+  showToast('Field drawn! Enter name and click Save Field.');
+});
+
+// ── State ────────────────────────────────────────────────────────────────────
+let fields = [];         // array of field objects from API
+let fieldLayers = {};    // field_id → Leaflet layer
+let activeFieldId = null;
+let ndviChart = null;
+
+// ── Drawing ──────────────────────────────────────────────────────────────────
+function startDrawing() {
+  map.addControl(drawControl);
+  new L.Draw.Polygon(map, drawControl.options.draw.polygon).enable();
+  document.getElementById('draw-hint').style.display = 'block';
+}
+
+async function saveField() {
+  const name = document.getElementById('field-name').value.trim();
+  const crop = document.getElementById('field-crop').value;
+
+  if (!name)         { showToast('Enter a field name', true); return; }
+  if (!crop)         { showToast('Select a crop', true); return; }
+  if (!pendingLayer) { showToast('Draw a field boundary first', true); return; }
+
+  const geojson = pendingLayer.toGeoJSON();
+  setLoading(true);
+
+  try {
+    const resp = await APOST('/api/satellite/fields', {
+      name:     name,
+      crop:     crop,
+      geometry: geojson.geometry,
+    });
+    const data = await resp.json();
+
+    if (!resp.ok) { showToast(data.error || 'Save failed', true); return; }
+
+    showToast(`✅ ${name} saved (${data.area_ha} ha)`);
+    document.getElementById('field-name').value = '';
+    document.getElementById('field-crop').value = '';
+    document.getElementById('save-btn').style.display = 'none';
+    pendingLayer = null;
+    map.removeControl(drawControl);
+
+    await loadFields();
+    selectField(data.field_id);
+  } catch (e) {
+    showToast('Network error', true);
+  } finally {
+    setLoading(false);
+  }
+}
+
+// ── Field loading ──────────────────────────────────────────────────────────────
+async function loadFields() {
+  const resp = await API('/api/satellite/fields');
+  const fc   = await resp.json();
+  fields = fc.features || [];
+
+  // Clear old layers
+  Object.values(fieldLayers).forEach(l => map.removeLayer(l));
+  fieldLayers = {};
+
+  fields.forEach(f => {
+    const color = f.properties.health_color || '#888';
+    const layer = L.geoJSON(f, {
+      style: {
+        color:       color,
+        weight:      2.5,
+        fillColor:   color,
+        fillOpacity: 0.25,
+      },
+      onEachFeature: (feat, lyr) => {
+        lyr.bindTooltip(
+          `<strong>${feat.properties.name}</strong><br>` +
+          `NDVI: ${feat.properties.latest_ndvi?.toFixed(2) || '—'} ` +
+          `(${feat.properties.health_label || '—'})`,
+          { permanent: false, sticky: true }
+        );
+        lyr.on('click', () => selectField(feat.properties.id));
+      }
+    }).addTo(map);
+    fieldLayers[f.properties.id] = layer;
+  });
+
+  // Render sidebar list
+  const list = document.getElementById('field-list');
+  document.getElementById('field-count').textContent = `(${fields.length})`;
+
+  if (!fields.length) {
+    list.innerHTML = `<div style="font-size:.82rem;color:var(--muted);text-align:center;padding:1.5rem 0">
+      No fields yet. Draw your first field boundary on the map.</div>`;
+    return;
+  }
+
+  list.innerHTML = fields.map(f => `
+    <div class="field-item" id="fi-${f.properties.id}" onclick="selectField(${f.properties.id})">
+      <div class="field-name">${f.properties.name}</div>
+      <div class="field-meta">
+        <span>${f.properties.crop || '—'}</span>
+        <span>${f.properties.area_ha || '—'} ha</span>
+        ${f.properties.latest_ndvi !== undefined ? `
+          <div class="health-dot" style="background:${f.properties.health_color}"></div>
+          <span class="ndvi-pill" style="background:${f.properties.health_color}20;color:${f.properties.health_color}">
+            ${f.properties.latest_ndvi?.toFixed(2)}
+          </span>
+        ` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── Select field & load health ─────────────────────────────────────────────────
+async function selectField(fieldId) {
+  activeFieldId = fieldId;
+
+  document.querySelectorAll('.field-item').forEach(el =>
+    el.classList.toggle('active', el.id === `fi-${fieldId}`)
+  );
+
+  // Zoom to field
+  const layer = fieldLayers[fieldId];
+  if (layer) map.fitBounds(layer.getBounds(), { padding: [40, 40] });
+
+  setLoading(true);
+  document.getElementById('field-stats-panel').style.display = 'block';
+
+  try {
+    // Load current health
+    const resp   = await API(`/api/satellite/fields/${fieldId}/health`);
+    const health = await resp.json();
+
+    if (!resp.ok) {
+      showToast(health.error || 'Could not fetch satellite data', true);
+      return;
+    }
+
+    document.getElementById('stats-field-name').textContent = health.field_name;
+    document.getElementById('stat-ndvi').textContent  = health.ndvi?.mean?.toFixed(3)  || '—';
+    document.getElementById('stat-ndwi').textContent  = health.ndwi?.mean?.toFixed(3)  || '—';
+    document.getElementById('stat-evi').textContent   = health.evi?.mean?.toFixed(3)   || '—';
+    document.getElementById('stat-date').textContent  = health.date  || '—';
+    document.getElementById('stat-cloud').textContent = health.cloud_pct ?? '—';
+
+    // Load time series for chart
+    const tsResp = await API(`/api/satellite/fields/${fieldId}/timeseries?days=90`);
+    const ts     = await tsResp.json();
+
+    if (ts.trend?.alert) {
+      document.getElementById('alert-bar').classList.add('visible');
+      document.getElementById('alert-text').textContent = ts.trend.alert_msg;
+    } else {
+      document.getElementById('alert-bar').classList.remove('visible');
+    }
+
+    renderChart(ts.series || []);
+
+  } catch (e) {
+    showToast('Error loading field data', true);
+  } finally {
+    setLoading(false);
+  }
+}
+
+async function refreshHealth() {
+  if (!activeFieldId) return;
+  // Delete stale cache then reload
+  showToast('Fetching fresh satellite data…');
+  await selectField(activeFieldId);
+  await loadFields();   // re-colour field polygon
+}
+
+// ── Chart.js NDVI time series ─────────────────────────────────────────────────
+function renderChart(series) {
+  if (ndviChart) { ndviChart.destroy(); ndviChart = null; }
+
+  const labels = series.map(p => p.date);
+  const ndvi   = series.map(p => p.ndvi != null ? +p.ndvi.toFixed(3) : null);
+  const ndwi   = series.map(p => p.ndwi != null ? +p.ndwi.toFixed(3) : null);
+
+  ndviChart = new Chart(document.getElementById('ndvi-chart'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label:           'NDVI',
+          data:            ndvi,
+          borderColor:     '#40916C',
+          backgroundColor: 'rgba(64,145,108,.1)',
+          fill:            true,
+          tension:         0.4,
+          pointRadius:     3,
+        },
+        {
+          label:       'NDWI',
+          data:        ndwi,
+          borderColor: '#378ADD',
+          fill:        false,
+          tension:     0.4,
+          pointRadius: 2,
+          borderDash:  [4, 4],
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { labels: { font: { size: 11 } } } },
+      scales: {
+        y: {
+          min: -0.2, max: 1.0,
+          ticks: { font: { size: 10 } },
+          grid: { color: 'rgba(0,0,0,.05)' },
+        },
+        x: { ticks: { font: { size: 9 }, maxTicksLimit: 6 } },
+      },
+    },
+  });
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function setLoading(on) {
+  document.getElementById('loading').classList.toggle('show', on);
+}
+
+function showToast(msg, isErr = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className   = `toast show${isErr ? ' err' : ''}`;
+  setTimeout(() => t.className = 'toast', 3500);
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+loadFields();
+</script>
+</body>
+</html>
