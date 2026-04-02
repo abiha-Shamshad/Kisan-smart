@@ -28,44 +28,43 @@
   --gray-4: #8a8478;
   --gray-5: #4a4640;
 
-  /* Functional Mapping */
-  --primary: var(--green);
+  --primary: var(--primary-green);
   --primary-foreground: #ffffff;
-  --primary-hover: var(--green-mid);
+  --primary-hover: var(--primary-green-light);
   
-  --secondary: var(--green-light);
-  --secondary-foreground: var(--green);
+  --secondary: var(--primary-green-light);
+  --secondary-foreground: var(--primary-green-deep);
 
-  --accent: var(--amber);
+  --accent: var(--accent-soil);
   --accent-foreground: #ffffff;
 
-  --background: var(--gray-1);
-  --foreground: #1e1c18;
+  --background: var(--bg-cream);
+  --foreground: var(--text-main);
 
-  --card: #ffffff;
-  --card-foreground: #1e1c18;
+  --card: var(--bg-white);
+  --card-foreground: var(--text-main);
 
-  /* Glassmorphism Scales (Updated for light theme focus) */
+  /* Glassmorphism Scales (Premium Agricultural Oasis) */
   --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(45, 106, 79, 0.1);
-  --glass-shadow: 0 8px 32px 0 rgba(10, 38, 21, 0.05);
-  --glass-blur: 16px;
+  --glass-border: rgba(45, 106, 79, 0.05);
+  --glass-shadow: var(--shadow-md);
+  --glass-blur: 12px;
 
   /* Borders & Spacing */
-  --border: var(--gray-2);
-  --input: var(--gray-2);
-  --ring: var(--green-light);
-  --radius: 12px;
-  --radius-sm: 8px;
+  --border: var(--border-light);
+  --input: var(--border-light);
+  --ring: var(--primary-green-light);
+  --radius: var(--radius-xl);
+  --radius-sm: var(--radius-md);
 
   /* Shadows */
-  --shadow-sm: 0 2px 12px rgba(0,0,0,0.06);
-  --shadow-md: 0 4px 18px rgba(0,0,0,0.08);
-  --shadow-lg: 0 12px 36px rgba(0,0,0,0.12);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
 
   /* Animations */
-  --ease: cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-base: 250ms var(--ease);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-base: 400ms var(--ease);
 }
 
 /* Dark Mode Override */
@@ -89,65 +88,54 @@
 }
 
 /* Glass Utility Classes */
-.glass-oasis {
+.glass-panel {
   background: var(--glass-bg);
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow);
-  border-radius: var(--radius-lg);
-  transition: var(--transition-oasis);
+  border-radius: var(--radius);
 }
 
-.glass-oasis:hover {
-  background: rgba(255, 255, 255, 0.85);
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-premium);
-  border-color: rgba(82, 183, 136, 0.4);
+.glass-nav {
+  background: hsla(222, 47%, 11%, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid hsla(0, 0%, 100%, 0.1);
 }
 
-/* ── MOTIONS (Advanced Animations) ── */
-@keyframes fadeInUp {
+/* Animation Utilities */
+@keyframes reveal {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-.animate-fade-in-up {
-  opacity: 0;
-  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+.reveal {
+  animation: reveal 0.8s var(--ease) forwards;
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
 }
 
-.animate-float {
-  animation: float 4s ease-in-out infinite;
+h1, h2, h3, .font-serif {
+    font-family: var(--font-dm-serif);
+    letter-spacing: -0.01em;
 }
 
-@keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 10px rgba(82, 183, 136, 0.2); }
-  50% { box-shadow: 0 0 25px rgba(82, 183, 136, 0.5); }
+body {
+    -webkit-font-smoothing: antialiased;
+    background-attachment: fixed;
 }
-
-.animate-pulse-glow {
-  animation: pulseGlow 3s ease-in-out infinite;
-}
-
-/* Staggered Delay Utilities */
-.delay-100 { animation-delay: 100ms; }
-.delay-200 { animation-delay: 200ms; }
-.delay-300 { animation-delay: 300ms; }
-.delay-400 { animation-delay: 400ms; }
-.delay-500 { animation-delay: 500ms; }
-
 
 /* Interactive Components */
 .btn-premium {

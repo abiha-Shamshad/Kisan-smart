@@ -1,40 +1,54 @@
 /* ==================== CSS VARIABLES ==================== */
 :root {
-  /* Refined Forest & Soil Palette (Professional Tech) */
-  --primary-forest: #0B241A;
-  --primary-emerald: #1B4332;
-  --secondary-emerald: #2D6A4F;
-  --accent-gold: #BC8E5B;
-  --accent-gold-light: #D4A373;
-  
-  /* Status Colors (Nuanced) */
-  --success-agri: #40916C;
-  --warning-harvest: #E9C46A;
-  --danger-pest: #9B2226;
-  --info-sky: #457B9D;
+  /* Primary Colors - Premium "Deep Forest" Theme from Reference */
+  --primary-green-deep: #1B3022;
+  --primary-green: #2D6A4F;
+  --primary-green-light: #52B788;
+  --primary-green-pale: #D8F3DC;
 
-  /* Neutrals & Surfaces */
-  --bg-oasis: #F1F3F2;
-  --text-main: #141F1A;
-  --text-muted: #4F6358;
-  
-  /* Glassmorphism Tokens - Subtle & Professional */
-  --glass-bg: rgba(255, 255, 255, 0.85);
-  --glass-border: rgba(27, 67, 50, 0.08);
-  --glass-shadow: 0 4px 24px 0 rgba(11, 36, 26, 0.05);
-  --glass-blur: 8px;
+  /* Secondary & Accents */
+  --accent-soil: #D4A373;
+  --accent-soil-light: #E9C46A;
+  --accent-pest-red: #C1121F;
+  --accent-blue: #1D6FA5;
 
-  /* Spacing & Radius */
-  --spacing-md: 1.5rem;
-  --radius-xl: 16px;
-  --radius-lg: 12px;
-  --radius-md: 8px;
+  /* Neutrals - Cream Aesthetic */
+  --bg-cream: #F7F5F0;
+  --bg-white: #FFFFFF;
+  --text-main: #1B3022;
+  --text-muted: #5A7060;
+  --border-light: rgba(45, 106, 79, 0.08);
 
-  /* Shadows - Subtle Depth */
-  --shadow-premium: 0 10px 30px rgba(11, 36, 26, 0.06);
-  --shadow-glow: 0 0 15px rgba(64, 145, 108, 0.2);
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+
+  /* Modern Smooth Radius (24px for cards) */
+  --radius-xs: 4px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+  --radius-pill: 100px;
+
+  /* Soft and spread shadows (matched from image) */
+  --shadow-sm: 0 4px 12px rgba(27, 48, 34, 0.03);
+  --shadow-md: 0 8px 24px rgba(27, 48, 34, 0.05);
+  --shadow-lg: 0 16px 48px rgba(27, 48, 34, 0.08);
 
   /* Transitions */
-  --transition-oasis: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Z-index */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-toast: 1060;
 }
-

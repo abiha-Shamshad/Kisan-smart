@@ -18,32 +18,17 @@
             theme: {
                 extend: {
                     colors: {
-                        agri: {
-                            forest: '#1B4332',
-                            emerald: '#2D6A4F',
-                            light: '#52B788',
-                            pale: '#D8F3DC',
+                        green: {
+                            50: '#D8F3DC', 100: '#B7E4C7', 200: '#74C69D',
+                            300: '#52B788', 400: '#40916C', 500: '#2D6A4F',
+                            600: '#1B4332', 700: '#0A2615',
                         },
-                        soil: { DEFAULT: '#6B4226', gold: '#D4A373' },
+                        soil: { DEFAULT: '#6B4226', light: '#A05C36' },
                     },
                     fontFamily: {
-                        syne: ['Syne', 'sans-serif'],
-                        inter: ['Inter', 'sans-serif'],
+                        syne: ['Syne', 'Poppins', 'sans-serif'],
+                        sans: ['Inter', 'DM Sans', 'sans-serif'],
                     },
-                    animation: {
-                        'fade-in-up': 'fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards',
-                        'float': 'float 4s ease-in-out infinite',
-                    },
-                    keyframes: {
-                        fadeInUp: {
-                            '0%': { opacity: '0', transform: 'translateY(30px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-10px)' },
-                        }
-                    }
                 }
             }
         }
@@ -54,11 +39,10 @@
 
     <!-- Google Fonts -->
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@400;600;700&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Syne:wght@400;700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@400;600;700&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap"
         rel="stylesheet" />
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/utilities.css') }}" />
 
@@ -66,7 +50,7 @@
     {% block head %}{% endblock %}
     <!-- PWA Support -->
     <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
-    <meta name="theme-color" content="#1B4332">
+    <meta name="theme-color" content="#2d6a4f">
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -78,70 +62,71 @@
     </script>
 </head>
 
-<body class="bg-[#F8F9FA]"
-    style="color: var(--text-main); min-height: 100vh; font-family: 'Inter', sans-serif;">
+<body class="bg-cream overflow-x-hidden"
+    style="background: var(--bg-cream); color: var(--foreground); min-height: 100vh; font-family: var(--font-inter);">
     
-    <div class="app-background fixed inset-0 z-[-1] pointer-events-none"
-        style="background: radial-gradient(circle at 0% 0%, rgba(82, 183, 136, 0.15) 0%, transparent 50%), 
-                   radial-gradient(circle at 100% 100%, rgba(212, 163, 115, 0.1) 0%, transparent 50%);">
+    <div class="app-background"
+        style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at top left, rgba(45, 106, 79, 0.05) 0%, rgba(247, 245, 240, 1) 40%);">
     </div>
-
     <!-- Navigation -->
     {% block navbar %}
-    <nav class="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-6xl z-[1000] rounded-full border border-white/20 bg-white/60 backdrop-blur-xl px-6 py-3 flex items-center justify-between shadow-2xl transition-all duration-300 hover:bg-white/80">
+    <style>.main-content { padding-top: 100px; }</style>
+    <nav class="fixed-top mx-auto mt-4 max-w-7xl px-4" style="z-index: 1100;">
+        <div class="flex items-center justify-between bg-[#1B3022] rounded-full p-2 px-6 shadow-2xl border border-white/5 backdrop-blur-md">
+            <!-- Brand -->
+            <a class="flex items-center text-white no-underline font-syne font-bold transition-transform hover:scale-105" href="/">
+                <div class="bg-green-500/20 p-2 rounded-full mr-3">
+                    <i class="fas fa-leaf text-[#52B788]"></i>
+                </div>
+                <span class="text-sm tracking-tight hidden sm:inline">Kisan Smart</span>
+            </a>
 
-        <!-- Brand -->
-        <a class="flex items-center gap-2 no-underline group" href="/">
-            <div class="p-2 rounded-lg bg-agri-emerald text-white group-hover:scale-110 transition-transform">
-                <i class="fas fa-seedling"></i>
+            <!-- Nav Links -->
+            <div class="flex items-center gap-1 overflow-x-auto no-scrollbar">
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('views.dashboard') }}" class="nav-pill-item {{ 'active' if request.path == url_for('views.dashboard') }}">Dashboard</a>
+                    <a href="{{ url_for('views.calculator') }}" class="nav-pill-item {{ 'active' if request.path == url_for('views.calculator') }}">NPK</a>
+                    <a href="{{ url_for('views.optimizer') }}" class="nav-pill-item {{ 'active' if request.path == url_for('views.optimizer') }}">Budget</a>
+                    <a href="{{ url_for('views.scan') }}" class="nav-pill-item {{ 'active' if request.path == url_for('views.scan') }}">AI Scan</a>
+                    <a href="{{ url_for('views.weather_alerts') }}" class="nav-pill-item {{ 'active' if request.path == url_for('views.weather_alerts') }}">Weather</a>
+                    <a href="{{ url_for('views.pest_alerts') }}" class="nav-pill-item {{ 'active' if request.path == url_for('views.pest_alerts') }}">Pests</a>
+
+                    <div class="h-6 w-px bg-white/10 mx-2 hidden md:block"></div>
+
+                    <a href="{{ url_for('views.profile') }}" class="text-white/60 hover:text-white transition-colors px-3 py-1 text-sm font-medium">Profile</a>
+                    <a href="/logout" class="bg-red-500/10 text-red-400 hover:bg-red-500/20 px-3 py-1 rounded-full text-xs font-bold transition-all ml-2">Logout</a>
+                {% else %}
+                    <a href="/login" class="text-white/80 hover:text-white px-4 py-2 text-sm font-medium">Login</a>
+                    <a href="/register" class="bg-[#2D6A4F] text-white px-5 py-2 rounded-full text-sm font-bold shadow-lg shadow-green-900/20 hover:bg-[#40916C] transition-all">Join Us</a>
+                {% endif %}
             </div>
-            <span class="font-syne font-extrabold text-xl tracking-tight text-agri-forest">Kisan<span class="text-agri-light">Smart</span></span>
-        </a>
-
-        <!-- Nav Links -->
-        <div class="hidden lg:flex items-center gap-1">
-            <a href="{{ url_for('views.about') }}" class="nav-pill-link">About</a>
-
-            {% if current_user.is_authenticated %}
-                <a href="{{ url_for('views.dashboard') }}" class="nav-pill-link">Dashboard</a>
-                <a href="{{ url_for('views.calculator') }}" class="nav-pill-link">Tools</a>
-                <a href="{{ url_for('views.pest_alerts') }}" class="nav-pill-link">Alerts</a>
-                <a href="{{ url_for('views.weather_alerts') }}" class="nav-pill-link">Weather</a>
-
-                <div class="w-px h-6 bg-gray-200 mx-2"></div>
-
-                <a href="{{ url_for('views.profile') }}" class="nav-pill-link flex items-center gap-2">
-                    <img src="https://ui-avatars.com/api/?name={{ current_user.username }}&background=2D6A4F&color=fff" class="w-7 h-7 rounded-full shadow-sm" alt="User Avatar">
-                    <span>Profile</span>
-                </a>
-
-                <a href="/logout" class="ml-2 px-4 py-2 rounded-full bg-red-50 text-red-600 font-bold text-sm hover:bg-red-100 transition-colors no-underline">
-                    Logout
-                </a>
-            {% else %}
-                <a href="/login" class="nav-pill-link">Login</a>
-                <a href="/register" class="ml-2 px-6 py-2 rounded-full bg-agri-emerald text-white font-bold text-sm hover:bg-agri-forest transition-all shadow-md active:scale-95 no-underline">
-                    Get Started
-                </a>
-            {% endif %}
         </div>
-
-        <!-- Mobile Toggle (Simplified for this task) -->
-        <button class="lg:hidden p-2 text-agri-forest">
-            <i class="fas fa-bars text-xl"></i>
-        </button>
     </nav>
 
     <style>
-        .nav-pill-link {
-            @apply flex items-center px-4 py-2 rounded-full text-sm font-semibold transition-all no-underline text-agri-forest/80;
+        .nav-pill-item {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            white-space: nowrap;
         }
-        .nav-pill-link:hover {
-            @apply bg-agri-pale/50 text-agri-emerald;
+        .nav-pill-item:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
         }
+        .nav-pill-item.active {
+            color: #fff;
+            background: rgba(82, 183, 136, 0.2);
+            box-shadow: inset 0 0 0 1px rgba(82, 183, 136, 0.4);
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
     {% endblock %}
-
 
     <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
