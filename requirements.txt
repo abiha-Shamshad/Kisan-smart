@@ -11,6 +11,16 @@ flasgger==0.9.7.1
 anthropic==0.21.3
 openai-whisper==20231117
 ffmpeg-python==0.2.0
+
+# AI & Satellite monitoring dependencies
+sentinelhub
+geoalchemy2
+shapely
+openai-whisper
+ffmpeg-python
+gTTS
+pydub
+psycopg2-binary
 pandas==2.1.1
 numpy==1.26.0
 scikit-learn==1.3.1

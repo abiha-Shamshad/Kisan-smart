@@ -18,17 +18,32 @@
             theme: {
                 extend: {
                     colors: {
-                        green: {
-                            50: '#D8F3DC', 100: '#B7E4C7', 200: '#74C69D',
-                            300: '#52B788', 400: '#40916C', 500: '#2D6A4F',
-                            600: '#1B4332', 700: '#0A2615',
+                        agri: {
+                            forest: '#1B4332',
+                            emerald: '#2D6A4F',
+                            light: '#52B788',
+                            pale: '#D8F3DC',
                         },
-                        soil: { DEFAULT: '#6B4226', light: '#A05C36' },
+                        soil: { DEFAULT: '#6B4226', gold: '#D4A373' },
                     },
                     fontFamily: {
-                        syne: ['Syne', 'Poppins', 'sans-serif'],
-                        sans: ['Inter', 'DM Sans', 'sans-serif'],
+                        syne: ['Syne', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif'],
                     },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards',
+                        'float': 'float 4s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
                 }
             }
         }
@@ -39,10 +54,11 @@
 
     <!-- Google Fonts -->
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@400;600;700&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@400;600;700&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Syne:wght@400;700;800&display=swap"
         rel="stylesheet" />
 
     <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/utilities.css') }}" />
 
@@ -50,7 +66,7 @@
     {% block head %}{% endblock %}
     <!-- PWA Support -->
     <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
-    <meta name="theme-color" content="#2d6a4f">
+    <meta name="theme-color" content="#1B4332">
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -62,98 +78,70 @@
     </script>
 </head>
 
-<body class="bg-light"
-    style="background: var(--background); color: var(--foreground); min-height: 100vh; font-family: var(--font-inter);">
-    <div class="app-background"
-        style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: linear-gradient(135deg, hsla(142, 70%, 10%, 0.1) 0%, hsla(210, 40%, 98%, 1) 100%);">
+<body class="bg-[#F8F9FA]"
+    style="color: var(--text-main); min-height: 100vh; font-family: 'Inter', sans-serif;">
+    
+    <div class="app-background fixed inset-0 z-[-1] pointer-events-none"
+        style="background: radial-gradient(circle at 0% 0%, rgba(82, 183, 136, 0.15) 0%, transparent 50%), 
+                   radial-gradient(circle at 100% 100%, rgba(212, 163, 115, 0.1) 0%, transparent 50%);">
     </div>
+
     <!-- Navigation -->
     {% block navbar %}
-    <style>.main-content { padding-top: 100px; }</style>
-    <nav class="fixed-top mx-2 mx-md-4 mt-3 rounded-pill p-2 px-4 d-flex align-items-center justify-content-between"
-        style="z-index:1000; background:rgba(15,30,20,0.85); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); box-shadow:0 4px 24px rgba(0,0,0,.25);">
+    <nav class="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-6xl z-[1000] rounded-full border border-white/20 bg-white/60 backdrop-blur-xl px-6 py-3 flex items-center justify-between shadow-2xl transition-all duration-300 hover:bg-white/80">
 
         <!-- Brand -->
-        <a class="fw-bold d-flex align-items-center text-decoration-none" href="/"
-            style="font-family:var(--font-poppins); color:#52B788; white-space:nowrap;">
-            <i class="fas fa-seedling me-2"></i>Kisan Smart
+        <a class="flex items-center gap-2 no-underline group" href="/">
+            <div class="p-2 rounded-lg bg-agri-emerald text-white group-hover:scale-110 transition-transform">
+                <i class="fas fa-seedling"></i>
+            </div>
+            <span class="font-syne font-extrabold text-xl tracking-tight text-agri-forest">Kisan<span class="text-agri-light">Smart</span></span>
         </a>
 
-        <!-- Nav Links (always accessible) -->
-        <div class="d-flex align-items-center gap-1 flex-wrap" id="mainNav">
+        <!-- Nav Links -->
+        <div class="hidden lg:flex items-center gap-1">
             <a href="{{ url_for('views.about') }}" class="nav-pill-link">About</a>
 
             {% if current_user.is_authenticated %}
-                <!-- Tools (Authenticated Only) -->
                 <a href="{{ url_for('views.dashboard') }}" class="nav-pill-link">Dashboard</a>
-                <a href="{{ url_for('views.calculator') }}" class="nav-pill-link">NPK Calculator</a>
-                <a href="{{ url_for('views.optimizer') }}" class="nav-pill-link">Budget Optimizer</a>
-                <a href="{{ url_for('views.schedule') }}" class="nav-pill-link">Schedule</a>
-                <a href="{{ url_for('views.scan') }}" class="nav-pill-link">AI Scan</a>
-                <a href="{{ url_for('views.field_history') }}" class="nav-pill-link">Field History</a>
-                <a href="{{ url_for('views.pest_alerts') }}" class="nav-pill-link">Pest Alerts</a>
+                <a href="{{ url_for('views.calculator') }}" class="nav-pill-link">Tools</a>
+                <a href="{{ url_for('views.pest_alerts') }}" class="nav-pill-link">Alerts</a>
                 <a href="{{ url_for('views.weather_alerts') }}" class="nav-pill-link">Weather</a>
 
-                <a href="{{ url_for('views.profile') }}" class="nav-pill-link ms-2">
-                    <i class="fas fa-user me-1 d-none d-md-inline" style="font-size:.7rem;"></i>Profile
+                <div class="w-px h-6 bg-gray-200 mx-2"></div>
+
+                <a href="{{ url_for('views.profile') }}" class="nav-pill-link flex items-center gap-2">
+                    <img src="https://ui-avatars.com/api/?name={{ current_user.username }}&background=2D6A4F&color=fff" class="w-7 h-7 rounded-full shadow-sm" alt="User Avatar">
+                    <span>Profile</span>
                 </a>
 
-                <!-- Logout -->
-                <a href="/logout" class="nav-pill-logout">
-                    <i class="fas fa-sign-out-alt me-1"></i>Logout
+                <a href="/logout" class="ml-2 px-4 py-2 rounded-full bg-red-50 text-red-600 font-bold text-sm hover:bg-red-100 transition-colors no-underline">
+                    Logout
                 </a>
             {% else %}
-                <!-- Public Links -->
                 <a href="/login" class="nav-pill-link">Login</a>
-                <a href="/register" class="nav-pill-cta">Join Us</a>
+                <a href="/register" class="ml-2 px-6 py-2 rounded-full bg-agri-emerald text-white font-bold text-sm hover:bg-agri-forest transition-all shadow-md active:scale-95 no-underline">
+                    Get Started
+                </a>
             {% endif %}
         </div>
+
+        <!-- Mobile Toggle (Simplified for this task) -->
+        <button class="lg:hidden p-2 text-agri-forest">
+            <i class="fas fa-bars text-xl"></i>
+        </button>
     </nav>
 
     <style>
         .nav-pill-link {
-            color: rgba(255,255,255,.8);
-            text-decoration: none;
-            font-size: .86rem;
-            font-weight: 600;
-            padding: .4rem .85rem;
-            border-radius: 100px;
-            transition: all .2s;
-            white-space: nowrap;
+            @apply flex items-center px-4 py-2 rounded-full text-sm font-semibold transition-all no-underline text-agri-forest/80;
         }
         .nav-pill-link:hover {
-            background: rgba(255,255,255,.1);
-            color: #fff;
+            @apply bg-agri-pale/50 text-agri-emerald;
         }
-        .nav-pill-logout {
-            color: #fca5a5;
-            text-decoration: none;
-            font-size: .86rem;
-            font-weight: 600;
-            padding: .4rem .85rem;
-            border-radius: 100px;
-            transition: all .2s;
-            white-space: nowrap;
-        }
-        .nav-pill-logout:hover {
-            background: rgba(239,68,68,.15);
-            color: #f87171;
-        }
-        .nav-pill-cta {
-            background: #2D6A4F;
-            color: #fff !important;
-            text-decoration: none;
-            font-size: .86rem;
-            font-weight: 700;
-            padding: .45rem 1.1rem;
-            border-radius: 100px;
-            transition: all .2s;
-            margin-left: .25rem;
-            white-space: nowrap;
-        }
-        .nav-pill-cta:hover { background: #40916C; }
     </style>
     {% endblock %}
+
 
     <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
