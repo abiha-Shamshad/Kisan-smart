@@ -1,97 +1,79 @@
 {% extends "base.html" %}
-{% block title %}Login - Kisan Smart{% endblock %}
+
+{% block title %}Login — Kisan Smart{% endblock %}
 
 {% block navbar %}{% endblock %}
 
+{% block extra_css %}
+<style>
+  body { background-color: #F7F5F0 !important; }
+  .login-card {
+    background: white;
+    border-radius: 32px;
+    padding: 3rem;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 20px 50px rgba(27, 48, 34, 0.05);
+    border: 1px solid rgba(0,0,0,0.02);
+  }
+  .input-group-premium { margin-bottom: 1.5rem; }
+  .input-label { font-size: 0.75rem; font-weight: 700; color: #8A8478; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; display: block; }
+  .input-field {
+    width: 100%; padding: 1rem 1.25rem; border-radius: 16px; border: 1.5px solid #EAE9E4;
+    background: #FBFBFA; transition: all 0.3s; font-size: 0.95rem;
+  }
+  .input-field:focus { outline: none; border-color: #2D6A4F; background: white; box-shadow: 0 0 0 4px rgba(45, 106, 79, 0.05); }
+  .btn-login {
+    width: 100%; padding: 1.1rem; background: #1B3022; color: white; border: none; border-radius: 16px;
+    font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s; margin-top: 1rem;
+  }
+  .btn-login:hover { background: #2D6A4F; transform: translateY(-2px); box-shadow: 0 10px 25px rgba(27, 48, 34, 0.15); }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="min-vh-100 d-flex" style="background: linear-gradient(135deg, #0A2615 0%, #1B4332 40%, #40916C 100%);">
-  <!-- Left Branding Panel -->
-  <div class="d-none d-lg-flex flex-column justify-content-center align-items-center text-white p-5" style="width:45%; background: rgba(0,0,0,0.2);">
-    <a href="/" class="text-decoration-none text-white mb-5 align-self-start">
-      <i class="fas fa-seedling me-2 text-green-300"></i>
-      <span class="fw-bold fs-5" style="font-family:var(--font-poppins)">Kisan Smart</span>
-    </a>
-    <div class="text-center">
-      <div class="mb-4" style="font-size:5rem; line-height:1;">🌾</div>
-      <h2 class="fw-black mb-3" style="font-family:var(--font-poppins); font-size:2rem; letter-spacing:-0.03em;">
-        Grow Smarter,<br>Harvest More
-      </h2>
-      <p class="text-white/70 mb-5" style="color:rgba(255,255,255,.7); font-size:0.95rem; line-height:1.7;">
-        AI-powered fertilizer recommendations based on your soil data, weather, and crop type — trusted by 50,000+ farmers.
-      </p>
-      <div class="d-flex justify-content-center gap-4">
-        <div class="text-center">
-          <div class="fw-bold fs-3" style="color:#74C69D">94%</div>
-          <div class="small" style="color:rgba(255,255,255,.6)">Accuracy</div>
-        </div>
-        <div class="text-center">
-          <div class="fw-bold fs-3" style="color:#74C69D">50K+</div>
-          <div class="small" style="color:rgba(255,255,255,.6)">Farmers</div>
-        </div>
-        <div class="text-center">
-          <div class="fw-bold fs-3" style="color:#74C69D">40%</div>
-          <div class="small" style="color:rgba(255,255,255,.6)">Yield ↑</div>
-        </div>
-      </div>
-    </div>
-    <div class="mt-auto align-self-start">
-      <p class="small" style="color:rgba(255,255,255,.4)">Don't have an account? <a href="/register" class="text-white fw-semibold text-decoration-none">Join for free →</a></p>
-    </div>
-  </div>
-
-  <!-- Right Login Panel -->
-  <div class="d-flex flex-column justify-content-center align-items-center p-4 p-md-5 flex-grow-1" style="background:#fff; border-radius: 0;">
-    <div style="max-width:420px; width:100%;">
-      <!-- Mobile Logo -->
-      <div class="d-lg-none text-center mb-4">
-        <a href="/" class="text-decoration-none">
-          <i class="fas fa-seedling me-1" style="color:#2D6A4F"></i>
-          <span class="fw-bold fs-5" style="color:#2D6A4F; font-family:var(--font-poppins)">Kisan Smart</span>
-        </a>
-      </div>
-
-      <h2 class="fw-black mb-1" style="font-family:var(--font-poppins); color:#1A2E1E; font-size:1.75rem;">Welcome back 👋</h2>
-      <p class="text-muted small mb-4">Enter your credentials to access your dashboard</p>
-
-      <form id="loginForm">
-        <div class="mb-3">
-          <label for="email" class="form-label fw-semibold small">Email Address</label>
-          <input type="email" class="input-premium w-100" id="email" name="email" placeholder="farmer@kisan.smart" required autofocus />
-          <div class="invalid-feedback"></div>
+<div class="min-h-screen flex items-center justify-center p-6">
+    <div class="login-card reveal">
+        <div class="text-center mb-10">
+            <a href="/" class="inline-flex items-center gap-2 no-underline text-[#2D6A4F] mb-6">
+                <i class="fas fa-leaf text-xl text-[#52B788]"></i>
+                <span class="font-bold tracking-tight text-[#1B3022]">Kisan Smart</span>
+            </a>
+            <h1 class="text-4xl font-serif text-[#1B3022] mb-2">Welcome back</h1>
+            <p class="text-[#5A7060]">Access your farm's intelligence</p>
         </div>
 
-        <div class="mb-3">
-          <label for="password" class="form-label fw-semibold small">Password</label>
-          <div class="password-input-wrapper position-relative">
-            <input type="password" class="input-premium w-100" id="password" name="password" placeholder="••••••••" required />
-            <button type="button" class="password-toggle position-absolute end-0 top-50 translate-middle-y border-0 bg-transparent px-3 py-2 text-muted">
-              <i class="fas fa-eye"></i>
+        <form id="loginForm">
+            <div class="input-group-premium">
+                <label class="input-label">Email Address</label>
+                <input type="email" id="email" name="email" class="input-field" placeholder="name@farm.com" required autofocus>
+                <div class="invalid-feedback text-xs text-red-500 mt-1"></div>
+            </div>
+
+            <div class="input-group-premium">
+                <label class="input-label">Password</label>
+                <input type="password" id="password" name="password" class="input-field" placeholder="••••••••" required>
+                <div class="invalid-feedback text-xs text-red-500 mt-1"></div>
+            </div>
+
+            <div class="flex items-center justify-between mb-8">
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" id="remember_me" name="remember_me" class="rounded border-[#EAE9E4] text-[#2D6A4F]">
+                    <span class="text-sm text-[#5A7060]">Stay signed in</span>
+                </label>
+                <a href="/forgot-password" class="text-sm font-bold text-[#2D6A4F] no-underline">Forgot?</a>
+            </div>
+
+            <button type="submit" id="submitBtn" class="btn-login">
+                Sign In
             </button>
-          </div>
-          <div class="invalid-feedback"></div>
-        </div>
+        </form>
 
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="remember_me" name="remember_me" />
-            <label class="form-check-label small" for="remember_me">Stay signed in</label>
-          </div>
-          <a href="/forgot-password" class="text-decoration-none small fw-semibold" style="color:#2D6A4F;">Forgot Password?</a>
-        </div>
-
-        <button type="submit" id="submitBtn" class="btn-premium w-100 py-3 mb-4">
-          <i class="fas fa-sign-in-alt me-2"></i>Sign In
-        </button>
-      </form>
-
-      <p class="text-center small text-muted mb-0">Don't have an account? <a href="/register" class="fw-bold text-decoration-none" style="color:#2D6A4F;">Join the community</a></p>
-      
-      <div class="mt-4 pt-4 border-top text-center">
-        <a href="/about" class="small text-decoration-none me-3" style="color:#9ca3af;">About</a>
-        <a href="/" class="small text-decoration-none" style="color:#9ca3af;">Home</a>
-      </div>
+        <p class="text-center mt-10 text-sm text-[#5A7060]">
+            Don't have an account? 
+            <a href="/register" class="font-bold text-[#2D6A4F] no-underline ml-1">Join the community</a>
+        </p>
     </div>
-  </div>
 </div>
 {% endblock %}
 
@@ -104,83 +86,40 @@
         const rememberMeCheckbox = document.getElementById('remember_me');
         const submitBtn = document.getElementById('submitBtn');
 
-        // Real-time email validation
-        emailInput.addEventListener('blur', function () {
-            const result = Validators.validateEmail(this.value);
-            if (!result.valid) {
-                ValidationUI.showFieldError('email', result.message);
-            } else {
-                ValidationUI.showFieldSuccess('email');
-            }
-        });
-
-        // Form submission
         form.addEventListener('submit', async function (e) {
             e.preventDefault();
-
-            // Clear previous errors
-            ValidationUI.clearAllFeedback('loginForm');
-
             const email = emailInput.value;
             const password = passwordInput.value;
             const rememberMe = rememberMeCheckbox.checked;
 
-            // Validate email
-            const emailResult = Validators.validateEmail(email);
-            if (!emailResult.valid) {
-                ValidationUI.showFieldError('email', emailResult.message);
-                Toast.error('Please enter a valid email address');
-                return;
-            }
-
-            // Validate password not empty
-            if (!password) {
-                ValidationUI.showFieldError('password', 'Password is required');
-                Toast.error('Please enter your password');
-                return;
-            }
-
-            // Submit to API
-            FormHelpers.setButtonLoading(submitBtn, true);
+            submitBtn.innerText = 'Signing in...';
+            submitBtn.disabled = true;
 
             try {
-                const response = await auth.login(email, password, rememberMe);
+                const response = await fetch('/api/v1/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, remember_me: rememberMe })
+                });
 
-                Toast.success('Login successful! Redirecting...');
-
-                // Redirect to dashboard after 1 second
-                setTimeout(() => {
+                if (response.ok) {
                     window.location.href = '/dashboard';
-                }, 1000);
-
-            } catch (error) {
-                // Handle specific error cases
-                let errorMessage = 'Login failed. Please try again.';
-
-                if (error.message.includes('credentials')) {
-                    errorMessage = 'Invalid email or password';
-                    ValidationUI.showFieldError('email', ' ');
-                    ValidationUI.showFieldError('password', ' ');
-                } else if (error.message.includes('locked')) {
-                    errorMessage = 'Account is locked. Please contact support.';
-                } else if (error.message.includes('verified')) {
-                    errorMessage = 'Please verify your email before logging in.';
                 } else {
-                    errorMessage = error.message;
+                    const data = await response.json();
+                    alert(data.message || 'Login failed');
+                    submitBtn.innerText = 'Sign In';
+                    submitBtn.disabled = false;
                 }
-
-                Toast.error(errorMessage);
-            } finally {
-                FormHelpers.setButtonLoading(submitBtn, false);
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('An error occurred. Please check the console for details.');
+                submitBtn.innerText = 'Sign In';
+                submitBtn.disabled = false;
             }
         });
-
-        // Clear error on input
-        [emailInput, passwordInput].forEach(input => {
-            input.addEventListener('input', function () {
-                ValidationUI.clearFieldFeedback(this.id);
-            });
-        });
     });
+</script>
+{% endblock %}
+;
 </script>
 {% endblock %}

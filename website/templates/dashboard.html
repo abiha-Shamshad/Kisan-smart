@@ -1,182 +1,220 @@
 {% extends "base.html" %}
 
-{% block title %}Kisan Smart — Advanced Fertilizer Advisor{% endblock %}
+{% block title %}Farm Overview — Kisan Smart{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_premium.css') }}" />
 <style>
-  .main-content { margin-top: 56px !important; background: var(--gray-1); }
-  .dashboard-container { max-width: 1000px; margin: 0 auto; padding: 1.5rem 1rem; }
+  .dashboard-container { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; }
   
-  /* Layout specific overrides */
-  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-  @media(max-width: 600px) { .field-grid { grid-template-columns: 1fr; } }
-  
-  .tab-content { display: none; min-height: 400px; padding-top: 1.5rem; }
-  .tab-content.active { display: block; animation: fadeIn 0.3s ease-out; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-  /* Make anchor tab-pills look like div tab-pills */
-  a.tab-pill { text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; }
-  a.tab-pill:hover { color: inherit; }
-  a.hub-card { text-decoration: none; color: inherit; display: block; }
-  a.hub-card:hover { color: inherit; }
-
-  /* New Tool Specifics */
-  .schedule-table-wrapper { overflow-x: auto; background: white; border-radius: var(--radius-sm); border: 1px solid var(--gray-2); }
-  .schedule-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-  .schedule-table th { background: var(--gray-1); padding: 12px; text-align: left; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; color: var(--gray-4); }
-  .schedule-table td { padding: 14px 12px; border-bottom: 1px solid var(--gray-1); vertical-align: top; }
-  
-  .budget-metric { text-align: center; padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--gray-1); }
-  .metric-val { font-family: var(--font-dm-serif); font-size: 1.5rem; margin-top: 0.25rem; }
-  
-  .hint { font-size: 11px; color: var(--gray-4); margin-top: 4px; }
-  
-  /* WhatsApp Floating/Static Button */
-  .btn-wa { background: #25d366; color: white; border: none; padding: 10px 20px; border-radius: 50px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s; text-decoration: none; }
-  .btn-wa:hover { background: #1da851; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3); color: white; }
-
-  /* Hub Specifics */
-  .hub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-bottom: 2rem; }
-  .hub-card { 
-      background: white; border-radius: var(--radius-md); padding: 1.5rem; 
-      border: 1px solid var(--gray-2); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      cursor: pointer; position: relative; overflow: hidden;
+  /* Tabs Redesign */
+  .tabs-pill-wrapper {
+    background: #EAE9E4;
+    padding: 6px;
+    border-radius: 100px;
+    display: inline-flex;
+    gap: 4px;
+    margin-bottom: 2.5rem;
+    overflow-x: auto;
+    max-width: 100%;
   }
-  .hub-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); border-color: var(--green-light); }
-  .hub-card .icon-bg { 
-      position: absolute; right: -10px; bottom: -10px; font-size: 5rem; 
-      opacity: 0.05; transform: rotate(-15deg); color: var(--green); 
+  .tab-pill-btn {
+    padding: 10px 24px;
+    border-radius: 100px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #5A7060;
+    text-decoration: none;
+    transition: all 0.3s;
+    white-space: nowrap;
   }
-  .hub-card .stat-label { font-size: 0.75rem; font-weight: 700; color: var(--gray-4); text-transform: uppercase; letter-spacing: 0.5px; }
-  .hub-card .stat-value { font-family: var(--font-dm-serif); font-size: 1.75rem; margin: 0.5rem 0; color: var(--gray-5); }
-  .hub-card .stat-desc { font-size: 0.8rem; color: var(--gray-4); }
+  .tab-pill-btn:hover { color: #1B3022; }
+  .tab-pill-btn.active {
+    background: white;
+    color: #1B3022;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+
+  /* Status Cards */
+  .status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+  .status-card {
+    background: white;
+    border-radius: 20px;
+    padding: 1.5rem;
+    border: 1px solid rgba(0,0,0,0.04);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.3s;
+  }
+  .status-card:hover { transform: translateY(-4px); }
+  .status-label { font-size: 0.7rem; font-weight: 700; color: #8A8478; text-transform: uppercase; letter-spacing: 0.5px; }
+  .status-value { font-size: 2rem; font-weight: 600; margin: 0.5rem 0; font-family: var(--font-inter); }
+  .status-desc { font-size: 0.8rem; color: #8A8478; }
+
+  /* Nutrient Bars */
+  .nutrient-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; font-size: 0.85rem; }
+  .nutrient-name { width: 100px; color: #5A7060; }
+  .nutrient-bar-bg { flex-grow: 1; height: 8px; background: #F0F0EE; border-radius: 100px; overflow: hidden; }
+  .nutrient-bar-fill { height: 100%; border-radius: 100px; transition: width 1s cubic-bezier(0.16, 1, 0.3, 1); }
+  .nutrient-val { width: 30px; text-align: right; color: #8A8478; font-weight: 600; }
+
+  /* Quick Actions List */
+  .action-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: #F7F7F5;
+    border-radius: 16px;
+    text-decoration: none;
+    color: inherit;
+    margin-bottom: 0.75rem;
+    transition: all 0.3s;
+  }
+  .action-item:hover { background: #EAE9E4; transform: translateX(4px); }
+  .action-icon {
+    width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    background: white; color: #1B3022; font-size: 0.9rem;
+  }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="dashboard-container">
   
-  <!-- Navigation Hub -->
-  <div class="tabs-container reveal">
-    <div class="tab-pill active" id="tab-btn-hub">
-      <i class="fas fa-th-large"></i> Overview
+  <!-- Header Section -->
+  <div class="flex justify-between items-start mb-8 reveal">
+    <div>
+        <h1 class="text-4xl font-serif text-[#1B3022] mb-1">Farm overview</h1>
+        <p class="text-[#5A7060]">Real-time status — Gujrat, Punjab</p>
     </div>
-    <a href="{{ url_for('views.calculator') }}" class="tab-pill" id="tab-btn-calc">
-      <i class="fas fa-calculator"></i> NPK Calculator
-    </a>
-    <a href="{{ url_for('views.optimizer') }}" class="tab-pill" id="tab-btn-budget">
-      <i class="fas fa-wallet"></i> Budget Optimizer
-    </a>
-    <a href="{{ url_for('views.schedule') }}" class="tab-pill" id="tab-btn-schedule">
-      <i class="fas fa-calendar-alt"></i> Schedule
-    </a>
-    <a href="{{ url_for('views.scan') }}" class="tab-pill" id="tab-btn-scan">
-      <i class="fas fa-camera"></i> AI Scan
-    </a>
-    <a href="{{ url_for('views.field_history') }}" class="tab-pill" id="tab-btn-history">
-      <i class="fas fa-history"></i> Field History
-    </a>
-  </div>
-
-  <!-- ── TAB 0: OVERVIEW HUB (Feature: Professional Dashboard) ── -->
-  <div class="tab-content active" id="hub">
-    <div class="reveal">
-        <h2 class="fw-bold mb-1" style="font-family: var(--font-dm-serif);">Farm Overview</h2>
-        <p class="text-gray-4 mb-4">Real-time status of your agricultural tools and soil health.</p>
-    </div>
-
-    <div class="hub-grid reveal" style="animation-delay: 0.1s;">
-        <a href="{{ url_for('views.calculator') }}" class="hub-card">
-            <div class="icon-bg"><i class="fas fa-vial"></i></div>
-            <div class="stat-label">Soil Health</div>
-            <div id="hub-soil-val" class="stat-value text-green">Stable</div>
-            <div class="stat-desc">Based on your last NPK test</div>
-        </a>
-        <a href="{{ url_for('views.optimizer') }}" class="hub-card">
-            <div class="icon-bg"><i class="fas fa-chart-line"></i></div>
-            <div class="stat-label">Budget ROI</div>
-            <div id="hub-budget-val" class="stat-value text-blue">-- %</div>
-            <div class="stat-desc">Projected profit margin per acre</div>
-        </a>
-        <a href="{{ url_for('views.schedule') }}" class="hub-card">
-            <div class="icon-bg"><i class="fas fa-calendar-check"></i></div>
-            <div class="stat-label">Next Task</div>
-            <div id="hub-task-val" class="stat-value text-amber">None</div>
-            <div id="hub-task-desc" class="stat-desc">No upcoming applications</div>
-        </a>
-        <a href="{{ url_for('views.scan') }}" class="hub-card">
-            <div class="icon-bg"><i class="fas fa-leaf"></i></div>
-            <div class="stat-label">Last Scan</div>
-            <div id="hub-scan-val" class="stat-value text-primary">Healthy</div>
-            <div class="stat-desc">AI leaf tissue analysis health</div>
-        </a>
-    </div>
-
-    <div class="row g-4 reveal" style="animation-delay: 0.2s;">
-        <div class="col-lg-8">
-            <div class="card-premium">
-                <div class="card-title-premium"><i class="fas fa-bolt text-amber"></i> Quick Actions Center</div>
-                <div class="row g-3">
-                    <div class="col-sm-6">
-                        <a href="{{ url_for('views.calculator') }}" class="btn btn-outline-success w-100 py-3 text-start d-flex align-items-center gap-3 text-decoration-none">
-                            <i class="fas fa-plus-circle fs-4"></i>
-                            <div>
-                                <div class="fw-bold small">New Soil Test</div>
-                                <div class="text-xs opacity-75">Start NPK calculation</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-sm-6">
-                        <a href="{{ url_for('views.scan') }}" class="btn btn-outline-primary w-100 py-3 text-start d-flex align-items-center gap-3 text-decoration-none">
-                            <i class="fas fa-camera fs-4"></i>
-                            <div>
-                                <div class="fw-bold small">AI Plant Scan</div>
-                                <div class="text-xs opacity-75">Diagnose plant health</div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4">
-            <div class="card-premium h-100">
-                <div class="card-title-premium"><i class="fas fa-cloud text-blue"></i> Expert Support</div>
-                <div class="text-center py-2">
-                    <a href="https://wa.me/919876543210" class="btn-wa shadow-sm w-100 justify-content-center">
-                        <i class="fab fa-whatsapp"></i> Chat with Agronomist
-                    </a>
-                </div>
-            </div>
-        </div>
+    <div class="bg-white px-4 py-2 rounded-full shadow-sm border border-black/5 text-sm font-medium text-[#5A7060]">
+        Wed, 2 Apr 2026
     </div>
   </div>
+
+  <!-- Navigation Pill -->
+  <div class="tabs-pill-wrapper reveal" style="animation-delay: 0.1s;">
+    <a href="{{ url_for('views.dashboard') }}" class="tab-pill-btn active">Overview</a>
+    <a href="{{ url_for('views.calculator') }}" class="tab-pill-btn">NPK calculator</a>
+    <a href="{{ url_for('views.optimizer') }}" class="tab-pill-btn">Budget</a>
+    <a href="{{ url_for('views.schedule') }}" class="tab-pill-btn">Schedule</a>
+    <a href="{{ url_for('views.scan') }}" class="tab-pill-btn">AI scan</a>
+    <a href="{{ url_for('views.field_history') }}" class="tab-pill-btn">Field history</a>
+  </div>
+
+  <!-- Status Cards Grid -->
+  <div class="status-grid reveal" style="animation-delay: 0.2s;">
+    <div class="status-card">
+        <div class="status-label">Soil Health</div>
+        <div class="status-value text-[#40916C]">Stable</div>
+        <div class="status-desc">Based on last NPK test</div>
+    </div>
+    <div class="status-card">
+        <div class="status-label">Budget ROI</div>
+        <div class="status-value text-[#D4A373]">-- %</div>
+        <div class="status-desc">Projected per acre</div>
+    </div>
+    <div class="status-card">
+        <div class="status-label">Next Task</div>
+        <div class="status-value text-[#1B3022]">No tasks</div>
+        <div class="status-desc">All applications done</div>
+    </div>
+    <div class="status-card">
+        <div class="status-label">Last Scan</div>
+        <div class="status-value text-[#1D6FA5]">Healthy</div>
+        <div class="status-desc">AI leaf tissue analysis</div>
+    </div>
+  </div>
+
+  <!-- Main Grid: Quick Actions & Soil Nutrients -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 reveal" style="animation-delay: 0.3s;">
+    
+    <!-- Quick Actions -->
+    <div class="bg-white rounded-[24px] p-8 shadow-sm border border-black/5">
+        <h3 class="font-serif text-2xl text-[#1B3022] mb-1">Quick actions</h3>
+        <p class="text-[#8A8478] mb-6">Jump to any tool</p>
+
+        <a href="{{ url_for('views.calculator') }}" class="action-item">
+            <div class="action-icon"><i class="fas fa-plus"></i></div>
+            <div class="flex-grow">
+                <div class="font-bold text-sm">NPK calculator</div>
+                <div class="text-xs text-[#8A8478]">Get fertilizer recommendations</div>
+            </div>
+            <i class="fas fa-chevron-right text-xs text-[#C9C4B8]"></i>
+        </a>
+
+        <a href="{{ url_for('views.pest_alerts') }}" class="action-item">
+            <div class="action-icon"><i class="fas fa-bug"></i></div>
+            <div class="flex-grow">
+                <div class="font-bold text-sm">Pest alerts</div>
+                <div class="text-xs text-[#8A8478]">View risk scores</div>
+            </div>
+            <i class="fas fa-chevron-right text-xs text-[#C9C4B8]"></i>
+        </a>
+
+        <a href="{{ url_for('views.weather_alerts') }}" class="action-item">
+            <div class="action-icon"><i class="fas fa-cloud"></i></div>
+            <div class="flex-grow">
+                <div class="font-bold text-sm">Weather monitor</div>
+                <div class="text-xs text-[#8A8478]">Live forecasts</div>
+            </div>
+            <i class="fas fa-chevron-right text-xs text-[#C9C4B8]"></i>
+        </a>
+
+        <a href="{{ url_for('views.scan') }}" class="action-item">
+            <div class="action-icon"><i class="fas fa-camera"></i></div>
+            <div class="flex-grow">
+                <div class="font-bold text-sm">AI scan</div>
+                <div class="text-xs text-[#8A8478]">Photograph your crop</div>
+            </div>
+            <i class="fas fa-chevron-right text-xs text-[#C9C4B8]"></i>
+        </a>
+    </div>
+
+    <!-- Soil Nutrients -->
+    <div class="bg-white rounded-[24px] p-8 shadow-sm border border-black/5">
+        <h3 class="font-serif text-2xl text-[#1B3022] mb-1">Soil nutrients</h3>
+        <p class="text-[#8A8478] mb-8 text-sm">Last reading — 28 Mar 2026</p>
+
+        <div class="nutrient-row">
+            <div class="nutrient-name">Nitrogen</div>
+            <div class="nutrient-bar-bg"><div class="nutrient-bar-fill bg-[#40916C]" style="width: 72%"></div></div>
+            <div class="nutrient-val">72</div>
+        </div>
+
+        <div class="nutrient-row">
+            <div class="nutrient-name">Phosphorus</div>
+            <div class="nutrient-bar-bg"><div class="nutrient-bar-fill bg-[#6B4226]" style="width: 45%"></div></div>
+            <div class="nutrient-val">45</div>
+        </div>
+
+        <div class="nutrient-row">
+            <div class="nutrient-name">Potassium</div>
+            <div class="nutrient-bar-bg"><div class="nutrient-bar-fill bg-[#1D6FA5]" style="width: 88%"></div></div>
+            <div class="nutrient-val">88</div>
+        </div>
+
+        <div class="nutrient-row mb-8">
+            <div class="nutrient-name">pH level</div>
+            <div class="nutrient-bar-bg"><div class="nutrient-bar-fill bg-[#2D6A4F]" style="width: 62%"></div></div>
+            <div class="nutrient-val">6.2</div>
+        </div>
+
+        <div class="bg-[#F1F8E9] p-4 rounded-xl border border-[#40916C]/10 text-sm leading-relaxed">
+            <span class="text-[#8A8478]">Recommendation:</span> <span class="text-[#2D6A4F] font-bold">Boost phosphorus — apply DAP 25kg/acre</span>
+        </div>
+    </div>
+  </div>
+
 </div>
-
-<!-- Toast -->
-<div class="toast" id="toast"></div>
 {% endblock %}
 
 {% block extra_js %}
 <script src="{{ url_for('static', filename='js/dashboard_premium.js') }}"></script>
-<script>
-  // Initialize default date (safety check)
-  const sowDate = document.getElementById('sched-sow-date');
-  if (sowDate) sowDate.value = new Date().toISOString().split('T')[0];
-  
-  function updatePHSlider(val) {
-    const v = parseFloat(val);
-    document.getElementById('ph-display').textContent = v.toFixed(1);
-    
-    let label = "Neutral";
-    if(v < 5.5) label = "Very Acidic";
-    else if(v < 6.5) label = "Acidic";
-    else if(v > 7.5) label = "Alkaline";
-    else if(v > 8.5) label = "Highly Alkaline";
-    
-    document.getElementById('ph-label').textContent = label;
-    const pct = ((v - 4) / (9 - 4) * 100);
-    document.getElementById('ph-marker').style.left = pct + '%';
-  }
-</script>
 {% endblock %}
+ndblock %}
