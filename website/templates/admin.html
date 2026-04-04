@@ -1,71 +1,54 @@
 {% extends "base.html" %}
 {% block title %}Admin Dashboard{% endblock %}
 {% block content %}
-<div class="admin-container">
+<div class="max-w-5xl mx-auto py-10 px-4">
     <!-- Page Header -->
-    <div class="page-header reveal mb-5">
-        <h1 class="fw-bold"><i class="fas fa-user-shield me-3 text-primary"></i>Admin Command Center</h1>
-        <p class="text-muted">Welcome back, Administrator. System monitoring and user management portal.</p>
+    <div class="flex items-center gap-4 mb-8 reveal">
+        <div class="w-16 h-16 bg-[#E8F3EC] rounded-2xl flex items-center justify-center text-[#2D6A4F] text-2xl">
+            <i class="fas fa-user-shield"></i>
+        </div>
+        <div>
+            <h1 class="text-3xl font-serif text-[#1B3022] mb-1">Admin Command Center</h1>
+            <p class="text-[#5A7060] m-0">System monitoring and user management portal.</p>
+        </div>
     </div>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="glass-panel reveal p-4 p-md-5 mb-5">
-                <div class="row g-4">
-                    <!-- Total Users -->
-                    <div class="col-md-4">
-                        <div class="stat-card glass-panel hover-lift">
-                            <div class="stat-icon text-primary">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <div class="stat-content">
-                                <h3 class="stat-number">1</h3>
-                                <p class="stat-label">Active Users</p>
-                            </div>
-                        </div>
-                    </div>
+    <div class="bg-white rounded-[32px] p-8 shadow-sm border border-black/5 reveal">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <!-- Total Users -->
+            <div class="border border-[#EAE9E4] rounded-[20px] p-6 text-center hover:shadow-md transition-all">
+                <div class="text-[#2D6A4F] text-2xl mb-3"><i class="fas fa-users"></i></div>
+                <h3 class="font-serif text-4xl text-[#1B3022] m-0">1</h3>
+                <p class="text-xs font-bold text-[#8A8478] uppercase tracking-widest mt-2">Active Users</p>
+            </div>
 
-                    <!-- Total Recommendations -->
-                    <div class="col-md-4">
-                        <div class="stat-card glass-panel hover-lift">
-                            <div class="stat-icon text-success">
-                                <i class="fas fa-file-alt"></i>
-                            </div>
-                            <div class="stat-content">
-                                <h3 class="stat-number">0</h3>
-                                <p class="stat-label">Total Reports</p>
-                            </div>
-                        </div>
-                    </div>
+            <!-- Total Recommendations -->
+            <div class="border border-[#EAE9E4] rounded-[20px] p-6 text-center hover:shadow-md transition-all">
+                <div class="text-[#74C69D] text-2xl mb-3"><i class="fas fa-file-alt"></i></div>
+                <h3 class="font-serif text-4xl text-[#1B3022] m-0">0</h3>
+                <p class="text-xs font-bold text-[#8A8478] uppercase tracking-widest mt-2">Total Reports</p>
+            </div>
 
-                    <!-- System Status -->
-                    <div class="col-md-4">
-                        <div class="stat-card glass-panel hover-lift">
-                            <div class="stat-icon text-info">
-                                <i class="fas fa-server"></i>
-                            </div>
-                            <div class="stat-content">
-                                <h3 class="stat-number">Live</h3>
-                                <p class="stat-label">System Nodes</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <!-- System Status -->
+            <div class="border border-[#EAE9E4] rounded-[20px] p-6 text-center hover:shadow-md transition-all">
+                <div class="text-[#1D6FA5] text-2xl mb-3"><i class="fas fa-server"></i></div>
+                <h3 class="font-serif text-4xl text-[#1B3022] m-0">Live</h3>
+                <p class="text-xs font-bold text-[#8A8478] uppercase tracking-widest mt-2">System Nodes</p>
+            </div>
+        </div>
 
-                <div class="mt-5">
-                    <h5 class="fw-bold mb-4"><i class="fas fa-tools me-2 text-primary"></i>Management Actions</h5>
-                    <div class="d-flex flex-wrap gap-3">
-                        <button class="btn glass-panel border px-4 py-2 small fw-bold">
-                            <i class="fas fa-user-plus me-2 text-primary"></i>Manage User Roles
-                        </button>
-                        <button class="btn glass-panel border px-4 py-2 small fw-bold">
-                            <i class="fas fa-database me-2 text-success"></i>System Backups
-                        </button>
-                        <button class="btn glass-panel border px-4 py-2 small fw-bold text-danger">
-                            <i class="fas fa-exclamation-circle me-2"></i>Clear Error Logs
-                        </button>
-                    </div>
-                </div>
+        <div>
+            <h5 class="text-xl font-serif text-[#1B3022] mb-4">Management Actions</h5>
+            <div class="flex flex-wrap gap-4">
+                <button class="bg-[#FBFBFA] border border-[#EAE9E4] text-[#1B3022] font-bold px-5 py-3 rounded-xl hover:bg-white hover:border-[#2D6A4F] transition-all text-sm shadow-sm flex items-center gap-2">
+                    <i class="fas fa-user-plus text-[#2D6A4F]"></i> Manage User Roles
+                </button>
+                <button class="bg-[#FBFBFA] border border-[#EAE9E4] text-[#1B3022] font-bold px-5 py-3 rounded-xl hover:bg-white hover:border-[#2D6A4F] transition-all text-sm shadow-sm flex items-center gap-2">
+                    <i class="fas fa-database text-[#1D6FA5]"></i> System Backups
+                </button>
+                <button class="bg-red-50 border border-red-100 text-red-600 font-bold px-5 py-3 rounded-xl hover:bg-red-100 transition-all text-sm shadow-sm flex items-center gap-2">
+                    <i class="fas fa-exclamation-triangle"></i> Clear Error Logs
+                </button>
             </div>
         </div>
     </div>
